@@ -13,7 +13,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public User findUserAccount(User user) {
+        return userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
     }
 }
