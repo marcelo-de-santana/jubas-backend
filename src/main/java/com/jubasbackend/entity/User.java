@@ -1,6 +1,7 @@
 package com.jubasbackend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -14,11 +15,14 @@ public class User implements Serializable {
     private UUID id;
 
     @Column(unique = true, length = 50)
+    @NotNull
     private String email;
 
+    @NotNull
     private String password;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "user_permission_id")
     private UserPermission userPermission;
 
