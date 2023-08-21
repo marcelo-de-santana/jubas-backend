@@ -7,8 +7,8 @@ import jakarta.persistence.Id;
 
 import java.util.UUID;
 
-@Entity(name = "tb_barber_service")
-public class BarberService {
+@Entity(name = "tb_barber_services")
+public class BarberServices {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
