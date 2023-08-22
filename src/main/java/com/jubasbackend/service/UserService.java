@@ -6,8 +6,6 @@ import com.jubasbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-
 @Service
 public class UserService {
 
@@ -16,18 +14,15 @@ public class UserService {
 
     public User create(User userToCreate) {
         if (userRepository.existsByEmail(userToCreate.getEmail())) {
-            throw new IllegalArgumentException("Usuário já existe");
+            throw new IllegalArgumentException("User already exists");
         }
         return userRepository.save(userToCreate);
     }
 
     public UserDTO findUserAccount(User user) {
-        User userData = userRepository.findByEmailAndPassword(user.getEmail(), user.getPassword());
-
-        if (userData == null) {
-            return null;
-        }
-
-        return new UserDTO(userData);
+        return new UserDTO(userRepository
+                .findByEmailAndPassword(user.getEmail(), user.getPassword())
+                .orElseThrow(
+                        () -> new IllegalArgumentException("Incorrect Email or Password")));
     }
 }

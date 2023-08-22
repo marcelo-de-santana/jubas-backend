@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("employee/barber")
 public class BarberController {
@@ -15,6 +17,11 @@ public class BarberController {
     @GetMapping
     public ResponseEntity<Object> findAll() {
         return ResponseEntity.ok(barberService.findALl());
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<?> findById(@PathVariable UUID id) {
+        return ResponseEntity.ok(barberService.findById(id));
     }
 
     @PostMapping
