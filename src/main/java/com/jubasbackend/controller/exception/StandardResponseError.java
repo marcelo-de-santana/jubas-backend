@@ -3,18 +3,21 @@ package com.jubasbackend.controller.exception;
 import java.io.Serializable;
 import java.time.Instant;
 
-public class StandardError implements Serializable {
+public class StandardResponseError implements Serializable {
     private Instant timestamp;
     private Integer status;
     private String error;
     private String path;
 
-    public Instant getTimestamp() {
-        return timestamp;
+    public StandardResponseError(Integer status, String error, String path) {
+        this.timestamp = Instant.now();
+        this.status = status;
+        this.error = error;
+        this.path = path;
     }
 
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
+    public Instant getTimestamp() {
+        return timestamp;
     }
 
     public Integer getStatus() {

@@ -20,7 +20,7 @@ public class BarberService {
 
     public Barber findById(UUID id) {
         return barberRepository.findById(id).orElseThrow(
-            () -> new NoSuchElementException("BARBER NOT FOUND"));
+            () -> new NoSuchElementException("Barber Not Found"));
     }
 
     public Barber save(Barber barber) {

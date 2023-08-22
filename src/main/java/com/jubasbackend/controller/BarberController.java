@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -15,19 +16,18 @@ public class BarberController {
     private BarberService barberService;
 
     @GetMapping
-    public ResponseEntity<Object> findAll() {
+    public ResponseEntity<List<Barber>> findAll() {
         return ResponseEntity.ok(barberService.findALl());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> findById(@PathVariable UUID id) {
+    public ResponseEntity<Barber> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(barberService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody Barber barber) {
-        Barber response = barberService.save(barber);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Barber> create(@RequestBody Barber barber) {
+        return ResponseEntity.ok(barberService.save(barber));
     }
 
 }

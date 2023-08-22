@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.Instant;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -18,13 +17,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<StandardError> handleNotFoundException(
+    public ResponseEntity<StandardResponseError> handleNotFoundException(
             NoSuchElementException notFoundException, HttpServletRequest request) {
-        StandardError err = new StandardError();
-        err.setTimestamp(Instant.now());
-        err.setStatus(HttpStatus.NOT_FOUND.value());
-        err.setError("Resource ID not found");
-        err.setPath(request.getRequestURI());
+        StandardResponseError err = new StandardResponseError(
+                HttpStatus.NOT_FOUND.value(),
+                "Resource ID not found", request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 }
