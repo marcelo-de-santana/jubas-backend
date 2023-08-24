@@ -1,6 +1,7 @@
 package com.jubasbackend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -12,12 +13,14 @@ public class Barber implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotNull
     private String name;
 
     private boolean statusProfile;
 
     @OneToOne
     @JoinColumn(name = "id_user")
+    @NotNull
     private User user;
 
     @OneToOne

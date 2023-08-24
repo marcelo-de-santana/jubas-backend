@@ -1,5 +1,6 @@
 package com.jubasbackend.controller;
 
+import com.jubasbackend.dto.ClientDTO;
 import com.jubasbackend.entity.Client;
 import com.jubasbackend.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,17 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping
-    public ResponseEntity<List<Client>> findAll(){
+    public ResponseEntity<List<ClientDTO>> findAll(){
         return ResponseEntity.ok(clientService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Client> findById(@PathVariable UUID id){
+    public ResponseEntity<ClientDTO> findById(@PathVariable UUID id){
         return ResponseEntity.ok(clientService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Client> save(@RequestBody Client client){
+    public ResponseEntity<Client> create(@RequestBody Client client){
         return ResponseEntity.status(HttpStatus.CREATED).body(clientService.save(client));
     }
 
@@ -38,7 +39,8 @@ public class ClientController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable UUID id){
+    public ResponseEntity<String> deleteById(@PathVariable UUID id){
         clientService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Client deleted");
     }
 }

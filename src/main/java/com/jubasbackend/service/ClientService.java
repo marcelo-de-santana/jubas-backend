@@ -1,8 +1,8 @@
 package com.jubasbackend.service;
 
+import com.jubasbackend.dto.ClientDTO;
 import com.jubasbackend.entity.Client;
 import com.jubasbackend.repository.ClientRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +15,20 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    public Client save(Client client){
+    public Client save(Client client) {
         return clientRepository.save(client);
     }
 
-    public List<Client> findAll(){
-        return clientRepository.findAll();
+    public List<ClientDTO> findAll() {
+        return clientRepository.findAll().stream().map(ClientDTO::new).toList();
     }
 
-    public Client findById(UUID id){
-        return clientRepository.findById(id)
-                .orElseThrow(()-> new NoSuchElementException("Client not found."));
+    public ClientDTO findById(UUID id) {
+        return new ClientDTO(clientRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Client not found.")));
     }
 
-    public void deleteById(UUID id){
+    public void deleteById(UUID id) {
         clientRepository.deleteById(id);
     }
 }

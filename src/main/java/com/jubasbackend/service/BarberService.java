@@ -1,5 +1,6 @@
 package com.jubasbackend.service;
 
+import com.jubasbackend.dto.BarberDTO;
 import com.jubasbackend.entity.Barber;
 import com.jubasbackend.repository.BarberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,13 @@ public class BarberService {
     @Autowired
     private BarberRepository barberRepository;
 
-    public List<Barber> findALl() {
-        return barberRepository.findAll();
+    public List<BarberDTO> findAll() {
+        return barberRepository.findAll().stream().map(BarberDTO::new).toList();
     }
 
-    public Barber findById(UUID id) {
-        return barberRepository.findById(id).orElseThrow(
-            () -> new NoSuchElementException("Barber Not Found"));
+    public BarberDTO findById(UUID id) {
+        return new BarberDTO(barberRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("Barber Not Found")));
     }
 
     public Barber save(Barber barber) {

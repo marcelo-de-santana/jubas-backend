@@ -1,5 +1,6 @@
 package com.jubasbackend.controller;
 
+import com.jubasbackend.dto.BarberDTO;
 import com.jubasbackend.entity.Barber;
 import com.jubasbackend.service.BarberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,12 @@ public class BarberController {
     private BarberService barberService;
 
     @GetMapping
-    public ResponseEntity<List<Barber>> findAll() {
-        return ResponseEntity.ok(barberService.findALl());
+    public ResponseEntity<List<BarberDTO>> findAll() {
+        return ResponseEntity.ok(barberService.findAll());
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Barber> findById(@PathVariable UUID id) {
+    public ResponseEntity<BarberDTO> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(barberService.findById(id));
     }
 
