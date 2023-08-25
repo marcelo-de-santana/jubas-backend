@@ -5,15 +5,12 @@ import com.jubasbackend.service.OperationTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalTime;
+import java.util.List;
 
 @RestController
-@RequestMapping("/employee/barber/operation-time")
+@RequestMapping("/employee/operation-time")
 public class OperationTimeController {
     @Autowired
     private OperationTimeService operationTimeService;
@@ -21,5 +18,10 @@ public class OperationTimeController {
     @PostMapping
     public ResponseEntity<OperationTime> create(@RequestBody OperationTime operationTime) {
         return ResponseEntity.status(HttpStatus.OK).body(operationTimeService.createNew(operationTime));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OperationTime>> findAll(){
+        return ResponseEntity.ok(operationTimeService.findAll());
     }
 }

@@ -5,6 +5,8 @@ import com.jubasbackend.repository.OperationTimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OperationTimeService {
     @Autowired
@@ -12,5 +14,9 @@ public class OperationTimeService {
 
     public OperationTime createNew(OperationTime operationTime) {
         return operationTimeRepository.save(operationTime);
+    }
+
+    public List<OperationTime> findAll() {
+        return operationTimeRepository.findAll();
     }
 }

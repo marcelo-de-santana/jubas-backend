@@ -23,13 +23,8 @@ public class BarberController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BarberDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<BarberOperationTimeDTO> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(barberService.findById(id));
-    }
-
-    @GetMapping("/{id}/operation-time")
-    public ResponseEntity<BarberOperationTimeDTO> findBarberWithOperationTime(@PathVariable UUID id) {
-        return ResponseEntity.ok(barberService.findBarberOperationTime(id));
     }
 
     @PostMapping
@@ -37,10 +32,9 @@ public class BarberController {
         return ResponseEntity.ok(barberService.save(barber));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<BarberDTO> update(@RequestBody Barber barber) {
         return ResponseEntity.ok(barberService.save(barber));
-
     }
 
 }

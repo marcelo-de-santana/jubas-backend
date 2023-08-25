@@ -20,8 +20,8 @@ public class BarberService {
         return barberRepository.findAll().stream().map(BarberDTO::new).toList();
     }
 
-    public BarberDTO findById(UUID id) {
-        return new BarberDTO(barberRepository.findById(id).orElseThrow(
+    public BarberOperationTimeDTO findById(UUID id) {
+        return new BarberOperationTimeDTO(barberRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("Barber Not Found")));
     }
 
@@ -29,7 +29,10 @@ public class BarberService {
         return new BarberDTO(barberRepository.save(barber));
     }
 
-    public BarberOperationTimeDTO findBarberOperationTime(UUID id) {
-        return new BarberOperationTimeDTO(barberRepository.findById(id).orElseThrow(NoSuchElementException::new));
+    public BarberOperationTimeDTO update(Barber barber) {
+        Barber response = barberRepository.findById(barber.getId()).orElseThrow(NoSuchElementException::new);
+        response.setOperationTime(barber.getOperationTime());
+        return new BarberOperationTimeDTO(barberRepository.save(response));
     }
+
 }
