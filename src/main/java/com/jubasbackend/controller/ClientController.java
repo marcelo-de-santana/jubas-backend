@@ -29,12 +29,12 @@ public class ClientController {
     }
 
     @PostMapping
-    public ResponseEntity<Client> create(@RequestBody Client client){
+    public ResponseEntity<ClientDTO> create(@RequestBody Client client){
         return ResponseEntity.status(HttpStatus.CREATED).body(clientService.save(client));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Client> update(@RequestBody Client client){
+    public ResponseEntity<ClientDTO> update(@RequestBody Client client){
         return ResponseEntity.ok(clientService.save(client));
     }
 

@@ -3,13 +3,10 @@ package com.jubasbackend.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name = "tb_client")
-public class Client implements Serializable {
-    private static final Long serialVersionUID = 1L;
-
+public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;

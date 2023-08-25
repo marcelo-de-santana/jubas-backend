@@ -1,6 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.jubasbackend.dto.BarberDTO;
+import com.jubasbackend.dto.BarberOperationTimeDTO;
 import com.jubasbackend.entity.Barber;
 import com.jubasbackend.service.BarberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("employee/barber")
+@RequestMapping("/employee/barber")
 public class BarberController {
     @Autowired
     private BarberService barberService;
@@ -21,14 +22,25 @@ public class BarberController {
         return ResponseEntity.ok(barberService.findAll());
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<BarberDTO> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(barberService.findById(id));
     }
 
+    @GetMapping("/{id}/operation-time")
+    public ResponseEntity<BarberOperationTimeDTO> findBarberWithOperationTime(@PathVariable UUID id) {
+        return ResponseEntity.ok(barberService.findBarberOperationTime(id));
+    }
+
     @PostMapping
-    public ResponseEntity<Barber> create(@RequestBody Barber barber) {
+    public ResponseEntity<BarberDTO> create(@RequestBody Barber barber) {
         return ResponseEntity.ok(barberService.save(barber));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BarberDTO> update(@RequestBody Barber barber) {
+        return ResponseEntity.ok(barberService.save(barber));
+
     }
 
 }

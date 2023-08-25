@@ -25,7 +25,7 @@ public class UserController {
         return ResponseEntity.created(location).body(userCreated);
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<UserDTO> findUserAccount(@RequestBody User user) {
         return ResponseEntity.ok(userService.findUserAccount(user));
     }

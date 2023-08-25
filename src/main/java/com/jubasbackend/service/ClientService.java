@@ -15,8 +15,8 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    public Client save(Client client) {
-        return clientRepository.save(client);
+    public ClientDTO save(Client client) {
+        return new ClientDTO(clientRepository.save(client));
     }
 
     public List<ClientDTO> findAll() {

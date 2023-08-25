@@ -7,8 +7,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Entity(name = "tb_barber")
-public class Barber implements Serializable {
-
+public class Barber {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
