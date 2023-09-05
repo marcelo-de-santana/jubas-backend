@@ -1,30 +1,26 @@
-package com.jubasbackend.entity;
+package com.jubasbackend.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-@Entity(name = "tb_barber")
-public class Barber {
+@Entity(name = "tb_profile")
+public class Profile {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull
     private String name;
+
+    @Column(unique = true, length = 11)
+    private Long cpf;
 
     private boolean statusProfile;
 
-    @OneToOne
-    @JoinColumn(name = "id_user")
-    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToOne
-    @JoinColumn(name = "id_operation_time")
-    private OperationTime operationTime;
 
     public UUID getId() {
         return id;
@@ -42,6 +38,14 @@ public class Barber {
         this.name = name;
     }
 
+    public Long getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(Long cpf) {
+        this.cpf = cpf;
+    }
+
     public boolean isStatusProfile() {
         return statusProfile;
     }
@@ -54,15 +58,7 @@ public class Barber {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user)  {
         this.user = user;
-    }
-
-    public OperationTime getOperationTime() {
-        return operationTime;
-    }
-
-    public void setOperationTime(OperationTime operationTime) {
-        this.operationTime = operationTime;
     }
 }

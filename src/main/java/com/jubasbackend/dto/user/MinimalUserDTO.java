@@ -1,7 +1,7 @@
-package com.jubasbackend.dto.users;
+package com.jubasbackend.dto.user;
 
-import com.jubasbackend.entity.User;
-import com.jubasbackend.entity.UserPermission;
+import com.jubasbackend.domain.entity.User;
+import com.jubasbackend.domain.entity.UserPermission;
 
 import java.util.UUID;
 

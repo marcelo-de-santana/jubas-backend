@@ -1,8 +1,6 @@
-package com.jubasbackend.repository;
+package com.jubasbackend.domain.repository;
 
-import com.jubasbackend.entity.User;
-import com.jubasbackend.entity.UserPermission;
-import jakarta.validation.constraints.NotNull;
+import com.jubasbackend.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

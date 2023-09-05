@@ -1,9 +1,9 @@
-package com.jubasbackend.entity;
+package com.jubasbackend.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "tb_user")
@@ -55,4 +55,5 @@ public class User {
     public void setUserPermission(UserPermission userPermission) {
         this.userPermission = userPermission;
     }
+
 }

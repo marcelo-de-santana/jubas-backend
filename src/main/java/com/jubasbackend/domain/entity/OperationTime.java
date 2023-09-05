@@ -1,4 +1,4 @@
-package com.jubasbackend.entity;
+package com.jubasbackend.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;

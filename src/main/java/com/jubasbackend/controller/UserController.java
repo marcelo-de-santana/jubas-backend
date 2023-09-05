@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.users.MinimalUserDTO;
-import com.jubasbackend.entity.User;
+import com.jubasbackend.dto.user.MinimalUserDTO;
+import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/all-users")
-    public ResponseEntity<List<MinimalUserDTO>> findAll() {
+    public ResponseEntity<List<User>> findAll() {
         return ResponseEntity.ok(userService.findAll());
     }
 

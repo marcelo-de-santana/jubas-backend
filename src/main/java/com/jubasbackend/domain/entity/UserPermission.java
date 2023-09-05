@@ -1,4 +1,4 @@
-package com.jubasbackend.entity;
+package com.jubasbackend.domain.entity;
 
 import jakarta.persistence.*;
 

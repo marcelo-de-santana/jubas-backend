@@ -1,11 +1,13 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.dto.users.MinimalUserDTO;
-import com.jubasbackend.entity.User;
-import com.jubasbackend.repository.UserRepository;
+import com.jubasbackend.dto.user.MinimalUserDTO;
+import com.jubasbackend.domain.entity.User;
+import com.jubasbackend.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -36,9 +38,8 @@ public class UserService {
                         () -> new NoSuchElementException("User not exists.")));
     }
 
-    public List<MinimalUserDTO> findAll() {
-        return (userRepository.findAll()
-                .stream().map(MinimalUserDTO::new).toList());
+    public List<User> findAll() {
+        return userRepository.findAll().stream().toList();
     }
 
     public List<MinimalUserDTO> findUsersByUserPermission_Id(Long id) {
