@@ -6,15 +6,15 @@ import jakarta.persistence.*;
 public class UserPermission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Short id;
 
     private String type;
 
-    public Long getId() {
+    public Short getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Short id) {
         this.id = id;
     }
 

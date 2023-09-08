@@ -1,6 +1,7 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.user.MinimalUserDTO;
+import com.jubasbackend.controller.dto.user.MinimalUserDTO;
+import com.jubasbackend.controller.dto.user.UserDTO;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,31 +19,31 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<MinimalUserDTO> createUser(@RequestBody User userToCreate) {
-        MinimalUserDTO userCreated = userService.create(userToCreate);
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> createUser(@RequestBody User userToCreate) {
+        UserDTO userCreated = userService.create(userToCreate);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(userCreated.id()).toUri();
         return ResponseEntity.created(location).body(userCreated);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<MinimalUserDTO> findUserAccount(@RequestBody User user) {
+    @PostMapping
+    public ResponseEntity<UserDTO> findUserAccount(@RequestBody User user) {
         return ResponseEntity.ok(userService.findUserAccount(user));
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<MinimalUserDTO> findById(@PathVariable UUID id) {
+    @GetMapping(value = "/user/{id}")
+    public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @GetMapping("/all-users")
-    public ResponseEntity<List<User>> findAll() {
+    public ResponseEntity<List<MinimalUserDTO>> findAll() {
         return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/all-users/permission/{id}")
     public ResponseEntity<List<MinimalUserDTO>> findAllByUserPermission(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.findUsersByUserPermission_Id(id));
+        return ResponseEntity.ok(userService.findAllByUserPermission(id));
     }
 }
