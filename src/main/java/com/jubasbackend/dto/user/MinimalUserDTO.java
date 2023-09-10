@@ -1,4 +1,4 @@
-package com.jubasbackend.controller.dto.user;
+package com.jubasbackend.dto.user;
 
 import com.jubasbackend.domain.entity.User;
 
