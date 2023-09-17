@@ -15,5 +15,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmailAndPassword(String email, String password);
 
-    List<User> findUsersByUserPermission_Id(Long userPermission_id);
+    List<User> findUsersByUserPermission_Id(Short userPermission_id);
+
+    Optional<User> findUserByEmail(String email);
 }

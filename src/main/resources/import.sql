@@ -4,7 +4,7 @@ INSERT INTO TB_USER_PERMISSION VALUES(3,'CLIENT');
 
 INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('272d740c-3984-11ee-be56-0242ac120002','admin@jubas.com', '12345678',1);
 INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('2d9f5652-3984-11ee-be56-0242ac120002','gerente@jubas.com','12345678',1);
-INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('db16f0fa-398a-11ee-be56-0242ac120002','cliente@gmail.com','12345678',1);
+INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('db16f0fa-398a-11ee-be56-0242ac120002','cliente@gmail.com','12345678',3);
 INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('5b4ae402-3366-457a-a891-e37f592538d4','gabriel.navalha@jubas.com','12345678',2);
 INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('75ecf217-e0da-4e59-a43f-d095902e30c6','gerson.castro@jubas.com','12345678',2);
 

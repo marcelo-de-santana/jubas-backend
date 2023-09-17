@@ -1,6 +1,7 @@
 package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.repository.ProfileRepository;
 import com.jubasbackend.domain.repository.UserRepository;
 import com.jubasbackend.dto.profile.ProfileDTO;
@@ -23,7 +24,13 @@ public class ProfileService {
         return profileRepository.findAllByUserId(id).stream().map(ProfileDTO::new).toList();
     }
 
-    public Object updateProfile(Profile profile) {
-        return new ProfileDTO(profileRepository.save(profile));
+    public ProfileDTO updateProfile(Profile profile) {
+        User user = userRepository.findUserByEmail(profile.getUser().getEmail()).orElseThrow(() -> new NoSuchElementException("User doesn't exists."));
+        Profile newProfile = profileRepository.findById(profile.getId()).orElseThrow(()-> new NoSuchElementException("Profile doesn't exists."));
+        newProfile.setName(profile.getName());
+        newProfile.setCpf(profile.getCpf());
+        newProfile.setStatusProfile(profile.isStatusProfile());
+        newProfile.setUser(user);
+        return new ProfileDTO(profileRepository.save(newProfile));
     }
 }

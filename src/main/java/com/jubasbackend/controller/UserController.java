@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping("/all-users/permission/{id}")
-    public ResponseEntity<List<MinimalUserDTO>> findAllByUserPermission(@PathVariable Long id) {
+    public ResponseEntity<List<MinimalUserDTO>> findAllByUserPermission(@PathVariable Short id) {
         return ResponseEntity.ok(userService.findAllByUserPermission(id));
     }
 }

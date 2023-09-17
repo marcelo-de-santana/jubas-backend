@@ -41,7 +41,7 @@ public class UserService {
         return userRepository.findAll().stream().map(MinimalUserDTO::new).toList();
     }
 
-    public List<MinimalUserDTO> findAllByUserPermission(Long id) {
+    public List<MinimalUserDTO> findAllByUserPermission(Short id) {
         return (userRepository.findUsersByUserPermission_Id(id)
                 .stream().map(MinimalUserDTO::new).toList());
     }

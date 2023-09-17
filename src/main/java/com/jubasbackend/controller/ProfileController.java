@@ -22,7 +22,7 @@ public class ProfileController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateProfile(@RequestBody Profile profile){
+    public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile){
         return ResponseEntity.ok(profileService.updateProfile(profile));
     }
 }
