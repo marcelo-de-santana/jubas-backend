@@ -34,15 +34,28 @@ public class UserService {
     public UserDTO findById(UUID id) {
         return new UserDTO(userRepository.findById(id)
                 .orElseThrow(
-                        () -> new NoSuchElementException("User not exists.")));
+                        () -> new NoSuchElementException("User doesn't exists.")));
     }
 
     public List<MinimalUserDTO> findAll() {
         return userRepository.findAll().stream().map(MinimalUserDTO::new).toList();
     }
 
-    public List<MinimalUserDTO> findAllByUserPermission(Short id) {
+    public List<UserDTO> findAllByUserPermission(Short id) {
         return (userRepository.findUsersByUserPermission_Id(id)
-                .stream().map(MinimalUserDTO::new).toList());
+                .stream().map(UserDTO::new).toList());
+    }
+
+    public UserDTO updateUser(User user) {
+        User optionalUser = userRepository.findById(user.getId()).orElseThrow(
+                () -> new NoSuchElementException("User doesn't exist."));
+        optionalUser.setEmail(user.getEmail());
+        if (user.getPassword() != null) {
+            if (user.getPassword().length() >= 8) {
+                optionalUser.setPassword(user.getPassword());
+            }
+        }
+        optionalUser.setUserPermission(user.getUserPermission());
+        return new UserDTO(userRepository.save(optionalUser));
     }
 }
