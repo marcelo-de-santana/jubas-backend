@@ -26,7 +26,7 @@ public class ProfileService {
 
     public ProfileDTO updateProfile(Profile profile) {
         User user = userRepository.findUserByEmail(profile.getUser().getEmail()).orElseThrow(() -> new NoSuchElementException("User doesn't exists."));
-        Profile newProfile = profileRepository.findById(profile.getId()).orElseThrow(()-> new NoSuchElementException("Profile doesn't exists."));
+        Profile newProfile = profileRepository.findById(profile.getId()).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
         newProfile.setName(profile.getName());
         newProfile.setCpf(profile.getCpf());
         newProfile.setStatusProfile(profile.isStatusProfile());
@@ -34,7 +34,17 @@ public class ProfileService {
         return new ProfileDTO(profileRepository.save(newProfile));
     }
 
-    public ProfileDTO create(Profile profile){
+    public ProfileDTO create(Profile profile) {
         return new ProfileDTO(profileRepository.save(profile));
+    }
+
+    public ProfileDTO delete(UUID id) {
+        Profile profile = profileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
+        profileRepository.deleteById(id);
+        return new ProfileDTO(profile);
+    }
+
+    public List<ProfileDTO> findAllProfilesByUserPermissionId(Short id) {
+        return profileRepository.findAllByUserUserPermissionId(id).stream().map(ProfileDTO::new).toList();
     }
 }

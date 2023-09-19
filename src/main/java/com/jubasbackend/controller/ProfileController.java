@@ -16,7 +16,7 @@ public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<List<ProfileDTO>> findAllByUserId(@PathVariable UUID id) {
         return ResponseEntity.ok(profileService.findAllByUserId(id));
     }
@@ -29,5 +29,15 @@ public class ProfileController {
     @PostMapping
     public ResponseEntity<ProfileDTO> createProfile(@RequestBody Profile profile){
         return ResponseEntity.ok(profileService.create(profile));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProfileDTO> deleteProfile(@PathVariable UUID id){
+        return ResponseEntity.ok(profileService.delete(id));
+    }
+
+    @GetMapping("/user/permission/{id}")
+    public ResponseEntity<List<ProfileDTO>> findAllProfilesByUserPermissionId(@PathVariable Short id){
+        return ResponseEntity.ok(profileService.findAllProfilesByUserPermissionId(id));
     }
 }

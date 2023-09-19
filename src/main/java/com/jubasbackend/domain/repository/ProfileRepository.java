@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ProfileRepository extends JpaRepository<Profile, UUID> {
     List<Profile> findAllByUserId(UUID id);
 
+    List<Profile> findAllByUserUserPermissionId(Short id);
+
 }
