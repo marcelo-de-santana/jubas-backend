@@ -33,4 +33,8 @@ public class ProfileService {
         newProfile.setUser(user);
         return new ProfileDTO(profileRepository.save(newProfile));
     }
+
+    public ProfileDTO create(Profile profile){
+        return new ProfileDTO(profileRepository.save(profile));
+    }
 }

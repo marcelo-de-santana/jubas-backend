@@ -25,4 +25,9 @@ public class ProfileController {
     public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile){
         return ResponseEntity.ok(profileService.updateProfile(profile));
     }
+
+    @PostMapping
+    public ResponseEntity<ProfileDTO> createProfile(@RequestBody Profile profile){
+        return ResponseEntity.ok(profileService.create(profile));
+    }
 }
