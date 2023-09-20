@@ -14,7 +14,7 @@ import java.util.UUID;
 public class OperationTime {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private long id;
     @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
     @JsonFormat(pattern = "HH:mm")
@@ -24,11 +24,11 @@ public class OperationTime {
     @JsonFormat(pattern = "HH:mm")
     private LocalTime endInterval;
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(long id) {
         this.id = id;
     }
 

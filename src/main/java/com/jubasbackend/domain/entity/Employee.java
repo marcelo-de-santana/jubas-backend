@@ -20,4 +20,28 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "operation_time_id")
     private OperationTime operationTime;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public OperationTime getOperationTime() {
+        return operationTime;
+    }
+
+    public void setOperationTime(OperationTime operationTime) {
+        this.operationTime = operationTime;
+    }
 }
