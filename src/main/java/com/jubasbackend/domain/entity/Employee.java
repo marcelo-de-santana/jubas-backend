@@ -17,6 +17,10 @@ public class Employee {
     @NotNull
     private Profile profile;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "employee_id")
+    private List<EmployeeServices> services;
+
     @ManyToOne
     @JoinColumn(name = "operation_time_id")
     private OperationTime operationTime;
@@ -35,6 +39,14 @@ public class Employee {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public List<EmployeeServices> getServices() {
+        return services;
+    }
+
+    public void setServices(List<EmployeeServices> services) {
+        this.services = services;
     }
 
     public OperationTime getOperationTime() {

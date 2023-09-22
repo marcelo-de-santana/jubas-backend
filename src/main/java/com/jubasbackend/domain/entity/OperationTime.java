@@ -6,9 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import java.io.Serializable;
 import java.time.LocalTime;
-import java.util.UUID;
 
 @Entity(name = "tb_operation_time")
 public class OperationTime {

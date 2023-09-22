@@ -1,9 +1,9 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.dto.user.MinimalUserDTO;
-import com.jubasbackend.dto.user.UserDTO;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.repository.UserRepository;
+import com.jubasbackend.dto.user.MinimalUserDTO;
+import com.jubasbackend.dto.user.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

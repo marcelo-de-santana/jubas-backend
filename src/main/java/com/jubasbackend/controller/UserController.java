@@ -1,8 +1,8 @@
 package com.jubasbackend.controller;
 
+import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.dto.user.MinimalUserDTO;
 import com.jubasbackend.dto.user.UserDTO;
-import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

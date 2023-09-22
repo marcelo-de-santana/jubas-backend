@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.profile.ProfileDTO;
 import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.dto.profile.ProfileDTO;
 import com.jubasbackend.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

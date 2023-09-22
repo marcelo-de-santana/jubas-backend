@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.jubasbackend.domain.entity.Employee;
-import com.jubasbackend.dto.EmployeeDTO;
+import com.jubasbackend.dto.employee.EmployeeDTO;
 import com.jubasbackend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,6 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<List<EmployeeDTO>> findAll(){
-        return ResponseEntity.ok(employeeService.findAll().stream().toList());
+        return ResponseEntity.ok(employeeService.findAll());
     }
 }

@@ -1,7 +1,6 @@
 package com.jubasbackend.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
@@ -58,7 +57,7 @@ public class Profile {
         return user;
     }
 
-    public void setUser(User user)  {
+    public void setUser(User user) {
         this.user = user;
     }
 }
