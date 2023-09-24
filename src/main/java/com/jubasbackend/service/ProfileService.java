@@ -24,7 +24,7 @@ public class ProfileService {
         return profileRepository.findAllByUserId(id).stream().map(ProfileDTO::new).toList();
     }
 
-    public ProfileDTO updateProfile(Profile profile) {
+    public ProfileDTO updateUserAndProfile(Profile profile) {
         User user = userRepository.findUserByEmail(profile.getUser().getEmail()).orElseThrow(() -> new NoSuchElementException("User doesn't exists."));
         Profile newProfile = profileRepository.findById(profile.getId()).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
         newProfile.setName(profile.getName());
@@ -46,5 +46,10 @@ public class ProfileService {
 
     public List<ProfileDTO> findAllProfilesByUserPermissionId(Short id) {
         return profileRepository.findAllByUserUserPermissionId(id).stream().map(ProfileDTO::new).toList();
+    }
+
+    public ProfileDTO updateProfile(Profile profile) {
+        profileRepository.findById(profile.getId()).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
+        return new ProfileDTO(profileRepository.save(profile));
     }
 }

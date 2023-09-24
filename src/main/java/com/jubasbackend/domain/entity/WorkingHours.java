@@ -8,11 +8,11 @@ import jakarta.persistence.Id;
 
 import java.time.LocalTime;
 
-@Entity(name = "tb_operation_time")
-public class OperationTime {
+@Entity(name = "tb_working_hours")
+public class WorkingHours {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
     @JsonFormat(pattern = "HH:mm")
@@ -22,11 +22,11 @@ public class OperationTime {
     @JsonFormat(pattern = "HH:mm")
     private LocalTime endInterval;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

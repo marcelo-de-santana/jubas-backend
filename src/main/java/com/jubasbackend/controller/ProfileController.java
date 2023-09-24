@@ -21,9 +21,9 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findAllByUserId(id));
     }
 
-    @PutMapping
-    public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile){
-        return ResponseEntity.ok(profileService.updateProfile(profile));
+    @PutMapping("/user")
+    public ResponseEntity<ProfileDTO> updateUserAndProfile(@RequestBody Profile profile){
+        return ResponseEntity.ok(profileService.updateUserAndProfile(profile));
     }
 
     @PostMapping
@@ -39,5 +39,10 @@ public class ProfileController {
     @GetMapping("/user/permission/{id}")
     public ResponseEntity<List<ProfileDTO>> findAllProfilesByUserPermissionId(@PathVariable Short id){
         return ResponseEntity.ok(profileService.findAllProfilesByUserPermissionId(id));
+    }
+
+    @PutMapping
+    public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile){
+        return ResponseEntity.ok(profileService.updateProfile(profile));
     }
 }

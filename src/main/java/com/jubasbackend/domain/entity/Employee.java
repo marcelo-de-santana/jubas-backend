@@ -22,8 +22,8 @@ public class Employee {
     private List<EmployeeServices> services;
 
     @ManyToOne
-    @JoinColumn(name = "operation_time_id")
-    private OperationTime operationTime;
+    @JoinColumn(name = "working_hours_id")
+    private WorkingHours workingHours;
 
     public UUID getId() {
         return id;
@@ -49,11 +49,11 @@ public class Employee {
         this.services = services;
     }
 
-    public OperationTime getOperationTime() {
-        return operationTime;
+    public WorkingHours getWorkingHours() {
+        return workingHours;
     }
 
-    public void setOperationTime(OperationTime operationTime) {
-        this.operationTime = operationTime;
+    public void setWorkingHours(WorkingHours workingHours) {
+        this.workingHours = workingHours;
     }
 }
