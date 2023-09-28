@@ -16,4 +16,12 @@ public class WorkingHoursService {
     public List<WorkingHours> findAll(){
         return workingHoursRepository.findAll();
     }
+
+    public WorkingHours create(WorkingHours workingHours) {
+        boolean workingHourExists = workingHoursRepository.existsByStartTimeAndStartIntervalAndEndIntervalAndEndTime(workingHours.getStartTime(), workingHours.getStartInterval(), workingHours.getEndInterval(), workingHours.getEndTime());
+        if (!workingHourExists) {
+            return workingHoursRepository.save(workingHours);
+        }
+        throw new IllegalArgumentException("Working hour already exists.");
+    }
 }

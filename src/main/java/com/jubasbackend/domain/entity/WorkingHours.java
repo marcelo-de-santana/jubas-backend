@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @Entity(name = "tb_working_hours")
 public class WorkingHours {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
