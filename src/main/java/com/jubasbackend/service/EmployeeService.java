@@ -26,28 +26,28 @@ public class EmployeeService {
     @Autowired
     private WorkingHoursRepository workingHoursRepository;
 
-    public EmployeeDTO registerEmployee(Employee employee) {
-        Profile profile = profileRepository.findById(employee.getProfile().getId()).orElseThrow(
+    public EmployeeDTO findByProfileId(UUID id){
+        return new EmployeeDTO(employeeRepository.findEmployeeByProfileId(id).orElseThrow(
+                ()-> new NoSuchElementException("There is no profile registered for the employee")));
+    }
+
+    public EmployeeDTO registerEmployee(Profile profile) {
+        Profile verifiedProfile = profileRepository.findById(profile.getId()).orElseThrow(
                 () -> new NoSuchElementException("Profile doesn't exist."));
-        Employee registredEmployee = employeeRepository.findEmployeeByProfileId(profile.getId());
-        if (registredEmployee == null) {
+        boolean linkedProfile = employeeRepository.existsByProfile(verifiedProfile);
+        if (!linkedProfile) {
+            Employee employee = new Employee();
             employee.setProfile(profile);
             return new EmployeeDTO(employeeRepository.save(employee));
         }
-        throw new IllegalArgumentException("Employee already registered.");
-    }
-
-    public List<EmployeeDTO> findAll() {
-        return employeeRepository.findAll().stream().map(EmployeeDTO::new).toList();
+        throw new IllegalArgumentException("The employee already has a linked profile.");
     }
 
     public void updateWorkingHoursForEmployee(UUID employeeId, WorkingHours workingHours) {
+        System.out.println(workingHours.getId());
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(
                 () -> new NoSuchElementException("Employee doesn't exist."));
-        WorkingHours optionalWorkingHours = workingHoursRepository.findById(workingHours.getId()).orElseThrow(
-                () -> new NoSuchElementException("Working Hours doesn't exist."));
-        employee.setWorkingHours(optionalWorkingHours);
-        employeeRepository.save(employee);
+        employee.setWorkingHours(workingHours);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.WorkingHours;
 import com.jubasbackend.dto.employee.EmployeeDTO;
 import com.jubasbackend.service.EmployeeService;
@@ -20,14 +21,15 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @PostMapping
-    public  ResponseEntity<EmployeeDTO> registerEmployee(@RequestBody Employee employee) {
-        return ResponseEntity.ok(employeeService.registerEmployee(employee));
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<EmployeeDTO> findByProfileId(@PathVariable UUID id){
+        return ResponseEntity.ok(employeeService.findByProfileId(id));
     }
 
-    @GetMapping
-    public ResponseEntity<List<EmployeeDTO>> findAll(){
-        return ResponseEntity.ok(employeeService.findAll());
+
+    @PostMapping
+    public  ResponseEntity<EmployeeDTO> registerEmployee(@RequestBody Profile profile) {
+        return ResponseEntity.ok(employeeService.registerEmployee(profile));
     }
 
     @PatchMapping("/{employeeId}/working-hours")
