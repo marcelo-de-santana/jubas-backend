@@ -48,8 +48,11 @@ public class ProfileService {
         return profileRepository.findAllByUserUserPermissionId(id).stream().map(ProfileDTO::new).toList();
     }
 
-    public ProfileDTO updateProfile(Profile profile) {
-        profileRepository.findById(profile.getId()).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
-        return new ProfileDTO(profileRepository.save(profile));
+    public ProfileDTO updateProfile(UUID id, Profile requestProfile) {
+        Profile currentProfile = profileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
+        currentProfile.setName(requestProfile.getName());
+        currentProfile.setCpf(requestProfile.getCpf());        currentProfile.setCpf(requestProfile.getCpf());
+        currentProfile.setStatusProfile(requestProfile.isStatusProfile());
+        return new ProfileDTO(profileRepository.save(currentProfile));
     }
 }

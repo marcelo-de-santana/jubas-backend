@@ -26,9 +26,9 @@ public class EmployeeService {
     @Autowired
     private WorkingHoursRepository workingHoursRepository;
 
-    public EmployeeDTO findByProfileId(UUID id){
+    public EmployeeDTO findByProfileId(UUID id) {
         return new EmployeeDTO(employeeRepository.findEmployeeByProfileId(id).orElseThrow(
-                ()-> new NoSuchElementException("There is no profile registered for the employee")));
+                () -> new NoSuchElementException("There is no profile registered for the employee")));
     }
 
     public EmployeeDTO registerEmployee(Profile profile) {
@@ -43,12 +43,11 @@ public class EmployeeService {
         throw new IllegalArgumentException("The employee already has a linked profile.");
     }
 
-    public void updateWorkingHoursForEmployee(UUID employeeId, WorkingHours workingHours) {
-        System.out.println(workingHours.getId());
+    public EmployeeDTO updateWorkingHoursForEmployee(UUID employeeId, WorkingHours workingHours) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(
                 () -> new NoSuchElementException("Employee doesn't exist."));
         employee.setWorkingHours(workingHours);
+        return new EmployeeDTO(employeeRepository.save(employee));
     }
 
 }
-

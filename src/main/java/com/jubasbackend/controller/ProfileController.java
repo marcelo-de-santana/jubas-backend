@@ -41,8 +41,8 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.findAllProfilesByUserPermissionId(id));
     }
 
-    @PutMapping
-    public ResponseEntity<ProfileDTO> updateProfile(@RequestBody Profile profile){
-        return ResponseEntity.ok(profileService.updateProfile(profile));
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProfileDTO> updateProfile(@PathVariable UUID id, @RequestBody Profile profile){
+        return ResponseEntity.ok(profileService.updateProfile(id, profile));
     }
 }
