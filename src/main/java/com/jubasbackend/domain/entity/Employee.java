@@ -19,7 +19,7 @@ public class Employee {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
-    private List<EmployeeServices> services;
+    private List<EmployeeSpecialty> specialTies;
 
     @ManyToOne
     @JoinColumn(name = "working_hours_id")
@@ -41,12 +41,12 @@ public class Employee {
         this.profile = profile;
     }
 
-    public List<EmployeeServices> getServices() {
-        return services;
+    public List<EmployeeSpecialty> getServices() {
+        return specialTies;
     }
 
-    public void setServices(List<EmployeeServices> services) {
-        this.services = services;
+    public void setServices(List<EmployeeSpecialty> services) {
+        this.specialTies = services;
     }
 
     public WorkingHours getWorkingHours() {

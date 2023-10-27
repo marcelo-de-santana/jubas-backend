@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
+import com.jubasbackend.dto.RequestUserDTO;
+
 @Entity(name = "tb_user")
 public class User {
     @Id
@@ -22,6 +24,19 @@ public class User {
     @NotNull
     @JoinColumn(name = "user_permission_id")
     private UserPermission userPermission;
+
+    public User(UUID id) {
+        this.id = id;
+    }
+
+    public User(RequestUserDTO requestUserDTO) {
+        this.email = requestUserDTO.email();
+        this.password = requestUserDTO.password();
+        this.userPermission = new UserPermission(requestUserDTO.userPermissionId());
+    }
+
+    public User() {
+    }
 
     public UUID getId() {
         return id;

@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
-@Entity(name = "tb_employee_services")
-public class EmployeeServices {
+@Entity(name = "tb_employee_specialty")
+public class EmployeeSpecialty {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -15,8 +15,8 @@ public class EmployeeServices {
     private Employee employee;
 
     @ManyToOne
-    @JoinColumn(name = "service_id")
-    private Service service;
+    @JoinColumn(name = "specialty_id")
+    private Specialty specialty;
 
     public UUID getId() {
         return id;
@@ -34,11 +34,11 @@ public class EmployeeServices {
         this.employee = employee;
     }
 
-    public Service getService() {
-        return service;
+    public Specialty getSpecialty() {
+        return specialty;
     }
 
-    public void setService(Service service) {
-        this.service = service;
+    public void setSpecialty(Specialty specialty) {
+        this.specialty = specialty;
     }
 }

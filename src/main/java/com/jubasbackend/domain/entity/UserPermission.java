@@ -13,6 +13,13 @@ public class UserPermission {
 
     private String type;
 
+    public UserPermission() {
+    }
+
+    public UserPermission(Short id) {
+        this.id = id;
+    }
+
     public Short getId() {
         return id;
     }

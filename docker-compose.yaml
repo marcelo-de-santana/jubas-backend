@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+  # DEVELOPMENT DATABASE
+  db:
+    container_name: mysql
+    image: mysql:oracle
+    restart: no
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=jubas
+    ports:
+      - 3306:3306
+    volumes:
+      - ./.docker/data:/var/lib/mysql
+  # DEVELOPMENT BACKEND APPLICATION
+  app:
+    container_name: jubas-backend
+    image: amazoncorretto:17-alpine
+    working_dir: /home/jubas-backend
+    tty: true
+    volumes:
+      - .:/home/jubas-backend
+      - /home/jubas-backend/.docker/
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - 8080:8080
+    command:
+      - sh
+      - -c
+      - './mvnw clean install && java -jar ./target/jubasbackend-0.0.1-SNAPSHOT.jar'
+    depends_on:
+      - db
+  # PHP MY ADMIN
+  dbms:
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
+    restart: no
+    ports:
+      - 8000:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    depends_on:
+      - db

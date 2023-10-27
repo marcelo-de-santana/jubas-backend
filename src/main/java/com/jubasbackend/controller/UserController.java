@@ -1,8 +1,9 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.domain.entity.User;
-import com.jubasbackend.dto.user.MinimalUserDTO;
-import com.jubasbackend.dto.user.UserDTO;
+import com.jubasbackend.dto.RequestMinimalUserDTO;
+import com.jubasbackend.dto.RequestUserDTO;
+import com.jubasbackend.dto.ResponseMinimalUserDTO;
+import com.jubasbackend.dto.ResponseUserDTO;
 import com.jubasbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,41 +15,41 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping
+    public ResponseEntity<List<ResponseMinimalUserDTO>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseUserDTO> findById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @GetMapping("/permission/{id}")
+    public ResponseEntity<List<ResponseUserDTO>> findAllByUserPermission(@PathVariable Short id) {
+        return ResponseEntity.ok(userService.findAllByUserPermission(id));
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> createUser(@RequestBody User userToCreate) {
-        UserDTO userCreated = userService.create(userToCreate);
+    public ResponseEntity<ResponseUserDTO> createUser(@RequestBody RequestUserDTO userToCreate) {
+        ResponseUserDTO userCreated = userService.create(userToCreate);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(userCreated.id()).toUri();
         return ResponseEntity.created(location).body(userCreated);
     }
 
-    @PostMapping
-    public ResponseEntity<UserDTO> findUserAccount(@RequestBody User user) {
+    @PostMapping("/login")
+    public ResponseEntity<ResponseUserDTO> findUserAccount(@RequestBody RequestMinimalUserDTO user) {
         return ResponseEntity.ok(userService.findUserAccount(user));
     }
 
-    @GetMapping(value = "/user/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
-        return ResponseEntity.ok(userService.findById(id));
-    }
-
-    @GetMapping("/all-users")
-    public ResponseEntity<List<MinimalUserDTO>> findAll() {
-        return ResponseEntity.ok(userService.findAll());
-    }
-
-    @GetMapping("/all-users/permission/{id}")
-    public ResponseEntity<List<UserDTO>> findAllByUserPermission(@PathVariable Short id) {
-        return ResponseEntity.ok(userService.findAllByUserPermission(id));
-    }
-
-    @PutMapping
-    public ResponseEntity<UserDTO> updateUser(@RequestBody User user){
-        return ResponseEntity.ok(userService.updateUser(user));
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResponseUserDTO> updateUser(@PathVariable UUID id, @RequestBody RequestUserDTO user) {
+        return ResponseEntity.ok(userService.updateUser(id,user));
     }
 }

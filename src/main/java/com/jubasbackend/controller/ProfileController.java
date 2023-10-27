@@ -1,7 +1,8 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.dto.profile.ProfileDTO;
+import com.jubasbackend.dto.RequestMinimalProfileDTO;
+import com.jubasbackend.dto.RequestProfileDTO;
+import com.jubasbackend.dto.ResponseProfileDTO;
 import com.jubasbackend.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,32 +18,33 @@ public class ProfileController {
     private ProfileService profileService;
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<ProfileDTO>> findAllByUserId(@PathVariable UUID id) {
+    public ResponseEntity<List<ResponseProfileDTO>> findAllByUserId(@PathVariable UUID id) {
         return ResponseEntity.ok(profileService.findAllByUserId(id));
     }
 
-    @PutMapping("/user")
-    public ResponseEntity<ProfileDTO> updateUserAndProfile(@RequestBody Profile profile){
-        return ResponseEntity.ok(profileService.updateUserAndProfile(profile));
-    }
-
-    @PostMapping
-    public ResponseEntity<ProfileDTO> createProfile(@RequestBody Profile profile){
-        return ResponseEntity.ok(profileService.create(profile));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ProfileDTO> deleteProfile(@PathVariable UUID id){
-        return ResponseEntity.ok(profileService.delete(id));
-    }
-
-    @GetMapping("/user/permission/{id}")
-    public ResponseEntity<List<ProfileDTO>> findAllProfilesByUserPermissionId(@PathVariable Short id){
+    @GetMapping("/permission/{id}")
+    public ResponseEntity<List<ResponseProfileDTO>> findAllByUserPermissionId(@PathVariable Short id) {
         return ResponseEntity.ok(profileService.findAllProfilesByUserPermissionId(id));
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<ProfileDTO> updateProfile(@PathVariable UUID id, @RequestBody Profile profile){
-        return ResponseEntity.ok(profileService.updateProfile(id, profile));
+    @PostMapping
+    public ResponseEntity<ResponseProfileDTO> createProfile(@RequestBody RequestProfileDTO profile) {
+        return ResponseEntity.ok(profileService.create(profile));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseProfileDTO> updateProfile(@PathVariable UUID id, @RequestBody RequestProfileDTO profile) {
+        return ResponseEntity.ok(profileService.update(id, profile));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResponseProfileDTO> updateProfile(@PathVariable UUID id, @RequestBody RequestMinimalProfileDTO profile) {
+        return ResponseEntity.ok(profileService.updateOnlyProfile(id, profile));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseProfileDTO> deleteProfile(@PathVariable UUID id){
+        return ResponseEntity.ok(profileService.delete(id));
+    }
+
 }

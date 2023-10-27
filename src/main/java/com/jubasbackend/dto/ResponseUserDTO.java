@@ -1,12 +1,12 @@
-package com.jubasbackend.dto.user;
+package com.jubasbackend.dto;
 
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.entity.UserPermission;
 
 import java.util.UUID;
 
-public record UserDTO(UUID id, String email, UserPermission userPermission) {
-    public UserDTO(User user) {
+public record ResponseUserDTO(UUID id, String email, UserPermission userPermission) {
+    public ResponseUserDTO(User user) {
         this(user.getId(), user.getEmail(), user.getUserPermission());
     }
 }

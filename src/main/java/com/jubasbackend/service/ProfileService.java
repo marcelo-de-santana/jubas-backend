@@ -1,10 +1,11 @@
 package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.repository.ProfileRepository;
-import com.jubasbackend.domain.repository.UserRepository;
-import com.jubasbackend.dto.profile.ProfileDTO;
+import com.jubasbackend.dto.RequestMinimalProfileDTO;
+import com.jubasbackend.dto.RequestProfileDTO;
+import com.jubasbackend.dto.ResponseProfileDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,41 +19,58 @@ public class ProfileService {
     private ProfileRepository profileRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public List<ProfileDTO> findAllByUserId(UUID id) {
-        return profileRepository.findAllByUserId(id).stream().map(ProfileDTO::new).toList();
+    protected Profile findProfileById(UUID id) {
+        return profileRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("Profile doesn't exists."));
     }
 
-    public ProfileDTO updateUserAndProfile(Profile profile) {
-        User user = userRepository.findUserByEmail(profile.getUser().getEmail()).orElseThrow(() -> new NoSuchElementException("User doesn't exists."));
-        Profile newProfile = profileRepository.findById(profile.getId()).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
-        newProfile.setName(profile.getName());
-        newProfile.setCpf(profile.getCpf());
-        newProfile.setStatusProfile(profile.isStatusProfile());
-        newProfile.setUser(user);
-        return new ProfileDTO(profileRepository.save(newProfile));
+    public List<ResponseProfileDTO> findAllByUserId(UUID id) {
+        return profileRepository.findAllByUserId(id).stream().map(ResponseProfileDTO::new).toList();
     }
 
-    public ProfileDTO create(Profile profile) {
-        return new ProfileDTO(profileRepository.save(profile));
+    public ResponseProfileDTO update(UUID id, RequestProfileDTO profile) {
+        Profile profileToUpdate = findProfileById(id);
+        //Check if User exists
+        userService.findUserById(profile.userId());
+        //Update Profile
+        profileToUpdate.setName(profile.name());
+        profileToUpdate.setCpf(profile.cpf());
+        profileToUpdate.setStatusProfile(profile.statusProfile());
+        return new ResponseProfileDTO(profileRepository.save(profileToUpdate));
     }
 
-    public ProfileDTO delete(UUID id) {
-        Profile profile = profileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
-        profileRepository.deleteById(id);
-        return new ProfileDTO(profile);
+    public ResponseProfileDTO updateOnlyProfile(UUID id, RequestMinimalProfileDTO profile) {
+        Profile profileToUpdate = findProfileById(id);
+        if (profile.name() != null) {
+            profileToUpdate.setName(profile.name());
+        }
+        if (profile.cpf() != null && profile.cpf().length() == 11) {
+            profileToUpdate.setCpf(profile.cpf());
+        }
+        if (profileToUpdate != null) {
+            profileToUpdate.setStatusProfile(profile.statusProfile());
+        }
+        assert profileToUpdate != null;
+        var updatedProfile = profileRepository.save(profileToUpdate);
+        return new ResponseProfileDTO(updatedProfile);
     }
 
-    public List<ProfileDTO> findAllProfilesByUserPermissionId(Short id) {
-        return profileRepository.findAllByUserUserPermissionId(id).stream().map(ProfileDTO::new).toList();
+    public ResponseProfileDTO create(RequestProfileDTO profile) {
+        Profile savedProfile = profileRepository.save(new Profile(profile));
+        return new ResponseProfileDTO(savedProfile);
     }
 
-    public ProfileDTO updateProfile(UUID id, Profile requestProfile) {
-        Profile currentProfile = profileRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Profile doesn't exists."));
-        currentProfile.setName(requestProfile.getName());
-        currentProfile.setCpf(requestProfile.getCpf());        currentProfile.setCpf(requestProfile.getCpf());
-        currentProfile.setStatusProfile(requestProfile.isStatusProfile());
-        return new ProfileDTO(profileRepository.save(currentProfile));
+    public ResponseProfileDTO delete(UUID id) {
+        Profile profileToDelete = findProfileById(id);
+        profileRepository.delete(profileToDelete);
+        return new ResponseProfileDTO(profileToDelete);
     }
+
+    public List<ResponseProfileDTO> findAllProfilesByUserPermissionId(Short id) {
+        return profileRepository.findAllByUserUserPermissionId(id).stream().map(ResponseProfileDTO::new).toList();
+    }
+
+
 }

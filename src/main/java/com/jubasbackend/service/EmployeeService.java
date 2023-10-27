@@ -4,13 +4,12 @@ import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.WorkingHours;
 import com.jubasbackend.domain.repository.EmployeeRepository;
-import com.jubasbackend.domain.repository.ProfileRepository;
-import com.jubasbackend.domain.repository.WorkingHoursRepository;
-import com.jubasbackend.dto.employee.EmployeeDTO;
+import com.jubasbackend.dto.RequestEmployeeDTO;
+import com.jubasbackend.dto.ResponseEmployeeDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -21,33 +20,50 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
 
     @Autowired
-    private ProfileRepository profileRepository;
+    private ProfileService profileService;
 
     @Autowired
-    private WorkingHoursRepository workingHoursRepository;
+    private WorkingHoursService workingHoursService;
 
-    public EmployeeDTO findByProfileId(UUID id) {
-        return new EmployeeDTO(employeeRepository.findEmployeeByProfileId(id).orElseThrow(
+    protected Employee findEmployeeById(UUID id) {
+        return employeeRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("Employee doesn't exist."));
+    }
+
+    public ResponseEmployeeDTO findByProfileId(UUID id) {
+        return new ResponseEmployeeDTO(employeeRepository.findEmployeeByProfileId(id).orElseThrow(
                 () -> new NoSuchElementException("There is no profile registered for the employee")));
     }
 
-    public EmployeeDTO registerEmployee(Profile profile) {
-        Profile verifiedProfile = profileRepository.findById(profile.getId()).orElseThrow(
-                () -> new NoSuchElementException("Profile doesn't exist."));
-        boolean linkedProfile = employeeRepository.existsByProfile(verifiedProfile);
-        if (!linkedProfile) {
-            Employee employee = new Employee();
-            employee.setProfile(profile);
-            return new EmployeeDTO(employeeRepository.save(employee));
+    public ResponseEmployeeDTO register(RequestEmployeeDTO employee) {
+        Employee employeeToCreate = new Employee();
+
+        if (employee.workingHourId() != null) {
+            var workingHoursToBeLinked = workingHoursService.findWorkingHoursById(employee.workingHourId());
+            employeeToCreate.setWorkingHours(workingHoursToBeLinked);
         }
-        throw new IllegalArgumentException("The employee already has a linked profile.");
+
+        Profile profileToBeLinked = profileService.findProfileById(employee.profileId());
+
+        if (employeeRepository.existsByProfile(profileToBeLinked)) {
+            throw new IllegalArgumentException("The profile is already linked to an employee.");
+        }
+
+        employeeToCreate.setProfile(profileToBeLinked);
+        Employee savedEmployee = employeeRepository.save(employeeToCreate);
+        return new ResponseEmployeeDTO(savedEmployee);
     }
 
-    public EmployeeDTO updateWorkingHoursForEmployee(UUID employeeId, WorkingHours workingHours) {
-        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
-                () -> new NoSuchElementException("Employee doesn't exist."));
-        employee.setWorkingHours(workingHours);
-        return new EmployeeDTO(employeeRepository.save(employee));
+    public ResponseEmployeeDTO update(UUID id, RequestEmployeeDTO employee) {
+        Employee employeeToUpdate = findEmployeeById(id);
+        if(employee.profileId() != null){
+            employeeToUpdate.setProfile(new Profile(employee.profileId()));
+        }
+        if(employee.workingHourId() != null){
+            employeeToUpdate.setWorkingHours(new WorkingHours(employee.workingHourId()));
+
+        }
+        return new ResponseEmployeeDTO(employeeRepository.save(employeeToUpdate));
     }
 
 }

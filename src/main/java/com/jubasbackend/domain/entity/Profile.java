@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
+import com.jubasbackend.dto.RequestProfileDTO;
+
 @Entity(name = "tb_profile")
 public class Profile {
     @Id
@@ -13,13 +15,27 @@ public class Profile {
     private String name;
 
     @Column(unique = true, length = 11)
-    private Long cpf;
+    private String cpf;
 
     private boolean statusProfile;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Profile() {
+    }
+
+    public Profile(UUID id){
+        this.id = id;
+    }
+
+    public Profile(RequestProfileDTO requestProfileDTO) {
+        this.name = requestProfileDTO.name();
+        this.cpf = requestProfileDTO.cpf();
+        this.statusProfile = requestProfileDTO.statusProfile();
+        this.user = new User(requestProfileDTO.userId());
+    }
 
     public UUID getId() {
         return id;
@@ -37,11 +53,11 @@ public class Profile {
         this.name = name;
     }
 
-    public Long getCpf() {
+    public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(Long cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 

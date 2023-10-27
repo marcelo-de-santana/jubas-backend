@@ -1,24 +1,183 @@
-INSERT INTO TB_USER_PERMISSION VALUES(1,'ADMIN');
-INSERT INTO TB_USER_PERMISSION VALUES(2,'BARBER');
-INSERT INTO TB_USER_PERMISSION VALUES(3,'CLIENT');
+INSERT INTO tb_user_permission VALUES(1,'ADMIN');
+INSERT INTO tb_user_permission VALUES(2,'BARBER');
+INSERT INTO tb_user_permission VALUES(3,'CLIENT');
 
-INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('272d740c-3984-11ee-be56-0242ac120002','admin@jubas.com', '12345678',1);
-INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('2d9f5652-3984-11ee-be56-0242ac120002','gerente@jubas.com','12345678',1);
-INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('db16f0fa-398a-11ee-be56-0242ac120002','cliente@gmail.com','12345678',3);
-INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('5b4ae402-3366-457a-a891-e37f592538d4','gabriel.navalha@jubas.com','12345678',2);
-INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('75ecf217-e0da-4e59-a43f-d095902e30c6','gerson.castro@jubas.com','12345678',2);
-INSERT INTO tb_user (id, email, password, user_permission_id) VALUES ('bdbf5d93-6e55-4841-8604-daae1fa85bb4','oliver.castro@jubas.com','12345678',2);
+INSERT INTO tb_user (id, email, password, user_permission_id) VALUES (0x2EBA17A0F7384107BF5A85BE53EC0FE3,'admin@jubas.com', '12345678',1);
+INSERT INTO tb_user (id, email, password, user_permission_id) VALUES (0xC2FCC2E5D07748BA8604E735D77168EE,'gerente@jubas.com','12345678',2);
+INSERT INTO tb_user (id, email, password, user_permission_id) VALUES (0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9,'cliente@gmail.com','12345678',3);
+INSERT INTO tb_user (id, email, password, user_permission_id) VALUES (0xD526F2C160B047198C5DFDB60CE7E72A,'gabriel.navalha@jubas.com','12345678',2);
+INSERT INTO tb_user (id, email, password, user_permission_id) VALUES (0xDEECD1007DEC4DBDAC0F4211650AE528,'gerson.castro@jubas.com','12345678',2);
+INSERT INTO tb_user (id, email, password, user_permission_id) VALUES (0xE8488082ACD9436F9AEBC22F9F409133 ,'oliver.castro@jubas.com','12345678',2);
 
-INSERT INTO tb_working_hours(id, start_time, end_time, start_interval, end_interval) VALUES ('1','09:00:00','18:00:00','13:00:00','14:00:00');
-INSERT INTO tb_working_hours(id, start_time, end_time, start_interval, end_interval) VALUES ('2','08:00:00','19:00:00','13:00:00','14:00:00');
-INSERT INTO tb_working_hours(id, start_time, end_time, start_interval, end_interval) VALUES ('3','10:00:00','20:00:00','13:00:00','14:00:00');
+INSERT INTO tb_working_hours(id, start_time, end_time, start_interval, end_interval) VALUES (1,'09:00:00','18:00:00','13:00:00','14:00:00');
+INSERT INTO tb_working_hours(id, start_time, end_time, start_interval, end_interval) VALUES (2,'08:00:00','19:00:00','13:00:00','14:00:00');
+INSERT INTO tb_working_hours(id, start_time, end_time, start_interval, end_interval) VALUES (3,'10:00:00','20:00:00','13:00:00','14:00:00');
 --CLIENT
-INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES ('b0c1cbde-398c-11ee-be56-0242ac120002','Pai do Fulano','00000000000',true,'db16f0fa-398a-11ee-be56-0242ac120002');
-INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES ('9a1104e0-398c-11ee-be56-0242ac120002','Filho de Fulano','00000000001',true,'db16f0fa-398a-11ee-be56-0242ac120002');
+INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (0xE8CB8B11508E4E099DBD6FADF015E28C,'Pai do Fulano','00000000000',true,0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9);
+INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (0x0B8B82F6A8EF474893EAFA3FCBDC8D8B,'Filho de Fulano','00000000001',true,0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9);
 --BARBER
-INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES ('b4ec78bd-d72f-4545-b695-0b40ffe7327d','Gabriel Navalha',null,true,'5b4ae402-3366-457a-a891-e37f592538d4');
-INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES ('ffeb959a-a95a-4a43-8c06-1763c9da8335','Gerson de Castro',null,false,'75ecf217-e0da-4e59-a43f-d095902e30c6');
-INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES ('9ad1ad9f-d052-4a05-8430-497a8ff165b0','Oliver Barbeiro','33333333333',false,'bdbf5d93-6e55-4841-8604-daae1fa85bb4');
+INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (0x1253FC4445C5440CB0D81B9A2C5DC919,'Gabriel Navalha',null,true,0xD526F2C160B047198C5DFDB60CE7E72A);
+INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (0x6603391C551848E2951D41AA0760ECE9,'Gerson de Castro',null,false,0xDEECD1007DEC4DBDAC0F4211650AE528);
+INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (0xD3B3D0DB5BB04DAF85C1193403C9F36C,'Oliver Barbeiro','33333333333',false,0xE8488082ACD9436F9AEBC22F9F409133);
 
-INSERT INTO tb_employee (id, profile_id, working_hours_id) VALUES ('08cec954-4bde-11ee-be56-0242ac120002','b4ec78bd-d72f-4545-b695-0b40ffe7327d','1');
-INSERT INTO tb_employee (id, profile_id, working_hours_id) VALUES ('36e6efa6-4bde-11ee-be56-0242ac120002','ffeb959a-a95a-4a43-8c06-1763c9da8335','1');
+INSERT INTO tb_employee (id, profile_id, working_hours_id) VALUES (0x5D8D72ACE6994308B618A975CEA3DCAF,0x1253FC4445C5440CB0D81B9A2C5DC919,1);
+INSERT INTO tb_employee (id, profile_id, working_hours_id) VALUES (0xB5274CB4A4D2483AA93B5970C6BB7C3E ,0x6603391C551848E2951D41AA0760ECE9,1);
+
+INSERT INTO tb_category (id, name) VALUES (1,'Corte de cabelo masculino');
+INSERT INTO tb_category (id, name) VALUES (2,'Serviços de barba');
+INSERT INTO tb_category (id, name) VALUES (3,'Tratamentos capilares');
+INSERT INTO tb_category (id, name) VALUES (4,'Depilação');
+INSERT INTO tb_category (id, name) VALUES (5,'Cuidados com a pele');
+INSERT INTO tb_category (id, name) VALUES (6,'Outros serviços');
+
+-- INSERT INTO tb_specialty (id, name, time_duration, price, category_id) VALUES (0x78be8b22957642c9a8190e217b10fa30,15.99,'Corte clássico com tesoura','00:40:00',1)
+-- INSERT INTO tb_specialty (id, name, time_duration, price, category_id) VALUES (null,'Corte moderno com máquina','00:20:00',1)
+-- INSERT INTO tb_specialty (id, name, time_duration, price, category_id) VALUES (null,'Corte degradê com máquina','00:40:00',1)
+-- INSERT INTO tb_specialty (id, name, time_duration, price, category_id) VALUES (null,'Corte com tesoura e navalha','00:50:00',1)
+
+
+--  "data": [
+--       {
+--         "id_servico": "5",
+--         "id_categoria": "2",
+--         "id_status_servico": "1",
+--         "nome_servico": "Barba completa com tesoura e navalha",
+--         "preco": null,
+--         "duracao": "00:30:00"
+--       },
+--       {
+--         "id_servico": "6",
+--         "id_categoria": "2",
+--         "id_status_servico": "1",
+--         "nome_servico": "Barba com máquina",
+--         "preco": null,
+--         "duracao": "00:05:00"
+--       },
+--       {
+--         "id_servico": "7",
+--         "id_categoria": "2",
+--         "id_status_servico": "1",
+--         "nome_servico": "Aparar barba",
+--         "preco": null,
+--         "duracao": "00:10:00"
+--       },
+--       {
+--         "id_servico": "8",
+--         "id_categoria": "2",
+--         "id_status_servico": "1",
+--         "nome_servico": "Modelar barba",
+--         "preco": null,
+--         "duracao": "00:15:00"
+--       },
+--       {
+--         "id_servico": "9",
+--         "id_categoria": "3",
+--         "id_status_servico": "1",
+--         "nome_servico": "Lavagem de cabelo",
+--         "preco": "5",
+--         "duracao": "00:10:00"
+--       },
+--       {
+--         "id_servico": "10",
+--         "id_categoria": "3",
+--         "id_status_servico": "1",
+--         "nome_servico": "Hidratação capilar",
+--         "preco": null,
+--         "duracao": "00:20:00"
+--       },
+--       {
+--         "id_servico": "11",
+--         "id_categoria": "3",
+--         "id_status_servico": "1",
+--         "nome_servico": "Tratamento para queda de cabelo",
+--         "preco": null,
+--         "duracao": "00:30:00"
+--       },
+--       {
+--         "id_servico": "12",
+--         "id_categoria": "3",
+--         "id_status_servico": "1",
+--         "nome_servico": "Tratamento para cabelos oleosos",
+--         "preco": null,
+--         "duracao": "00:20:00"
+--       },
+--       {
+--         "id_servico": "13",
+--         "id_categoria": "3",
+--         "id_status_servico": "1",
+--         "nome_servico": "Tratamento para cabelos ressecados",
+--         "preco": null,
+--         "duracao": "00:30:00"
+--       },
+--       {
+--         "id_servico": "14",
+--         "id_categoria": "4",
+--         "id_status_servico": "1",
+--         "nome_servico": "Depilação facial com cera",
+--         "preco": null,
+--         "duracao": "00:15:00"
+--       },
+--       {
+--         "id_servico": "15",
+--         "id_categoria": "4",
+--         "id_status_servico": "1",
+--         "nome_servico": "Depilação corporal com cera",
+--         "preco": null,
+--         "duracao": "01:00:00"
+--       },
+--       {
+--         "id_servico": "16",
+--         "id_categoria": "4",
+--         "id_status_servico": "1",
+--         "nome_servico": "Depilação íntima masculina",
+--         "preco": null,
+--         "duracao": "01:00:00"
+--       },
+--       {
+--         "id_servico": "17",
+--         "id_categoria": "5",
+--         "id_status_servico": "1",
+--         "nome_servico": "Limpeza facial",
+--         "preco": null,
+--         "duracao": "00:30:00"
+--       },
+--       {
+--         "id_servico": "18",
+--         "id_categoria": "5",
+--         "id_status_servico": "1",
+--         "nome_servico": "Massagem facial",
+--         "preco": null,
+--         "duracao": "00:30:00"
+--       },
+--       {
+--         "id_servico": "19",
+--         "id_categoria": "6",
+--         "id_status_servico": "1",
+--         "nome_servico": "Manicure masculina",
+--         "preco": null,
+--         "duracao": "00:20:00"
+--       },
+--       {
+--         "id_servico": "20",
+--         "id_categoria": "6",
+--         "id_status_servico": "1",
+--         "nome_servico": "Pedicure masculina",
+--         "preco": null,
+--         "duracao": "00:20:00"
+--       },
+--       {
+--         "id_servico": "21",
+--         "id_categoria": "6",
+--         "id_status_servico": "1",
+--         "nome_servico": "Design de sobrancelha",
+--         "preco": null,
+--         "duracao": "00:20:00"
+--       },
+--       {
+--         "id_servico": "22",
+--         "id_categoria": "6",
+--         "id_status_servico": "1",
+--         "nome_servico": "Coloração de cabelo",
+--         "preco": null,
+--         "duracao": "00:45:00"
+--       }

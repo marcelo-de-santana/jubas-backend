@@ -1,9 +1,13 @@
 package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.User;
+import com.jubasbackend.domain.entity.UserPermission;
 import com.jubasbackend.domain.repository.UserRepository;
-import com.jubasbackend.dto.user.MinimalUserDTO;
-import com.jubasbackend.dto.user.UserDTO;
+import com.jubasbackend.dto.RequestMinimalUserDTO;
+import com.jubasbackend.dto.RequestUserDTO;
+import com.jubasbackend.dto.ResponseMinimalUserDTO;
+import com.jubasbackend.dto.ResponseUserDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,45 +21,44 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public UserDTO create(User userToCreate) {
-        if (userRepository.existsByEmail(userToCreate.getEmail())) {
-            throw new IllegalArgumentException("User already exists.");
-        }
-        return new UserDTO(userRepository.save(userToCreate));
+    protected User findUserById(UUID id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("User doesn't exists."));
     }
 
-    public UserDTO findUserAccount(User user) {
-        return new UserDTO(userRepository
-                .findByEmailAndPassword(user.getEmail(), user.getPassword())
+    public ResponseUserDTO create(RequestUserDTO userToCreate) {
+        if (userRepository.existsByEmail(userToCreate.email())) {
+            throw new IllegalArgumentException("User already exists.");
+        }
+        User userToSave = new User(userToCreate);
+        return new ResponseUserDTO(userRepository.save(userToSave));
+    }
+
+    public ResponseUserDTO findUserAccount(RequestMinimalUserDTO user) {
+        return new ResponseUserDTO(userRepository.findByEmailAndPassword(user.email(), user.password())
                 .orElseThrow(
                         () -> new IllegalArgumentException("Incorrect Email or Password.")));
     }
 
-    public UserDTO findById(UUID id) {
-        return new UserDTO(userRepository.findById(id)
-                .orElseThrow(
-                        () -> new NoSuchElementException("User doesn't exists.")));
+    public ResponseUserDTO findById(UUID id) {
+        return new ResponseUserDTO(findUserById(id));
     }
 
-    public List<MinimalUserDTO> findAll() {
-        return userRepository.findAll().stream().map(MinimalUserDTO::new).toList();
+    public List<ResponseMinimalUserDTO> findAll() {
+        return userRepository.findAll().stream().map(ResponseMinimalUserDTO::new).toList();
     }
 
-    public List<UserDTO> findAllByUserPermission(Short id) {
-        return (userRepository.findUsersByUserPermission_Id(id)
-                .stream().map(UserDTO::new).toList());
+    public List<ResponseUserDTO> findAllByUserPermission(Short id) {
+        return (userRepository.findUsersByUserPermission_Id(id).stream().map(ResponseUserDTO::new).toList());
     }
 
-    public UserDTO updateUser(User user) {
-        User optionalUser = userRepository.findById(user.getId()).orElseThrow(
-                () -> new NoSuchElementException("User doesn't exist."));
-        optionalUser.setEmail(user.getEmail());
-        if (user.getPassword() != null) {
-            if (user.getPassword().length() >= 8) {
-                optionalUser.setPassword(user.getPassword());
-            }
+    public ResponseUserDTO updateUser(UUID id, RequestUserDTO user) {
+        User userToUpdate = findUserById(id);
+        if (user.password() != null && user.password().length() >= 8) {
+            userToUpdate.setPassword(user.password());
         }
-        optionalUser.setUserPermission(user.getUserPermission());
-        return new UserDTO(userRepository.save(optionalUser));
+        userToUpdate.setEmail(user.email());
+        userToUpdate.setUserPermission(new UserPermission(user.userPermissionId()));
+        return new ResponseUserDTO(userRepository.save(userToUpdate));
     }
 }
