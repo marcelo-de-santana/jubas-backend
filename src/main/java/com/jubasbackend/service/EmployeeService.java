@@ -4,8 +4,8 @@ import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.WorkingHours;
 import com.jubasbackend.domain.repository.EmployeeRepository;
-import com.jubasbackend.dto.RequestEmployeeDTO;
-import com.jubasbackend.dto.ResponseEmployeeDTO;
+import com.jubasbackend.dto.request.RequestEmployeeDTO;
+import com.jubasbackend.dto.response.ResponseEmployeeDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

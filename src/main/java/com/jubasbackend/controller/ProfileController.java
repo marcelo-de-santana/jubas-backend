@@ -1,8 +1,8 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.RequestMinimalProfileDTO;
-import com.jubasbackend.dto.RequestProfileDTO;
-import com.jubasbackend.dto.ResponseProfileDTO;
+import com.jubasbackend.dto.request.RequestMinimalProfileDTO;
+import com.jubasbackend.dto.request.RequestProfileDTO;
+import com.jubasbackend.dto.response.ResponseProfileDTO;
 import com.jubasbackend.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,9 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.RequestMinimalUserDTO;
-import com.jubasbackend.dto.RequestUserDTO;
-import com.jubasbackend.dto.ResponseMinimalUserDTO;
-import com.jubasbackend.dto.ResponseUserDTO;
+import com.jubasbackend.dto.request.RequestMinimalUserDTO;
+import com.jubasbackend.dto.request.RequestUserDTO;
+import com.jubasbackend.dto.response.ResponseMinimalUserDTO;
+import com.jubasbackend.dto.response.ResponseUserDTO;
 import com.jubasbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

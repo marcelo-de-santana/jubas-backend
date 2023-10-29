@@ -1,8 +1,7 @@
-package com.jubasbackend.dto;
+package com.jubasbackend.dto.response;
 
 import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.WorkingHours;
-import com.jubasbackend.dto.ResponseProfileDTO;
 
 import java.util.UUID;
 

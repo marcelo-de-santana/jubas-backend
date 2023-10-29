@@ -1,4 +1,4 @@
-package com.jubasbackend.dto;
+package com.jubasbackend.dto.response;
 
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.entity.UserPermission;

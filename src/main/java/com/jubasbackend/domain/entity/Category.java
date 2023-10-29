@@ -1,7 +1,6 @@
 package com.jubasbackend.domain.entity;
 
-import com.jubasbackend.dto.RequestCategoryDTO;
-
+import com.jubasbackend.dto.request.RequestCategoryDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

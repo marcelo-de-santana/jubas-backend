@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-import com.jubasbackend.dto.RequestUserDTO;
+import com.jubasbackend.dto.request.RequestUserDTO;
 
 @Entity(name = "tb_user")
 public class User {

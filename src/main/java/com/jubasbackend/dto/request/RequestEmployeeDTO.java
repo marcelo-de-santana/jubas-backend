@@ -1,4 +1,4 @@
-package com.jubasbackend.dto;
+package com.jubasbackend.dto.request;
 
 import java.util.UUID;
 

@@ -1,6 +1,6 @@
 package com.jubasbackend.domain.entity;
 
-import com.jubasbackend.dto.ResponseSpecialtyDTO;
+import com.jubasbackend.dto.request.RequestSpecialtyDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,6 +15,8 @@ public class Specialty {
 
     private String name;
 
+    private Float price;
+
     private String timeDuration;
 
     @ManyToOne
@@ -25,7 +27,7 @@ public class Specialty {
     public Specialty() {
     }
 
-    public Specialty(ResponseSpecialtyDTO specialty) {
+    public Specialty(RequestSpecialtyDTO specialty) {
         this.name = specialty.name();
         this.timeDuration = specialty.timeDuration();
         this.category = new Category(specialty.categoryId());

@@ -1,14 +1,14 @@
-package com.jubasbackend.dto;
+package com.jubasbackend.dto.request;
 
 import com.jubasbackend.domain.entity.WorkingHours;
 
-public record WorkingHoursRequestDTO(
+public record RequestWorkingHoursDTO(
         String startTime,
         String endTime,
         String startInterval,
         String endInterval) {
 
-    public WorkingHoursRequestDTO(WorkingHours workingHours) {
+    public RequestWorkingHoursDTO(WorkingHours workingHours) {
         this(
                 workingHours.timeFormatter(workingHours.getStartTime()),
                 workingHours.timeFormatter(workingHours.getEndTime()),

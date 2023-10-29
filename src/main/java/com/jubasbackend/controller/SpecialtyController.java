@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.jubasbackend.domain.entity.Specialty;
-import com.jubasbackend.dto.ResponseSpecialtyDTO;
+import com.jubasbackend.dto.request.RequestSpecialtyDTO;
 import com.jubasbackend.service.SpecialtyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +23,12 @@ public class SpecialtyController {
     }
 
     @PostMapping
-    public ResponseEntity<Specialty> create(@RequestBody ResponseSpecialtyDTO specialty) {
+    public ResponseEntity<Specialty> create(@RequestBody RequestSpecialtyDTO specialty) {
         return ResponseEntity.ok(specialtyService.create(specialty));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Specialty> update(@RequestBody UUID id, @RequestBody ResponseSpecialtyDTO specialty) {
+    public ResponseEntity<Specialty> update(@RequestBody UUID id, @RequestBody RequestSpecialtyDTO specialty) {
         return ResponseEntity.ok(specialtyService.update(id, specialty));
     }
 

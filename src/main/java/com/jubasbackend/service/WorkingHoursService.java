@@ -2,8 +2,8 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.WorkingHours;
 import com.jubasbackend.domain.repository.WorkingHoursRepository;
-import com.jubasbackend.dto.WorkingHoursRequestDTO;
-import com.jubasbackend.dto.WorkingHoursResponseDTO;
+import com.jubasbackend.dto.request.RequestWorkingHoursDTO;
+import com.jubasbackend.dto.response.ResponseWorkingHoursDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +22,11 @@ public class WorkingHoursService {
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
-    public List<WorkingHoursResponseDTO> findAll() {
-        return workingHoursRepository.findAll().stream().map(WorkingHoursResponseDTO::new).toList();
+    public List<ResponseWorkingHoursDTO> findAll() {
+        return workingHoursRepository.findAll().stream().map(ResponseWorkingHoursDTO::new).toList();
     }
 
-    public WorkingHoursResponseDTO create(WorkingHoursRequestDTO workingHoursToCreated) {
+    public ResponseWorkingHoursDTO create(RequestWorkingHoursDTO workingHoursToCreated) {
         WorkingHours workingHours = new WorkingHours(workingHoursToCreated);
         //Check if working hours are already registered
         if(workingHoursRepository.existsByStartTimeAndStartIntervalAndEndIntervalAndEndTime(
@@ -35,13 +35,13 @@ public class WorkingHoursService {
             throw new IllegalArgumentException("Working hours already exists.");
         }
         WorkingHours savedWorkingHours = workingHoursRepository.save(workingHours);
-        return new WorkingHoursResponseDTO(savedWorkingHours);
+        return new ResponseWorkingHoursDTO(savedWorkingHours);
     }
 
-    public WorkingHoursResponseDTO delete(Long id) {
+    public ResponseWorkingHoursDTO delete(Long id) {
         var WorkingHoursToDelete = findWorkingHoursById(id);
         workingHoursRepository.delete(WorkingHoursToDelete);
-        return new WorkingHoursResponseDTO(WorkingHoursToDelete);
+        return new ResponseWorkingHoursDTO(WorkingHoursToDelete);
     }
 
 

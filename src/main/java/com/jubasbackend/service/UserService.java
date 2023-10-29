@@ -3,10 +3,10 @@ package com.jubasbackend.service;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.entity.UserPermission;
 import com.jubasbackend.domain.repository.UserRepository;
-import com.jubasbackend.dto.RequestMinimalUserDTO;
-import com.jubasbackend.dto.RequestUserDTO;
-import com.jubasbackend.dto.ResponseMinimalUserDTO;
-import com.jubasbackend.dto.ResponseUserDTO;
+import com.jubasbackend.dto.request.RequestMinimalUserDTO;
+import com.jubasbackend.dto.request.RequestUserDTO;
+import com.jubasbackend.dto.response.ResponseMinimalUserDTO;
+import com.jubasbackend.dto.response.ResponseUserDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

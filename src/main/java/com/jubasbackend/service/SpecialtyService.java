@@ -1,9 +1,8 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.domain.entity.Category;
 import com.jubasbackend.domain.entity.Specialty;
 import com.jubasbackend.domain.repository.SpecialtyRepository;
-import com.jubasbackend.dto.ResponseSpecialtyDTO;
+import com.jubasbackend.dto.request.RequestSpecialtyDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,16 +25,14 @@ public class SpecialtyService {
         return repository.findAll();
     }
 
-    public Specialty create(ResponseSpecialtyDTO specialty) {
+    public Specialty create(RequestSpecialtyDTO specialty) {
         Specialty specialtyToCreate = new Specialty(specialty);
         return repository.save(specialtyToCreate);
     }
 
-    public Specialty update(UUID id, ResponseSpecialtyDTO specialty) {
-        Specialty specialtyToUpdate = findSpecialtyById(id);
-        specialtyToUpdate.setName(specialty.name());
-        specialtyToUpdate.setTimeDuration(specialty.timeDuration());
-        specialtyToUpdate.setCategory(new Category(specialty.categoryId()));
+    public Specialty update(UUID id, RequestSpecialtyDTO specialty) {
+        Specialty specialtyToUpdate = new Specialty(specialty);
+        specialtyToUpdate.setId(findSpecialtyById(id).getId());
         return repository.save(specialtyToUpdate);
     }
 

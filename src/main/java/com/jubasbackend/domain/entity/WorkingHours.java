@@ -1,7 +1,7 @@
 package com.jubasbackend.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.jubasbackend.dto.WorkingHoursRequestDTO;
+import com.jubasbackend.dto.request.RequestWorkingHoursDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +32,7 @@ public class WorkingHours {
         this.id = id;
     }
 
-    public WorkingHours(WorkingHoursRequestDTO workingHours) {
+    public WorkingHours(RequestWorkingHoursDTO workingHours) {
         this.startTime = timeParser(workingHours.startTime());
         this.startInterval = timeParser(workingHours.startInterval());
         this.endInterval = timeParser(workingHours.endInterval());

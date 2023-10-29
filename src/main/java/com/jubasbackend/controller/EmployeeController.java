@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.RequestEmployeeDTO;
-import com.jubasbackend.dto.ResponseEmployeeDTO;
+import com.jubasbackend.dto.request.RequestEmployeeDTO;
+import com.jubasbackend.dto.response.ResponseEmployeeDTO;
 import com.jubasbackend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

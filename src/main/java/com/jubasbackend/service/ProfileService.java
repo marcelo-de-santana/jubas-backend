@@ -2,9 +2,9 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.repository.ProfileRepository;
-import com.jubasbackend.dto.RequestMinimalProfileDTO;
-import com.jubasbackend.dto.RequestProfileDTO;
-import com.jubasbackend.dto.ResponseProfileDTO;
+import com.jubasbackend.dto.request.RequestMinimalProfileDTO;
+import com.jubasbackend.dto.request.RequestProfileDTO;
+import com.jubasbackend.dto.response.ResponseProfileDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
