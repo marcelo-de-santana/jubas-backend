@@ -5,8 +5,8 @@ import com.jubasbackend.domain.entity.UserPermission;
 
 import java.util.UUID;
 
-public record ResponseUserDTO(UUID id, String email, UserPermission userPermission) {
-    public ResponseUserDTO(User user) {
+public record UserResponse(UUID id, String email, UserPermission userPermission) {
+    public UserResponse(User user) {
         this(user.getId(), user.getEmail(), user.getUserPermission());
     }
 }

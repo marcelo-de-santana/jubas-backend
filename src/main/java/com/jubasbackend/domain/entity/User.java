@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-import com.jubasbackend.dto.request.RequestUserDTO;
+import com.jubasbackend.dto.request.UserRequest;
 
 @Entity(name = "tb_user")
 public class User {
@@ -29,7 +29,7 @@ public class User {
         this.id = id;
     }
 
-    public User(RequestUserDTO requestUserDTO) {
+    public User(UserRequest requestUserDTO) {
         this.email = requestUserDTO.email();
         this.password = requestUserDTO.password();
         this.userPermission = new UserPermission(requestUserDTO.userPermissionId());

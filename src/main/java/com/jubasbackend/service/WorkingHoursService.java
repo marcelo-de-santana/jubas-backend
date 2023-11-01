@@ -2,8 +2,8 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.WorkingHours;
 import com.jubasbackend.domain.repository.WorkingHoursRepository;
-import com.jubasbackend.dto.request.RequestWorkingHoursDTO;
-import com.jubasbackend.dto.response.ResponseWorkingHoursDTO;
+import com.jubasbackend.dto.request.WorkingHoursRequest;
+import com.jubasbackend.dto.response.WorkingHoursResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,33 +15,32 @@ import java.util.NoSuchElementException;
 public class WorkingHoursService {
 
     @Autowired
-    private WorkingHoursRepository workingHoursRepository;
+    private WorkingHoursRepository repository;
 
     protected WorkingHours findWorkingHoursById(Long id) {
-        return workingHoursRepository.findById(id).orElseThrow(
+        return repository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
-    public List<ResponseWorkingHoursDTO> findAll() {
-        return workingHoursRepository.findAll().stream().map(ResponseWorkingHoursDTO::new).toList();
+    public List<WorkingHoursResponse> findAll() {
+        return repository.findAll().stream().map(WorkingHoursResponse::new).toList();
     }
 
-    public ResponseWorkingHoursDTO create(RequestWorkingHoursDTO workingHoursToCreated) {
+    public WorkingHoursResponse create(WorkingHoursRequest workingHoursToCreated) {
         WorkingHours workingHours = new WorkingHours(workingHoursToCreated);
         //Check if working hours are already registered
-        if(workingHoursRepository.existsByStartTimeAndStartIntervalAndEndIntervalAndEndTime(
+        if(repository.existsByStartTimeAndStartIntervalAndEndIntervalAndEndTime(
                 workingHours.getStartTime(), workingHours.getStartInterval(),
                 workingHours.getEndInterval(), workingHours.getEndTime())) {
             throw new IllegalArgumentException("Working hours already exists.");
         }
-        WorkingHours savedWorkingHours = workingHoursRepository.save(workingHours);
-        return new ResponseWorkingHoursDTO(savedWorkingHours);
+        WorkingHours savedWorkingHours = repository.save(workingHours);
+        return new WorkingHoursResponse(savedWorkingHours);
     }
 
-    public ResponseWorkingHoursDTO delete(Long id) {
+    public void delete(Long id) {
         var WorkingHoursToDelete = findWorkingHoursById(id);
-        workingHoursRepository.delete(WorkingHoursToDelete);
-        return new ResponseWorkingHoursDTO(WorkingHoursToDelete);
+        repository.delete(WorkingHoursToDelete);
     }
 
 

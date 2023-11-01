@@ -2,12 +2,12 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.Category;
 import com.jubasbackend.domain.repository.CategoryRepository;
-import com.jubasbackend.dto.request.RequestCategoryDTO;
-import com.jubasbackend.dto.response.ResponseCategorySpecialtyDTO;
+import com.jubasbackend.dto.request.CategoryRequest;
+import com.jubasbackend.dto.response.CategoryMinimalResponse;
+import com.jubasbackend.dto.response.CategoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -22,63 +22,28 @@ public class CategoryService {
                 () -> new NoSuchElementException("Category doesn't exist."));
     }
 
-    public List<Category> findAll(){
-        return repository.findAll();
+    public List<CategoryMinimalResponse> findAll() {
+        return repository.findAll().stream().map(CategoryMinimalResponse::new).toList();
     }
 
-    public List<ResponseCategorySpecialtyDTO> findAllWithSpecialty() {
-        var list = repository.findAllCategoriesWithSpecialties();
-        var response = new ArrayList<ResponseCategorySpecialtyDTO>();
-
-        if (list.isEmpty()) {
-            return response;
-        }
-
-        String lastCategory = null;
-        ResponseCategorySpecialtyDTO categorySpecialty = null;
-
-        for (var item : list) {
-            boolean isLast = list.indexOf(item) == list.size() - 1;
-
-            if (categorySpecialty == null) {
-                categorySpecialty = new ResponseCategorySpecialtyDTO(item);
-
-            } else if (item.getCategoryName().equals(lastCategory)) {
-                categorySpecialty.addSpecialty(item);
-
-                if (isLast) {
-                    response.add(categorySpecialty);
-                }
-
-            } else {
-                response.add(categorySpecialty);
-                categorySpecialty = new ResponseCategorySpecialtyDTO(item);
-
-                if (isLast) {
-                    response.add(categorySpecialty);
-                }
-            }
-
-            lastCategory = item.getCategoryName();
-        }
-
-        return response;
+    public List<CategoryResponse> findAllWithSpecialty() {
+        return repository.findAll().stream().map(CategoryResponse::new).toList();
     }
 
-    public Category create(RequestCategoryDTO category) {
-        Category newCategory = new Category(category);
-        return repository.save(newCategory);
+
+    public CategoryMinimalResponse create(CategoryRequest request) {
+        Category newCategory = new Category(request);
+        return new CategoryMinimalResponse(repository.save(newCategory));
     }
 
-    public Category update(Short id, RequestCategoryDTO category) {
-        Category categoryToUpdate = new Category(category);
+    public CategoryMinimalResponse update(Short id, CategoryRequest request) {
+        Category categoryToUpdate = new Category(request);
         categoryToUpdate.setId(findCategoryById(id).getId());
-        return repository.save(categoryToUpdate);
+        return new CategoryMinimalResponse(repository.save(categoryToUpdate));
     }
 
-    public Category delete(Short id) {
+    public void delete(Short id) {
         Category categoryToDelete = findCategoryById(id);
         repository.delete(categoryToDelete);
-        return categoryToDelete;
     }
 }

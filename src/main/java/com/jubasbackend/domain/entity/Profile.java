@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
-import com.jubasbackend.dto.request.RequestProfileDTO;
+import com.jubasbackend.dto.request.ProfileRequest;
 
 @Entity(name = "tb_profile")
 public class Profile {
@@ -30,7 +30,7 @@ public class Profile {
         this.id = id;
     }
 
-    public Profile(RequestProfileDTO requestProfileDTO) {
+    public Profile(ProfileRequest requestProfileDTO) {
         this.name = requestProfileDTO.name();
         this.cpf = requestProfileDTO.cpf();
         this.statusProfile = requestProfileDTO.statusProfile();

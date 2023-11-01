@@ -3,10 +3,10 @@ package com.jubasbackend.service;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.entity.UserPermission;
 import com.jubasbackend.domain.repository.UserRepository;
-import com.jubasbackend.dto.request.RequestMinimalUserDTO;
-import com.jubasbackend.dto.request.RequestUserDTO;
-import com.jubasbackend.dto.response.ResponseMinimalUserDTO;
-import com.jubasbackend.dto.response.ResponseUserDTO;
+import com.jubasbackend.dto.request.UserMinimalRequest;
+import com.jubasbackend.dto.request.UserRequest;
+import com.jubasbackend.dto.response.UserMinimalResponse;
+import com.jubasbackend.dto.response.UserResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,46 +19,46 @@ import java.util.UUID;
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository repository;
 
     protected User findUserById(UUID id) {
-        return userRepository.findById(id).orElseThrow(
+        return repository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("User doesn't exists."));
     }
 
-    public ResponseUserDTO create(RequestUserDTO userToCreate) {
-        if (userRepository.existsByEmail(userToCreate.email())) {
+    public UserResponse create(UserRequest request) {
+        if (repository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("User already exists.");
         }
-        User userToSave = new User(userToCreate);
-        return new ResponseUserDTO(userRepository.save(userToSave));
+        User userToSave = new User(request);
+        return new UserResponse(repository.save(userToSave));
     }
 
-    public ResponseUserDTO findUserAccount(RequestMinimalUserDTO user) {
-        return new ResponseUserDTO(userRepository.findByEmailAndPassword(user.email(), user.password())
+    public UserResponse findUserAccount(UserMinimalRequest request) {
+        return new UserResponse(repository.findByEmailAndPassword(request.email(), request.password())
                 .orElseThrow(
                         () -> new IllegalArgumentException("Incorrect Email or Password.")));
     }
 
-    public ResponseUserDTO findById(UUID id) {
-        return new ResponseUserDTO(findUserById(id));
+    public UserResponse findById(UUID id) {
+        return new UserResponse(findUserById(id));
     }
 
-    public List<ResponseMinimalUserDTO> findAll() {
-        return userRepository.findAll().stream().map(ResponseMinimalUserDTO::new).toList();
+    public List<UserMinimalResponse> findAll() {
+        return repository.findAll().stream().map(UserMinimalResponse::new).toList();
     }
 
-    public List<ResponseUserDTO> findAllByUserPermission(Short id) {
-        return (userRepository.findUsersByUserPermission_Id(id).stream().map(ResponseUserDTO::new).toList());
+    public List<UserResponse> findAllByUserPermission(Short id) {
+        return (repository.findUsersByUserPermission_Id(id).stream().map(UserResponse::new).toList());
     }
 
-    public ResponseUserDTO updateUser(UUID id, RequestUserDTO user) {
+    public UserResponse updateUser(UUID id, UserRequest request) {
         User userToUpdate = findUserById(id);
-        if (user.password() != null && user.password().length() >= 8) {
-            userToUpdate.setPassword(user.password());
+        if (request.password() != null && request.password().length() >= 8) {
+            userToUpdate.setPassword(request.password());
         }
-        userToUpdate.setEmail(user.email());
-        userToUpdate.setUserPermission(new UserPermission(user.userPermissionId()));
-        return new ResponseUserDTO(userRepository.save(userToUpdate));
+        userToUpdate.setEmail(request.email());
+        userToUpdate.setUserPermission(new UserPermission(request.userPermissionId()));
+        return new UserResponse(repository.save(userToUpdate));
     }
 }

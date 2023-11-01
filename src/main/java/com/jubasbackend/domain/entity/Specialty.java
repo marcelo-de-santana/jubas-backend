@@ -1,9 +1,12 @@
 package com.jubasbackend.domain.entity;
 
-import com.jubasbackend.dto.request.RequestSpecialtyDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jubasbackend.dto.request.SpecialtyRequest;
+import com.jubasbackend.utils.TimeUtils;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity(name = "tb_specialty")
@@ -17,19 +20,20 @@ public class Specialty {
 
     private Float price;
 
-    private String timeDuration;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime timeDuration;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    @NotNull
+    @JoinColumn(name = "category_id", nullable = true)
+    @JsonIgnore
     private Category category;
 
     public Specialty() {
     }
 
-    public Specialty(RequestSpecialtyDTO specialty) {
+    public Specialty(SpecialtyRequest specialty) {
         this.name = specialty.name();
-        this.timeDuration = specialty.timeDuration();
+        this.timeDuration = TimeUtils.parseToLocalTime(specialty.timeDuration());
         this.category = new Category(specialty.categoryId());
     }
 
@@ -49,11 +53,19 @@ public class Specialty {
         this.name = name;
     }
 
-    public String getTimeDuration() {
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
+    public LocalTime getTimeDuration() {
         return timeDuration;
     }
 
-    public void setTimeDuration(String timeDuration) {
+    public void setTimeDuration(LocalTime timeDuration) {
         this.timeDuration = timeDuration;
     }
 

@@ -4,8 +4,8 @@ import com.jubasbackend.domain.entity.User;
 
 import java.util.UUID;
 
-public record ResponseMinimalUserDTO(UUID id, String email) {
-    public ResponseMinimalUserDTO(User user) {
+public record UserMinimalResponse(UUID id, String email) {
+    public UserMinimalResponse(User user) {
         this(user.getId(), user.getEmail());
     }
 }

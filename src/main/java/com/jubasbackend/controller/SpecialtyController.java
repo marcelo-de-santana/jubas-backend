@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.domain.entity.Specialty;
-import com.jubasbackend.dto.request.RequestSpecialtyDTO;
+import com.jubasbackend.dto.request.SpecialtyRequest;
+import com.jubasbackend.dto.response.SpecialtyResponse;
 import com.jubasbackend.service.SpecialtyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,25 +15,28 @@ import java.util.UUID;
 public class SpecialtyController {
 
     @Autowired
-    private SpecialtyService specialtyService;
+    private SpecialtyService service;
 
     @GetMapping
-    public ResponseEntity<List<Specialty>> findAll() {
-        return ResponseEntity.ok(specialtyService.findAll());
+    public ResponseEntity<List<SpecialtyResponse>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<Specialty> create(@RequestBody RequestSpecialtyDTO specialty) {
-        return ResponseEntity.ok(specialtyService.create(specialty));
+    public ResponseEntity<SpecialtyResponse> create(@RequestBody SpecialtyRequest request) {
+        return ResponseEntity.ok(service.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Specialty> update(@RequestBody UUID id, @RequestBody RequestSpecialtyDTO specialty) {
-        return ResponseEntity.ok(specialtyService.update(id, specialty));
+    public ResponseEntity<SpecialtyResponse> update(
+            @RequestBody UUID id,
+            @RequestBody SpecialtyRequest request) {
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Specialty> update(@RequestBody UUID id) {
-        return ResponseEntity.ok(specialtyService.delete(id));
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.ok("Specialty has been deleted successfully");
     }
 }

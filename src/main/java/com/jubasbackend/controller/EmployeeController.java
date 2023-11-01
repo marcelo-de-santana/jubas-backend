@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.request.RequestEmployeeDTO;
-import com.jubasbackend.dto.response.ResponseEmployeeDTO;
+import com.jubasbackend.dto.request.EmployeeRequest;
+import com.jubasbackend.dto.response.EmployeeResponse;
 import com.jubasbackend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +14,22 @@ import java.util.UUID;
 public class EmployeeController {
 
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeService service;
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<ResponseEmployeeDTO> findByProfileId(@PathVariable UUID id) {
-        return ResponseEntity.ok(employeeService.findByProfileId(id));
+    public ResponseEntity<EmployeeResponse> findByProfileId(@PathVariable UUID id) {
+        return ResponseEntity.ok(service.findByProfileId(id));
     }
 
     @PostMapping
-    public ResponseEntity<ResponseEmployeeDTO> registerEmployee(@RequestBody RequestEmployeeDTO employee) {
-        return ResponseEntity.ok(employeeService.register(employee));
+    public ResponseEntity<EmployeeResponse> registerEmployee(@RequestBody EmployeeRequest request) {
+        return ResponseEntity.ok(service.register(request));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ResponseEmployeeDTO> updateEmployee(@PathVariable UUID id,
-                                                                             @RequestBody RequestEmployeeDTO employee) {
-        return ResponseEntity.ok(employeeService.update(id, employee));
+    public ResponseEntity<EmployeeResponse> updateEmployee(
+            @PathVariable UUID id,
+            @RequestBody EmployeeRequest request) {
+        return ResponseEntity.ok(service.update(id, request));
     }
 }

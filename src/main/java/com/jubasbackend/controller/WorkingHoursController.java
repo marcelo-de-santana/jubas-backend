@@ -1,7 +1,7 @@
 package com.jubasbackend.controller;
 
-import com.jubasbackend.dto.request.RequestWorkingHoursDTO;
-import com.jubasbackend.dto.response.ResponseWorkingHoursDTO;
+import com.jubasbackend.dto.request.WorkingHoursRequest;
+import com.jubasbackend.dto.response.WorkingHoursResponse;
 import com.jubasbackend.service.WorkingHoursService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,20 +14,21 @@ import java.util.List;
 public class WorkingHoursController {
 
     @Autowired
-    private WorkingHoursService workingHoursService;
+    private WorkingHoursService service;
 
     @GetMapping
-    public ResponseEntity<List<ResponseWorkingHoursDTO>> findAll() {
-        return ResponseEntity.ok(workingHoursService.findAll());
+    public ResponseEntity<List<WorkingHoursResponse>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<ResponseWorkingHoursDTO> create(@RequestBody RequestWorkingHoursDTO workingHours) {
-        return ResponseEntity.ok(workingHoursService.create(workingHours));
+    public ResponseEntity<WorkingHoursResponse> create(@RequestBody WorkingHoursRequest request) {
+        return ResponseEntity.ok(service.create(request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseWorkingHoursDTO> delete(@PathVariable Long id) {
-        return ResponseEntity.ok(workingHoursService.delete(id));
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.ok("Working Hours has been deleted successfully");
     }
 }

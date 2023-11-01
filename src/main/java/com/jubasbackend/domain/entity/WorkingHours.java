@@ -1,15 +1,14 @@
 package com.jubasbackend.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.jubasbackend.dto.request.RequestWorkingHoursDTO;
-
+import com.jubasbackend.dto.request.WorkingHoursRequest;
+import com.jubasbackend.utils.TimeUtils;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity(name = "tb_working_hours")
 public class WorkingHours {
@@ -32,19 +31,11 @@ public class WorkingHours {
         this.id = id;
     }
 
-    public WorkingHours(RequestWorkingHoursDTO workingHours) {
-        this.startTime = timeParser(workingHours.startTime());
-        this.startInterval = timeParser(workingHours.startInterval());
-        this.endInterval = timeParser(workingHours.endInterval());
-        this.endTime = timeParser(workingHours.endTime());
-    }
-
-    public LocalTime timeParser(String time){
-        return LocalTime.parse(time);
-    }
-
-    public String timeFormatter(LocalTime time) {
-        return DateTimeFormatter.ofPattern("HH:mm").format(time);
+    public WorkingHours(WorkingHoursRequest workingHours) {
+        this.startTime = TimeUtils.parseToLocalTime(workingHours.startTime());
+        this.startInterval = TimeUtils.parseToLocalTime(workingHours.startInterval());
+        this.endInterval = TimeUtils.parseToLocalTime(workingHours.endInterval());
+        this.endTime = TimeUtils.parseToLocalTime(workingHours.endTime());
     }
 
     public Long getId() {

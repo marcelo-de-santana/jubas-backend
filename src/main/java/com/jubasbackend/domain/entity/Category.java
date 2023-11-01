@@ -1,20 +1,25 @@
 package com.jubasbackend.domain.entity;
 
-import com.jubasbackend.dto.request.RequestCategoryDTO;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jubasbackend.dto.request.CategoryRequest;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "tb_category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
 
     @NotNull
     private String name;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REFRESH)
+    @JsonIgnore
+    private List<Specialty> specialties = new ArrayList<>();
 
     public Category() {
     }
@@ -23,7 +28,7 @@ public class Category {
         this.id = id;
     }
 
-    public Category(RequestCategoryDTO category) {
+    public Category(CategoryRequest category) {
         this.name = category.name();
     }
 
@@ -43,4 +48,11 @@ public class Category {
         this.name = name;
     }
 
+    public List<Specialty> getSpecialties() {
+        return specialties;
+    }
+
+    public void setSpecialties(List<Specialty> specialties) {
+        this.specialties = specialties;
+    }
 }

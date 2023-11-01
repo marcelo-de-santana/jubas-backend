@@ -2,7 +2,8 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.Specialty;
 import com.jubasbackend.domain.repository.SpecialtyRepository;
-import com.jubasbackend.dto.request.RequestSpecialtyDTO;
+import com.jubasbackend.dto.request.SpecialtyRequest;
+import com.jubasbackend.dto.response.SpecialtyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,24 +22,23 @@ public class SpecialtyService {
                 () -> new NoSuchElementException("Unregistered Specialty."));
     }
 
-    public List<Specialty> findAll() {
-        return repository.findAll();
+    public List<SpecialtyResponse> findAll() {
+        return repository.findAll().stream().map(SpecialtyResponse::new).toList();
     }
 
-    public Specialty create(RequestSpecialtyDTO specialty) {
-        Specialty specialtyToCreate = new Specialty(specialty);
-        return repository.save(specialtyToCreate);
+    public SpecialtyResponse create(SpecialtyRequest request) {
+        Specialty specialtyToCreate = new Specialty(request);
+        return new SpecialtyResponse(repository.save(specialtyToCreate));
     }
 
-    public Specialty update(UUID id, RequestSpecialtyDTO specialty) {
-        Specialty specialtyToUpdate = new Specialty(specialty);
+    public SpecialtyResponse update(UUID id, SpecialtyRequest request) {
+        Specialty specialtyToUpdate = new Specialty(request);
         specialtyToUpdate.setId(findSpecialtyById(id).getId());
-        return repository.save(specialtyToUpdate);
+        return new SpecialtyResponse(repository.save(specialtyToUpdate));
     }
 
-    public Specialty delete(UUID id) {
+    public void delete(UUID id) {
         Specialty specialtyToDelete = findSpecialtyById(id);
         repository.delete(specialtyToDelete);
-        return specialtyToDelete;
     }
 }
