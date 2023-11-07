@@ -7,7 +7,6 @@ import com.jubasbackend.dto.request.UserMinimalRequest;
 import com.jubasbackend.dto.request.UserRequest;
 import com.jubasbackend.dto.response.UserMinimalResponse;
 import com.jubasbackend.dto.response.UserResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +25,23 @@ public class UserService {
                 () -> new NoSuchElementException("User doesn't exists."));
     }
 
+    protected boolean existsByEmail(String email) {
+        return repository.existsByEmail(email);
+    }
+
     public UserResponse create(UserRequest request) {
-        if (repository.existsByEmail(request.email())) {
+        if (existsByEmail(request.email())) {
             throw new IllegalArgumentException("User already exists.");
         }
+        existsByEmail(request.email());
         User userToSave = new User(request);
         return new UserResponse(repository.save(userToSave));
     }
 
     public UserResponse findUserAccount(UserMinimalRequest request) {
+        if (!existsByEmail(request.email())) {
+            throw new NoSuchElementException("User doesn't exists.");
+        }
         return new UserResponse(repository.findByEmailAndPassword(request.email(), request.password())
                 .orElseThrow(
                         () -> new IllegalArgumentException("Incorrect Email or Password.")));
