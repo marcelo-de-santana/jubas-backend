@@ -5,6 +5,7 @@ import com.jubasbackend.dto.request.ProfileRequest;
 import com.jubasbackend.dto.response.ProfileResponse;
 import com.jubasbackend.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class ProfileController {
 
     @PostMapping
     public ResponseEntity<ProfileResponse> createProfile(@RequestBody ProfileRequest request) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
     @PutMapping("/{id}")

@@ -5,6 +5,7 @@ import com.jubasbackend.dto.response.CategoryMinimalResponse;
 import com.jubasbackend.dto.response.CategoryResponse;
 import com.jubasbackend.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryMinimalResponse> create(@RequestBody CategoryRequest request) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
     @PutMapping("/{id}")

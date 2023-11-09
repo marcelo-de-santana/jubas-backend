@@ -1,12 +1,9 @@
 package com.jubasbackend.service;
 
 import com.jubasbackend.domain.entity.Employee;
-import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.domain.entity.WorkingHours;
 import com.jubasbackend.domain.repository.EmployeeRepository;
 import com.jubasbackend.dto.request.EmployeeRequest;
 import com.jubasbackend.dto.response.EmployeeResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,32 +33,29 @@ public class EmployeeService {
     }
 
     public EmployeeResponse register(EmployeeRequest request) {
-        Employee employeeToCreate = new Employee();
-
-        if (request.workingHourId() != null) {
-            var workingHoursToBeLinked = workingHoursService.findWorkingHoursById(request.workingHourId());
-            employeeToCreate.setWorkingHours(workingHoursToBeLinked);
-        }
-
-        Profile profileToBeLinked = profileService.findProfileById(request.profileId());
+        var profileToBeLinked = profileService.findProfileById(request.profileId());
 
         if (repository.existsByProfile(profileToBeLinked)) {
             throw new IllegalArgumentException("The profile is already linked to an employee.");
         }
 
-        employeeToCreate.setProfile(profileToBeLinked);
-        Employee savedEmployee = repository.save(employeeToCreate);
-        return new EmployeeResponse(savedEmployee);
+        var employeeToCreate = new Employee(profileToBeLinked);
+        var workingHoursToBeLinked = workingHoursService.findWorkingHoursById(request.workingHourId());
+
+        employeeToCreate.setWorkingHours(workingHoursToBeLinked);
+
+        return new EmployeeResponse(repository.save(employeeToCreate));
     }
 
     public EmployeeResponse update(UUID id, EmployeeRequest request) {
-        Employee employeeToUpdate = findEmployeeById(id);
+        var employeeToUpdate = findEmployeeById(id);
         if(request.profileId() != null){
-            employeeToUpdate.setProfile(new Profile(request.profileId()));
+            var profile = profileService.findProfileById(request.profileId());
+            employeeToUpdate.setProfile(profile);
         }
         if(request.workingHourId() != null){
-            employeeToUpdate.setWorkingHours(new WorkingHours(request.workingHourId()));
-
+            var workingHours = workingHoursService.findWorkingHoursById(request.workingHourId());
+            employeeToUpdate.setWorkingHours(workingHours);
         }
         return new EmployeeResponse(repository.save(employeeToUpdate));
     }

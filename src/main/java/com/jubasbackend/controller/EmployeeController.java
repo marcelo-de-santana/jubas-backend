@@ -4,6 +4,7 @@ import com.jubasbackend.dto.request.EmployeeRequest;
 import com.jubasbackend.dto.response.EmployeeResponse;
 import com.jubasbackend.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<EmployeeResponse> registerEmployee(@RequestBody EmployeeRequest request) {
-        return ResponseEntity.ok(service.register(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.register(request));
     }
 
     @PatchMapping("/{id}")

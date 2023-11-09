@@ -4,6 +4,7 @@ import com.jubasbackend.dto.request.WorkingHoursRequest;
 import com.jubasbackend.dto.response.WorkingHoursResponse;
 import com.jubasbackend.service.WorkingHoursService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class WorkingHoursController {
 
     @PostMapping
     public ResponseEntity<WorkingHoursResponse> create(@RequestBody WorkingHoursRequest request) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
     @DeleteMapping("/{id}")

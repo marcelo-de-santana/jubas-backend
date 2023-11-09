@@ -25,6 +25,12 @@ public class Employee {
     @JoinColumn(name = "working_hours_id")
     private WorkingHours workingHours;
 
+    public Employee(){
+    }
+    public Employee(Profile profile){
+        this.profile = profile;
+    }
+
     public UUID getId() {
         return id;
     }

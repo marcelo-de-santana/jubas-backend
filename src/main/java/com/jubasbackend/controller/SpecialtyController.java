@@ -4,6 +4,7 @@ import com.jubasbackend.dto.request.SpecialtyRequest;
 import com.jubasbackend.dto.response.SpecialtyResponse;
 import com.jubasbackend.service.SpecialtyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class SpecialtyController {
 
     @PostMapping
     public ResponseEntity<SpecialtyResponse> create(@RequestBody SpecialtyRequest request) {
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 
     @PutMapping("/{id}")
