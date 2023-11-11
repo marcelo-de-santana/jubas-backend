@@ -1,6 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.jubasbackend.dto.request.UserMinimalRequest;
+import com.jubasbackend.dto.request.ProfileRecoveryRequest;
 import com.jubasbackend.dto.request.UserRequest;
 import com.jubasbackend.dto.response.UserMinimalResponse;
 import com.jubasbackend.dto.response.UserResponse;
@@ -52,4 +53,5 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(@PathVariable UUID id, @RequestBody UserRequest request) {
         return ResponseEntity.ok(service.updateUser(id, request));
     }
+
 }

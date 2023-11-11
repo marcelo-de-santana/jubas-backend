@@ -3,6 +3,7 @@ package com.jubasbackend.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.jubasbackend.dto.request.UserRequest;
@@ -19,6 +20,9 @@ public class User {
 
     @NotNull
     private String password;
+
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "user")
+    private List<Profile> profile;
 
     @ManyToOne
     @NotNull
@@ -60,6 +64,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Profile> getProfile() {
+        return profile;
+    }
+
+    public void setProfile(List<Profile> profile) {
+        this.profile = profile;
     }
 
     public UserPermission getUserPermission() {

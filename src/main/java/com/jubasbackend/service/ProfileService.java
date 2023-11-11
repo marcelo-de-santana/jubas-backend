@@ -4,6 +4,7 @@ import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.repository.ProfileRepository;
 import com.jubasbackend.dto.request.ProfileMinimalRequest;
 import com.jubasbackend.dto.request.ProfileRequest;
+import com.jubasbackend.dto.request.ProfileRecoveryRequest;
 import com.jubasbackend.dto.response.ProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,10 @@ public class ProfileService {
                 () -> new NoSuchElementException("Profile doesn't exists."));
     }
 
-    public List<ProfileResponse> findAllByUserId(UUID id) {
-        return repository.findAllByUserId(id).stream().map(ProfileResponse::new).toList();
+    protected Profile findProfileByCpfAndEmail(String cpf, String email) {
+        return repository.findByCpfAndUserEmail(cpf, email).orElseThrow(
+                () -> new NoSuchElementException("No profile found for the given email and CPF combination.")
+        );
     }
 
     public ProfileResponse update(UUID id, ProfileRequest request) {
@@ -66,9 +69,18 @@ public class ProfileService {
         repository.delete(profileToDelete);
     }
 
-    public List<ProfileResponse> findAllProfilesByUserPermissionId(Short id) {
-        return repository.findAllByUserUserPermissionId(id).stream().map(ProfileResponse::new).toList();
+    public List<ProfileResponse> findAllByUserId(UUID userId) {
+        return repository.findAllByUserId(userId).stream().map(ProfileResponse::new).toList();
     }
 
+    public List<ProfileResponse> findAllProfilesByUserPermissionId(Short permissionId) {
+        return repository.findAllByUserUserPermissionId(permissionId).stream().map(ProfileResponse::new).toList();
+    }
+
+    public ProfileResponse recoveryPassword(ProfileRecoveryRequest request) {
+        var profile = findProfileByCpfAndEmail(request.profileCpf(),request.email());
+        profile.getUser().setPassword(request.newPassword());
+        return new ProfileResponse(repository.save(profile));
+    }
 
 }

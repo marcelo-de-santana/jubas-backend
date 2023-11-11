@@ -1,6 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.jubasbackend.dto.request.ProfileMinimalRequest;
+import com.jubasbackend.dto.request.ProfileRecoveryRequest;
 import com.jubasbackend.dto.request.ProfileRequest;
 import com.jubasbackend.dto.response.ProfileResponse;
 import com.jubasbackend.service.ProfileService;
@@ -19,13 +20,13 @@ public class ProfileController {
     private ProfileService service;
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<ProfileResponse>> findAllByUserId(@PathVariable UUID id) {
-        return ResponseEntity.ok(service.findAllByUserId(id));
+    public ResponseEntity<List<ProfileResponse>> findAllByUserId(@PathVariable UUID userId) {
+        return ResponseEntity.ok(service.findAllByUserId(userId));
     }
 
     @GetMapping("/permission/{id}")
-    public ResponseEntity<List<ProfileResponse>> findAllByUserPermissionId(@PathVariable Short id) {
-        return ResponseEntity.ok(service.findAllProfilesByUserPermissionId(id));
+    public ResponseEntity<List<ProfileResponse>> findAllByUserPermissionId(@PathVariable Short permissionId) {
+        return ResponseEntity.ok(service.findAllProfilesByUserPermissionId(permissionId));
     }
 
     @PostMapping
@@ -45,6 +46,11 @@ public class ProfileController {
             @PathVariable UUID id,
             @RequestBody ProfileMinimalRequest request) {
         return ResponseEntity.ok(service.updateOnlyProfile(id, request));
+    }
+
+    @PatchMapping("/recovery")
+    public ResponseEntity<ProfileResponse> recovery(@RequestBody ProfileRecoveryRequest request) {
+        return ResponseEntity.ok(service.recoveryPassword(request));
     }
 
     @DeleteMapping("/{id}")

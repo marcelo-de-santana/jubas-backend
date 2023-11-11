@@ -16,13 +16,17 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-
     @Autowired
     private UserRepository repository;
 
     protected User findUserById(UUID id) {
         return repository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("User doesn't exists."));
+    }
+
+    protected User findUserByEmail(String email) {
+        return repository.findByEmail(email).orElseThrow(
+                () -> new NoSuchElementException("The provided email is not registered in our system."));
     }
 
     protected boolean existsByEmail(String email) {
@@ -68,4 +72,5 @@ public class UserService {
         userToUpdate.setUserPermission(new UserPermission(request.userPermissionId()));
         return new UserResponse(repository.save(userToUpdate));
     }
+
 }
