@@ -7,7 +7,7 @@ import com.jubasbackend.dto.request.UserMinimalRequest;
 import com.jubasbackend.dto.request.UserRequest;
 import com.jubasbackend.dto.response.UserMinimalResponse;
 import com.jubasbackend.dto.response.UserResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +15,10 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository repository;
+
+    private final UserRepository repository;
 
     protected User findUserById(UUID id) {
         return repository.findById(id).orElseThrow(
@@ -37,18 +38,17 @@ public class UserService {
         if (existsByEmail(request.email())) {
             throw new IllegalArgumentException("User already exists.");
         }
-        existsByEmail(request.email());
         User userToSave = new User(request);
+
         return new UserResponse(repository.save(userToSave));
     }
 
     public UserResponse findUserAccount(UserMinimalRequest request) {
-        if (!existsByEmail(request.email())) {
-            throw new NoSuchElementException("User doesn't exists.");
+        var user = findUserByEmail(request.email());
+        if (!request.password().equals(user.getPassword())) {
+            throw new IllegalArgumentException("Incorrect Email or Password.");
         }
-        return new UserResponse(repository.findByEmailAndPassword(request.email(), request.password())
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Incorrect Email or Password.")));
+        return new UserResponse(user);
     }
 
     public UserResponse findById(UUID id) {

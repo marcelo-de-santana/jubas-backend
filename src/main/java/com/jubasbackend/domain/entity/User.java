@@ -1,13 +1,19 @@
 package com.jubasbackend.domain.entity;
 
+import com.jubasbackend.dto.request.UserRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
-import com.jubasbackend.dto.request.UserRequest;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity(name = "tb_user")
 public class User {
     @Id
@@ -19,6 +25,7 @@ public class User {
     private String email;
 
     @NotNull
+    @Size(min = 8, max = 20)
     private String password;
 
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "user")
@@ -38,48 +45,4 @@ public class User {
         this.password = requestUserDTO.password();
         this.userPermission = new UserPermission(requestUserDTO.userPermissionId());
     }
-
-    public User() {
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Profile> getProfile() {
-        return profile;
-    }
-
-    public void setProfile(List<Profile> profile) {
-        this.profile = profile;
-    }
-
-    public UserPermission getUserPermission() {
-        return userPermission;
-    }
-
-    public void setUserPermission(UserPermission userPermission) {
-        this.userPermission = userPermission;
-    }
-
 }

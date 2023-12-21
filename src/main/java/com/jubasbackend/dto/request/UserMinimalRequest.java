@@ -1,4 +1,6 @@
 package com.jubasbackend.dto.request;
 
-public record UserMinimalRequest(String email, String password) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UserMinimalRequest(@NotBlank String email, @NotBlank String password) {
 }

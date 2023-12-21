@@ -3,10 +3,10 @@ package com.jubasbackend.service;
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.repository.ProfileRepository;
 import com.jubasbackend.dto.request.ProfileMinimalRequest;
-import com.jubasbackend.dto.request.ProfileRequest;
 import com.jubasbackend.dto.request.ProfileRecoveryRequest;
+import com.jubasbackend.dto.request.ProfileRequest;
 import com.jubasbackend.dto.response.ProfileResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +14,11 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ProfileService {
-    @Autowired
-    private ProfileRepository repository;
 
-    @Autowired
-    private UserService userService;
+    private final ProfileRepository repository;
+    private final UserService userService;
 
     protected Profile findProfileById(UUID id) {
         return repository.findById(id).orElseThrow(
@@ -34,34 +33,26 @@ public class ProfileService {
 
     public ProfileResponse update(UUID id, ProfileRequest request) {
         Profile profileToUpdate = findProfileById(id);
-        //Check if User exists
-        userService.findUserById(request.userId());
-        //Update Profile
-        profileToUpdate.setName(request.name());
-        profileToUpdate.setCpf(request.cpf());
-        profileToUpdate.setStatusProfile(request.statusProfile());
+        profileToUpdate.setUser(userService.findUserById(request.userId()));
         return new ProfileResponse(repository.save(profileToUpdate));
     }
 
     public ProfileResponse updateOnlyProfile(UUID id, ProfileMinimalRequest request) {
         Profile profileToUpdate = findProfileById(id);
-        if (request.name() != null) {
+        if (!request.name().isBlank()) {
             profileToUpdate.setName(request.name());
         }
-        if (request.cpf() != null && request.cpf().length() == 11) {
+        if (!request.cpf().isBlank()) {
             profileToUpdate.setCpf(request.cpf());
         }
-        if (profileToUpdate != null) {
-            profileToUpdate.setStatusProfile(request.statusProfile());
-        }
-        assert profileToUpdate != null;
-        var updatedProfile = repository.save(profileToUpdate);
-        return new ProfileResponse(updatedProfile);
+        profileToUpdate.setStatusProfile(request.statusProfile());
+
+        return new ProfileResponse(repository.save(profileToUpdate));
     }
 
     public ProfileResponse create(ProfileRequest request) {
-        Profile savedProfile = repository.save(new Profile(request));
-        return new ProfileResponse(savedProfile);
+        var newProfile = new Profile(request);
+        return new ProfileResponse(repository.save(newProfile));
     }
 
     public void delete(UUID id) {
