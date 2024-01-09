@@ -5,6 +5,9 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeUtils {
 
+    private TimeUtils() {
+    }
+
     public static LocalTime parseToLocalTime(String time) {
         return LocalTime.parse(time);
     }

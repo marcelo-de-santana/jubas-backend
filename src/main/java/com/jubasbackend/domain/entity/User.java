@@ -28,21 +28,17 @@ public class User {
     @Size(min = 8, max = 20)
     private String password;
 
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Profile> profile;
 
     @ManyToOne
     @NotNull
-    @JoinColumn(name = "user_permission_id")
-    private UserPermission userPermission;
-
-    public User(UUID id) {
-        this.id = id;
-    }
+    @JoinColumn(name = "permission_id")
+    private Permission permission;
 
     public User(UserRequest requestUserDTO) {
         this.email = requestUserDTO.email();
         this.password = requestUserDTO.password();
-        this.userPermission = new UserPermission(requestUserDTO.userPermissionId());
+        this.permission = new Permission().builder().id(requestUserDTO.permissionId()).build();
     }
 }

@@ -1,11 +1,12 @@
 package com.jubasbackend.service;
 
+import com.jubasbackend.domain.entity.Permission;
 import com.jubasbackend.domain.entity.User;
-import com.jubasbackend.domain.entity.UserPermission;
 import com.jubasbackend.domain.repository.UserRepository;
 import com.jubasbackend.dto.request.UserMinimalRequest;
 import com.jubasbackend.dto.request.UserRequest;
 import com.jubasbackend.dto.response.UserMinimalResponse;
+import com.jubasbackend.dto.response.UserProfileResponse;
 import com.jubasbackend.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import static com.jubasbackend.utils.StringUtils.isNonBlank;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
 
-    protected User findUserById(UUID id) {
+    protected User findUserByIdOnRepository(UUID id) {
         return repository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("User doesn't exists."));
     }
@@ -34,7 +37,7 @@ public class UserService {
         return repository.existsByEmail(email);
     }
 
-    public UserResponse create(UserRequest request) {
+    public UserResponse createUser(UserRequest request) {
         if (existsByEmail(request.email())) {
             throw new IllegalArgumentException("User already exists.");
         }
@@ -51,25 +54,41 @@ public class UserService {
         return new UserResponse(user);
     }
 
-    public UserResponse findById(UUID id) {
-        return new UserResponse(findUserById(id));
+    public UserResponse findUserById(UUID userId) {
+        return new UserResponse(findUserByIdOnRepository(userId));
     }
 
-    public List<UserMinimalResponse> findAll() {
+    public UserProfileResponse findProfilesByUserId(UUID userId) {
+        var user = findUserByIdOnRepository(userId);
+        return new UserProfileResponse(user);
+    }
+
+    public List<UserMinimalResponse> findAllUsers() {
         return repository.findAll().stream().map(UserMinimalResponse::new).toList();
     }
 
-    public List<UserResponse> findAllByUserPermission(Short id) {
-        return (repository.findUsersByUserPermission_Id(id).stream().map(UserResponse::new).toList());
+    public List<UserResponse> findAllUsersByPermissionId(Short permissionId) {
+        return (repository.findUsersByPermissionId(permissionId).stream().map(UserResponse::new).toList());
     }
 
     public UserResponse updateUser(UUID id, UserRequest request) {
-        User userToUpdate = findUserById(id);
-        if (request.password() != null && request.password().length() >= 8) {
+        User userToUpdate = findUserByIdOnRepository(id);
+
+        if (isNonBlank(request.email())) {
+            if (!userToUpdate.getEmail().equals(request.email()) && existsByEmail(request.email())) {
+                throw new IllegalArgumentException("E-mail is already in use.");
+            }
+            userToUpdate.setEmail(request.email());
+        }
+
+        if (isNonBlank(request.password())) {
             userToUpdate.setPassword(request.password());
         }
-        userToUpdate.setEmail(request.email());
-        userToUpdate.setUserPermission(new UserPermission(request.userPermissionId()));
+
+        if (isNonBlank(request.permissionId())) {
+            var newPermission = Permission.builder().id(request.permissionId()).build();
+            userToUpdate.setPermission(newPermission);
+        }
         return new UserResponse(repository.save(userToUpdate));
     }
 

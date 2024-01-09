@@ -30,15 +30,11 @@ public class Profile {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Profile(UUID id){
-        this.id = id;
-    }
-
-    public Profile(ProfileRequest requestProfileDTO) {
-        this.name = requestProfileDTO.name();
-        this.cpf = requestProfileDTO.cpf();
-        this.statusProfile = requestProfileDTO.statusProfile();
-        this.user = new User(requestProfileDTO.userId());
+    public Profile(ProfileRequest request) {
+        this.name = request.name();
+        this.cpf = request.cpf();
+        this.statusProfile = request.statusProfile();
+        this.user = new User().builder().id(request.userId()).build();
     }
 
 }

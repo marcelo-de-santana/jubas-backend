@@ -11,17 +11,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "tb_user_permission")
+@Entity(name = "tb_permission")
 
-public class UserPermission {
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
 
     private String type;
-
-    public UserPermission(Short id) {
-        this.id = id;
-    }
 
 }

@@ -33,7 +33,7 @@ public class ProfileService {
 
     public ProfileResponse update(UUID id, ProfileRequest request) {
         Profile profileToUpdate = findProfileById(id);
-        profileToUpdate.setUser(userService.findUserById(request.userId()));
+        profileToUpdate.setUser(userService.findUserByIdOnRepository(request.userId()));
         return new ProfileResponse(repository.save(profileToUpdate));
     }
 
@@ -65,12 +65,13 @@ public class ProfileService {
     }
 
     public List<ProfileResponse> findAllProfilesByUserPermissionId(Short permissionId) {
-        return repository.findAllByUserUserPermissionId(permissionId).stream().map(ProfileResponse::new).toList();
+        return repository.findAllByUserPermissionId(permissionId).stream().map(ProfileResponse::new).toList();
     }
 
     public ProfileResponse recoveryPassword(ProfileRecoveryRequest request) {
         var profile = findProfileByCpfAndEmail(request.profileCpf(),request.email());
         profile.getUser().setPassword(request.newPassword());
+
         return new ProfileResponse(repository.save(profile));
     }
 
