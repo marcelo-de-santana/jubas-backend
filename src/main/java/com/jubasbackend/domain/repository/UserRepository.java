@@ -1,6 +1,6 @@
 package com.jubasbackend.domain.repository;
 
-import com.jubasbackend.domain.entity.User;
+import com.jubasbackend.domain.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,14 +9,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     boolean existsByEmail(String email);
 
-    Optional<User> findByEmailAndPassword(String email, String password);
+    Optional<UserEntity> findByEmailAndPassword(String email, String password);
 
-    List<User> findUsersByPermissionId(Short permissionId);
+    List<UserEntity> findUsersByPermissionId(Short permissionId);
 
-    Optional<User> findByEmail(String email);
+    Optional<UserEntity> findByEmail(String email);
 
 }

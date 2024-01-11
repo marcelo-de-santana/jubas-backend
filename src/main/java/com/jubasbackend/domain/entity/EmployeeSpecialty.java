@@ -12,11 +12,11 @@ public class EmployeeSpecialty {
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
-    private Employee employee;
+    private EmployeeEntity employee;
 
     @ManyToOne
     @JoinColumn(name = "specialty_id")
-    private Specialty specialty;
+    private SpecialtyEntity specialty;
 
     public UUID getId() {
         return id;
@@ -26,19 +26,19 @@ public class EmployeeSpecialty {
         this.id = id;
     }
 
-    public Employee getEmployee() {
+    public EmployeeEntity getEmployee() {
         return employee;
     }
 
-    public void setEmployee(Employee employee) {
+    public void setEmployee(EmployeeEntity employee) {
         this.employee = employee;
     }
 
-    public Specialty getSpecialty() {
+    public SpecialtyEntity getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(Specialty specialty) {
+    public void setSpecialty(SpecialtyEntity specialty) {
         this.specialty = specialty;
     }
 }
