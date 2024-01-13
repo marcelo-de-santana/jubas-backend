@@ -1,6 +1,6 @@
-package com.jubasbackend.domain.entity;
+package com.jubasbackend.infrastructure.entity;
 
-import com.jubasbackend.api.dto.request.ProfileRequest;
+import com.jubasbackend.api.dto.request.ProfileUserRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -30,7 +30,7 @@ public class ProfileEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public ProfileEntity(ProfileRequest request) {
+    public ProfileEntity(ProfileUserRequest request) {
         this.name = request.name();
         this.cpf = request.cpf();
         this.statusProfile = request.statusProfile();

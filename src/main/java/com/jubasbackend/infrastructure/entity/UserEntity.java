@@ -1,4 +1,4 @@
-package com.jubasbackend.domain.entity;
+package com.jubasbackend.infrastructure.entity;
 
 import com.jubasbackend.api.dto.request.UserRequest;
 import jakarta.persistence.*;

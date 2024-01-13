@@ -1,7 +1,7 @@
-package com.jubasbackend.domain.repository;
+package com.jubasbackend.infrastructure.repository;
 
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.ProfileEntity;
+import com.jubasbackend.infrastructure.entity.EmployeeEntity;
+import com.jubasbackend.infrastructure.entity.ProfileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

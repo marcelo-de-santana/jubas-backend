@@ -1,6 +1,6 @@
 package com.jubasbackend.api.dto.response;
 
-import com.jubasbackend.domain.entity.WorkingHoursEntity;
+import com.jubasbackend.infrastructure.entity.WorkingHoursEntity;
 import com.jubasbackend.utils.TimeUtils;
 
 public record WorkingHoursResponse(

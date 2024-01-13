@@ -1,12 +1,12 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.domain.entity.PermissionEntity;
-import com.jubasbackend.domain.entity.UserEntity;
-import com.jubasbackend.domain.repository.UserRepository;
+import com.jubasbackend.infrastructure.entity.PermissionEntity;
+import com.jubasbackend.infrastructure.entity.UserEntity;
+import com.jubasbackend.infrastructure.repository.UserRepository;
 import com.jubasbackend.api.dto.request.UserMinimalRequest;
 import com.jubasbackend.api.dto.request.UserRequest;
 import com.jubasbackend.api.dto.response.UserResponse;
-import com.jubasbackend.api.dto.response.UserProfileResponse;
+import com.jubasbackend.api.dto.response.UserPermissionProfileResponse;
 import com.jubasbackend.api.dto.response.UserPermissionResponse;
 import com.jubasbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -59,9 +59,9 @@ public class UserServiceImpl implements UserService {
         return new UserPermissionResponse(findUserByIdOnRepository(userId));
     }
 
-    public UserProfileResponse findProfilesByUserId(UUID userId) {
+    public UserPermissionProfileResponse findProfilesByUserId(UUID userId) {
         var user = findUserByIdOnRepository(userId);
-        return new UserProfileResponse(user);
+        return new UserPermissionProfileResponse(user);
     }
 
     public List<UserResponse> findAllUsers() {

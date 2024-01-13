@@ -1,5 +1,6 @@
 package com.jubasbackend.api;
 
+import com.jubasbackend.api.dto.response.PermissionProfileResponse;
 import com.jubasbackend.api.dto.response.PermissionResponse;
 import com.jubasbackend.api.dto.response.PermissionUserResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +33,7 @@ public interface PermisssionApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar permissões.", content = @Content)
     })
     @GetMapping("/{permissionId}/users")
-    ResponseEntity<PermissionUserResponse> findUsersByPermissionId(@PathVariable Short permissionId);
+    ResponseEntity<PermissionUserResponse> findUsersByPermission(@PathVariable Short permissionId);
 
     @Operation(summary = "Buscar todas as permissões e usuários associados.", method = "GET")
     @ApiResponses(value = {
@@ -42,4 +43,13 @@ public interface PermisssionApi {
     })
     @GetMapping("/users")
     ResponseEntity<List<PermissionUserResponse>> findPermissionsAndUsers();
+
+    @Operation(summary = "Buscar todos os perfis por nível de permissão.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Nenhuma permissão cadastrada.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar permissões.", content = @Content)
+    })
+    @GetMapping("/{permissionId}/profiles")
+    ResponseEntity<PermissionProfileResponse> findProfilesByPermission(@PathVariable Short permissionId);
 }

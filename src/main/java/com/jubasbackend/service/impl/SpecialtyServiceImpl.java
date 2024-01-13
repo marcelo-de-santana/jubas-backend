@@ -1,7 +1,7 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.domain.entity.SpecialtyEntity;
-import com.jubasbackend.domain.repository.SpecialtyRepository;
+import com.jubasbackend.infrastructure.entity.SpecialtyEntity;
+import com.jubasbackend.infrastructure.repository.SpecialtyRepository;
 import com.jubasbackend.api.dto.request.SpecialtyRequest;
 import com.jubasbackend.api.dto.response.SpecialtyCategoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;

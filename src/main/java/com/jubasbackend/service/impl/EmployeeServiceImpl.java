@@ -1,7 +1,7 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.repository.EmployeeRepository;
+import com.jubasbackend.infrastructure.entity.EmployeeEntity;
+import com.jubasbackend.infrastructure.repository.EmployeeRepository;
 import com.jubasbackend.api.dto.request.EmployeeRequest;
 import com.jubasbackend.api.dto.response.EmployeeResponse;
 import org.springframework.beans.factory.annotation.Autowired;

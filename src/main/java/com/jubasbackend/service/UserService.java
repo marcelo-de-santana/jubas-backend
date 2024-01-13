@@ -1,10 +1,10 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.domain.entity.UserEntity;
+import com.jubasbackend.infrastructure.entity.UserEntity;
 import com.jubasbackend.api.dto.request.UserMinimalRequest;
 import com.jubasbackend.api.dto.request.UserRequest;
 import com.jubasbackend.api.dto.response.UserResponse;
-import com.jubasbackend.api.dto.response.UserProfileResponse;
+import com.jubasbackend.api.dto.response.UserPermissionProfileResponse;
 import com.jubasbackend.api.dto.response.UserPermissionResponse;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public interface UserService {
 
     UserPermissionResponse findUserById(UUID userId);
 
-    UserProfileResponse findProfilesByUserId(UUID userId);
+    UserPermissionProfileResponse findProfilesByUserId(UUID userId);
 
     List<UserResponse> findAllUsers();
 

@@ -4,12 +4,11 @@ import com.jubasbackend.api.UserApi;
 import com.jubasbackend.api.dto.request.UserMinimalRequest;
 import com.jubasbackend.api.dto.request.UserRequest;
 import com.jubasbackend.api.dto.response.UserPermissionResponse;
-import com.jubasbackend.api.dto.response.UserProfileResponse;
+import com.jubasbackend.api.dto.response.UserPermissionProfileResponse;
 import com.jubasbackend.api.dto.response.UserResponse;
 import com.jubasbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController implements UserApi {
 
@@ -32,7 +30,7 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(service.findUserById(userId));
     }
 
-    public ResponseEntity<UserProfileResponse> findProfilesByUserId(UUID userId) {
+    public ResponseEntity<UserPermissionProfileResponse> findProfilesByUserId(UUID userId) {
         return ResponseEntity.ok(service.findProfilesByUserId(userId));
     }
 

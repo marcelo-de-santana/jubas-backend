@@ -1,7 +1,7 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.domain.entity.WorkingHoursEntity;
-import com.jubasbackend.domain.repository.WorkingHoursRepository;
+import com.jubasbackend.infrastructure.entity.WorkingHoursEntity;
+import com.jubasbackend.infrastructure.repository.WorkingHoursRepository;
 import com.jubasbackend.api.dto.request.WorkingHoursRequest;
 import com.jubasbackend.api.dto.response.WorkingHoursResponse;
 

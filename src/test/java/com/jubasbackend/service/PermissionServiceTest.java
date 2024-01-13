@@ -1,8 +1,8 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.domain.entity.PermissionEntity;
-import com.jubasbackend.domain.entity.UserEntity;
-import com.jubasbackend.domain.repository.PermissionRepository;
+import com.jubasbackend.infrastructure.entity.PermissionEntity;
+import com.jubasbackend.infrastructure.entity.UserEntity;
+import com.jubasbackend.infrastructure.repository.PermissionRepository;
 import com.jubasbackend.service.impl.PermissionServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -76,7 +76,7 @@ class PermissionServiceTest {
             doReturn(Optional.of(currentPermission)).when(repository).findById(permissionId);
 
             //ACT
-            var response = service.findUsersByPermissionId(permissionId);
+            var response = service.findUsersByPermission(permissionId);
 
             //ASSERT
             assertNotNull(response);
@@ -120,4 +120,11 @@ class PermissionServiceTest {
         }
 
     }
+
+//    @Nested
+//    class FindProfilesByPermissionId{
+//        @Test
+//        @DisplayName("")
+//        void
+//    }
 }

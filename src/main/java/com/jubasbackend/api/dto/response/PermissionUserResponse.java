@@ -1,6 +1,6 @@
 package com.jubasbackend.api.dto.response;
 
-import com.jubasbackend.domain.entity.PermissionEntity;
+import com.jubasbackend.infrastructure.entity.PermissionEntity;
 
 import java.util.List;
 

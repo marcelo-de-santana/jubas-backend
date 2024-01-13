@@ -1,7 +1,7 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
-import com.jubasbackend.domain.repository.CategoryRepository;
+import com.jubasbackend.infrastructure.entity.CategoryEntity;
+import com.jubasbackend.infrastructure.repository.CategoryRepository;
 import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.api.dto.response.CategoryResponse;
 import com.jubasbackend.api.dto.response.CategorySpecialtyResponse;

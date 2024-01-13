@@ -1,6 +1,6 @@
 package com.jubasbackend.api.dto.response;
 
-import com.jubasbackend.domain.entity.UserEntity;
+import com.jubasbackend.infrastructure.entity.UserEntity;
 
 import java.util.UUID;
 

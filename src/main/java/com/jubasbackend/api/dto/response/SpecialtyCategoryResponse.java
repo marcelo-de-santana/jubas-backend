@@ -1,6 +1,6 @@
 package com.jubasbackend.api.dto.response;
 
-import com.jubasbackend.domain.entity.SpecialtyEntity;
+import com.jubasbackend.infrastructure.entity.SpecialtyEntity;
 import com.jubasbackend.utils.TimeUtils;
 
 import java.util.UUID;

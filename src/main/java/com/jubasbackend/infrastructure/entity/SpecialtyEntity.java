@@ -1,4 +1,4 @@
-package com.jubasbackend.domain.entity;
+package com.jubasbackend.infrastructure.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;

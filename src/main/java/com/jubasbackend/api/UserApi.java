@@ -3,7 +3,7 @@ package com.jubasbackend.api;
 import com.jubasbackend.api.dto.request.UserMinimalRequest;
 import com.jubasbackend.api.dto.request.UserRequest;
 import com.jubasbackend.api.dto.response.UserPermissionResponse;
-import com.jubasbackend.api.dto.response.UserProfileResponse;
+import com.jubasbackend.api.dto.response.UserPermissionProfileResponse;
 import com.jubasbackend.api.dto.response.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "User")
+@RequestMapping("/user")
 public interface UserApi {
 
     @Operation(summary = "Buscar todos os usuários.", method = "GET")
@@ -42,8 +43,8 @@ public interface UserApi {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuário.", content = @Content)
     })
-    @GetMapping("/{userId}/profile")
-    ResponseEntity<UserProfileResponse> findProfilesByUserId(@PathVariable UUID userId);
+    @GetMapping("/{userId}/profiles")
+    ResponseEntity<UserPermissionProfileResponse> findProfilesByUserId(@PathVariable UUID userId);
 
     @Operation(summary = "Cadastrar novo usuário.", method = "POST")
     @ApiResponses(value = {

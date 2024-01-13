@@ -1,44 +1,37 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.domain.repository.ProfileRepository;
-import com.jubasbackend.api.dto.request.ProfileMinimalRequest;
 import com.jubasbackend.api.dto.request.ProfileRecoveryRequest;
 import com.jubasbackend.api.dto.request.ProfileRequest;
+import com.jubasbackend.api.dto.request.ProfileUserRequest;
 import com.jubasbackend.api.dto.response.ProfileResponse;
+import com.jubasbackend.infrastructure.entity.ProfileEntity;
+import com.jubasbackend.infrastructure.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ProfileServiceImpl {
+public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository repository;
-    private final UserServiceImpl userService;
 
-    protected ProfileEntity findProfileById(UUID id) {
-        return repository.findById(id).orElseThrow(
+    public ProfileEntity findProfileById(UUID profileId) {
+        return repository.findById(profileId).orElseThrow(
                 () -> new NoSuchElementException("Profile doesn't exists."));
     }
 
-    protected ProfileEntity findProfileByCpfAndEmail(String cpf, String email) {
+    public ProfileEntity findProfileByCpfAndEmailOnRepository(String cpf, String email) {
         return repository.findByCpfAndUserEmail(cpf, email).orElseThrow(
                 () -> new NoSuchElementException("No profile found for the given email and CPF combination.")
         );
     }
 
-    public ProfileResponse update(UUID id, ProfileRequest request) {
-        ProfileEntity profileToUpdate = findProfileById(id);
-        profileToUpdate.setUser(userService.findUserByIdOnRepository(request.userId()));
-        return new ProfileResponse(repository.save(profileToUpdate));
-    }
-
-    public ProfileResponse updateOnlyProfile(UUID id, ProfileMinimalRequest request) {
-        ProfileEntity profileToUpdate = findProfileById(id);
+    @Override
+    public ProfileResponse updateProfile(UUID profileId, ProfileRequest request) {
+        ProfileEntity profileToUpdate = findProfileById(profileId);
         if (!request.name().isBlank()) {
             profileToUpdate.setName(request.name());
         }
@@ -50,26 +43,24 @@ public class ProfileServiceImpl {
         return new ProfileResponse(repository.save(profileToUpdate));
     }
 
-    public ProfileResponse create(ProfileRequest request) {
+    @Override
+    public ProfileResponse createProfile(ProfileUserRequest request) {
+        if (!repository.existsByUserId(request.userId()))
+            throw new IllegalArgumentException("User doesn't exists.");
+
         var newProfile = new ProfileEntity(request);
         return new ProfileResponse(repository.save(newProfile));
     }
 
-    public void delete(UUID id) {
-        ProfileEntity profileToDelete = findProfileById(id);
+    @Override
+    public void delete(UUID profileId) {
+        ProfileEntity profileToDelete = findProfileById(profileId);
         repository.delete(profileToDelete);
     }
 
-    public List<ProfileResponse> findAllByUserId(UUID userId) {
-        return repository.findAllByUserId(userId).stream().map(ProfileResponse::new).toList();
-    }
-
-    public List<ProfileResponse> findAllProfilesByUserPermissionId(Short permissionId) {
-        return repository.findAllByUserPermissionId(permissionId).stream().map(ProfileResponse::new).toList();
-    }
-
+    @Override
     public ProfileResponse recoveryPassword(ProfileRecoveryRequest request) {
-        var profile = findProfileByCpfAndEmail(request.profileCpf(),request.email());
+        var profile = findProfileByCpfAndEmailOnRepository(request.profileCpf(), request.email());
         profile.getUser().setPassword(request.newPassword());
 
         return new ProfileResponse(repository.save(profile));

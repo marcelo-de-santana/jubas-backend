@@ -1,6 +1,6 @@
 package com.jubasbackend.api.dto.response;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
+import com.jubasbackend.infrastructure.entity.CategoryEntity;
 
 import java.util.List;
 

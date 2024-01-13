@@ -1,6 +1,6 @@
-package com.jubasbackend.domain.repository;
+package com.jubasbackend.infrastructure.repository;
 
-import com.jubasbackend.domain.entity.PermissionEntity;
+import com.jubasbackend.infrastructure.entity.PermissionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PermissionRepository extends JpaRepository<PermissionEntity, Short> {
