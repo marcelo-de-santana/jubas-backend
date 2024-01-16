@@ -1,4 +1,4 @@
-![Branching](https://github.com/marcelo-de-santana/jubas-backend/blob/dev/src/main/resources/images/swagger-ui-from-jubas-backend-v1.png?raw=true)
+![Branching](https://github.com/marcelo-de-santana/jubas-backend/blob/dev/images/swagger-ui-from-jubas-backend-v1.png?raw=true)
 
 <h3 align="center">
   Backend do Ecossistema Jubas

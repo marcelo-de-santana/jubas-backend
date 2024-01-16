@@ -31,10 +31,10 @@ public class SpecialtyEntity {
     public SpecialtyEntity() {
     }
 
-    public SpecialtyEntity(SpecialtyRequest specialty) {
-        this.name = specialty.name();
-        this.timeDuration = TimeUtils.parseToLocalTime(specialty.timeDuration());
-        this.category = new CategoryEntity(specialty.categoryId());
+    public SpecialtyEntity(SpecialtyRequest request) {
+        this.name = request.name();
+        this.timeDuration = TimeUtils.parseToLocalTime(request.timeDuration());
+        this.category = CategoryEntity.builder().id(request.categoryId()).build();
     }
 
     public UUID getId() {

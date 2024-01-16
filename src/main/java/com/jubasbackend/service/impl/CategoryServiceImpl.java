@@ -1,49 +1,58 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.infrastructure.entity.CategoryEntity;
-import com.jubasbackend.infrastructure.repository.CategoryRepository;
 import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.api.dto.response.CategoryResponse;
 import com.jubasbackend.api.dto.response.CategorySpecialtyResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jubasbackend.infrastructure.entity.CategoryEntity;
+import com.jubasbackend.infrastructure.repository.CategoryRepository;
+import com.jubasbackend.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@RequiredArgsConstructor
 @Service
-public class CategoryServiceImpl {
+public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    private CategoryRepository repository;
+    private final CategoryRepository repository;
 
-    protected CategoryEntity findCategoryById(Short id) {
+    public CategoryEntity findCategoryOnRepository(Short id) {
         return repository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("Category doesn't exist."));
+                () -> new NoSuchElementException("Category doesn't exists."));
     }
 
-    public List<CategoryResponse> findAll() {
+    @Override
+    public List<CategoryResponse> findCategories() {
         return repository.findAll().stream().map(CategoryResponse::new).toList();
     }
 
-    public List<CategorySpecialtyResponse> findAllWithSpecialty() {
+    @Override
+
+    public List<CategorySpecialtyResponse> findCategoriesAndSpecialties() {
         return repository.findAll().stream().map(CategorySpecialtyResponse::new).toList();
     }
 
+    @Override
+    public CategoryResponse createCategory(CategoryRequest request) {
+        if (repository.existsByName(request.name()))
+            throw new IllegalArgumentException("Category already exists.");
 
-    public CategoryResponse create(CategoryRequest request) {
-        CategoryEntity newCategory = new CategoryEntity(request);
+        var newCategory = CategoryEntity.builder().name(request.name()).build();
         return new CategoryResponse(repository.save(newCategory));
     }
 
-    public CategoryResponse update(Short id, CategoryRequest request) {
-        CategoryEntity categoryToUpdate = new CategoryEntity(request);
-        categoryToUpdate.setId(findCategoryById(id).getId());
-        return new CategoryResponse(repository.save(categoryToUpdate));
+    @Override
+    public void updateCategory(Short categoryId, CategoryRequest request) {
+        var categoryToUpdate = findCategoryOnRepository(categoryId);
+        categoryToUpdate.setName(request.name());
+        repository.save(categoryToUpdate);
     }
 
-    public void delete(Short id) {
-        CategoryEntity categoryToDelete = findCategoryById(id);
+    @Override
+    public void deleteCategory(Short categoryId) {
+        var categoryToDelete = findCategoryOnRepository(categoryId);
         repository.delete(categoryToDelete);
     }
 }

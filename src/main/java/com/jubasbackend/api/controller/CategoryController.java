@@ -1,49 +1,49 @@
 package com.jubasbackend.api.controller;
 
+import com.jubasbackend.api.CategoryApi;
 import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.api.dto.response.CategoryResponse;
 import com.jubasbackend.api.dto.response.CategorySpecialtyResponse;
 import com.jubasbackend.service.impl.CategoryServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/category")
-public class CategoryController {
+public class CategoryController implements CategoryApi {
+    private final CategoryServiceImpl service;
 
-    @Autowired
-    private CategoryServiceImpl service;
-
-    @GetMapping
-    public ResponseEntity<List<CategoryResponse>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    @Override
+    public ResponseEntity<List<CategoryResponse>> findCategories() {
+        return ResponseEntity.ok(service.findCategories());
     }
 
-    @GetMapping("/specialties")
-    public ResponseEntity<List<CategorySpecialtyResponse>> findAllWithSpecialty() {
-        return ResponseEntity.ok(service.findAllWithSpecialty());
+    @Override
+    public ResponseEntity<List<CategorySpecialtyResponse>> findCategoriesAndSpecialties() {
+        return ResponseEntity.ok(service.findCategoriesAndSpecialties());
     }
 
-    @PostMapping
-    public ResponseEntity<CategoryResponse> create(@RequestBody CategoryRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    @Override
+    public ResponseEntity<CategoryResponse> createCategory(CategoryRequest request) {
+        var categoryCreated = service.createCategory(request);
+        return ResponseEntity.created(URI.create("/category/" + categoryCreated.id())).build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponse> update(
-            @PathVariable Short id,
-            @RequestBody CategoryRequest request
-    ) {
-        return ResponseEntity.ok(service.update(id, request));
+    @Override
+    public ResponseEntity<Void> updateCategory(Short categoryId, CategoryRequest request) {
+        service.updateCategory(categoryId, request);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable Short id) {
-        service.delete(id);
-        return ResponseEntity.ok("Category has been deleted successfully.");
+    @Override
+    public ResponseEntity<Void> deleteCategory(Short categoryId) {
+        service.deleteCategory(categoryId);
+        return ResponseEntity.noContent().build();
     }
 }

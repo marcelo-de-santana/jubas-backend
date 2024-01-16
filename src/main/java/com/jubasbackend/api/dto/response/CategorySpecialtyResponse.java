@@ -5,11 +5,11 @@ import com.jubasbackend.infrastructure.entity.CategoryEntity;
 import java.util.List;
 
 public record CategorySpecialtyResponse(Short id, String name, List<SpecialtyResponse> specialties) {
-    public CategorySpecialtyResponse(CategoryEntity entity) {
+    public CategorySpecialtyResponse(CategoryEntity category) {
         this(
-                entity.getId(),
-                entity.getName(),
-                entity.getSpecialties().stream().map(SpecialtyResponse::new).toList()
+                category.getId(),
+                category.getName(),
+                category.getSpecialties().stream().map(SpecialtyResponse::new).toList()
         );
     }
 }

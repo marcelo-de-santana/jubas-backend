@@ -25,7 +25,6 @@ public class UserController implements UserApi {
         return ResponseEntity.ok(service.findAllUsers());
     }
 
-
     public ResponseEntity<UserPermissionResponse> findUserById(UUID userId) {
         return ResponseEntity.ok(service.findUserById(userId));
     }
@@ -36,7 +35,7 @@ public class UserController implements UserApi {
 
     public ResponseEntity<UserPermissionResponse> createUser(UserRequest request) {
         UserPermissionResponse userCreated = service.createUser(request);
-        return ResponseEntity.created(URI.create("/user" + userCreated.id())).body(userCreated);
+        return ResponseEntity.created(URI.create("/user/" + userCreated.id())).body(userCreated);
     }
 
     public ResponseEntity<UserPermissionResponse> findUserAccount(UserMinimalRequest request) {
