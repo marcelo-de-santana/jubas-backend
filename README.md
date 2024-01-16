@@ -1,14 +1,20 @@
-![Branching](https://github.com/marcelo-de-santana/jubas-backend/blob/dev/images/swagger-ui-from-jubas-backend-v1.png?raw=true)
+## 🍃 Deploy da Aplicação
+
+O [deploy da aplicação](https://jubas-backend.onrender.com/swagger-ui.html) do Ecossistema Jubas já está disponível. Por favor, note que pode haver uma demora inicial no carregamento do container devido ao serviço gratuito utilizado. Agradeço pela sua compreensão.
+
+![Swagger UI](https://github.com/marcelo-de-santana/jubas-backend/blob/dev/images/swagger-ui-from-jubas-backend-v1.png?raw=true)
+
+---
 
 <h3 align="center">
   Backend do Ecossistema Jubas
 </h3>
 
 <p align="center">
-
   <img alt="Language: Java" src="https://img.shields.io/badge/language-java-green">
-  <img alt="Version: 1.0" src="https://img.shields.io/badge/version-1.0-yellowgreen">
-
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-🐳-blue">
+  <img alt="Swagger 3.0" src="https://img.shields.io/badge/Swagger-3.0-orange">
+  <img alt="Version: 1.0" src="https://img.shields.io/badge/version-2.0-yellowgreen">
 </p>
 
 ## :straight_ruler: Diagrama de Classes
@@ -92,4 +98,4 @@ classDiagram
 * Spring Boot
 * Swagger
 
-Developed by Marcelo Santana
+Desenvolvido por Marcelo Santana

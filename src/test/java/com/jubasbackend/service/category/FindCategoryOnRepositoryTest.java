@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class FindCategoryOnRepository extends CategoryServiceBaseTest {
+public class FindCategoryOnRepositoryTest extends CategoryServiceBaseTest {
 
     @Test
     @DisplayName("Deve ocorrer uma exceção caso a categoria não exista.")
