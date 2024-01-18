@@ -23,7 +23,7 @@ public class CategoryEntity {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REFRESH)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<SpecialtyEntity> specialties;
 
 }

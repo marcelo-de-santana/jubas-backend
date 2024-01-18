@@ -1,4 +1,4 @@
-package com.jubasbackend.service.impl;
+package com.jubasbackend.service;
 
 import com.jubasbackend.api.dto.request.ProfileRecoveryRequest;
 import com.jubasbackend.api.dto.request.ProfileRequest;
@@ -12,7 +12,7 @@ public interface ProfileService {
 
     ProfileResponse createProfile(ProfileUserRequest request);
 
-    void delete(UUID profileId);
+    void deleteProfile(UUID profileId);
 
     ProfileResponse recoveryPassword(ProfileRecoveryRequest request);
 }

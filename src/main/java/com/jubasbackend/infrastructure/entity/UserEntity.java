@@ -2,6 +2,7 @@ package com.jubasbackend.infrastructure.entity;
 
 import com.jubasbackend.api.dto.request.UserRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -22,6 +23,7 @@ public class UserEntity {
 
     @Column(unique = true, length = 50)
     @NotNull
+    @Email
     private String email;
 
     @NotNull

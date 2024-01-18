@@ -39,7 +39,7 @@ public class ProfileController implements ProfileApi {
 
     @Override
     public ResponseEntity<Void> deleteProfile(UUID profileId) {
-        service.delete(profileId);
+        service.deleteProfile(profileId);
         return ResponseEntity.noContent().build();
     }
 

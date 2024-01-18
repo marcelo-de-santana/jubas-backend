@@ -1,13 +1,13 @@
 package com.jubasbackend.service.impl;
 
+import com.jubasbackend.api.dto.request.UserMinimalRequest;
+import com.jubasbackend.api.dto.request.UserRequest;
+import com.jubasbackend.api.dto.response.UserPermissionProfileResponse;
+import com.jubasbackend.api.dto.response.UserPermissionResponse;
+import com.jubasbackend.api.dto.response.UserResponse;
 import com.jubasbackend.infrastructure.entity.PermissionEntity;
 import com.jubasbackend.infrastructure.entity.UserEntity;
 import com.jubasbackend.infrastructure.repository.UserRepository;
-import com.jubasbackend.api.dto.request.UserMinimalRequest;
-import com.jubasbackend.api.dto.request.UserRequest;
-import com.jubasbackend.api.dto.response.UserResponse;
-import com.jubasbackend.api.dto.response.UserPermissionProfileResponse;
-import com.jubasbackend.api.dto.response.UserPermissionResponse;
 import com.jubasbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-
-import static com.jubasbackend.utils.StringUtils.isNonBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -71,18 +69,18 @@ public class UserServiceImpl implements UserService {
     public UserPermissionResponse updateUser(UUID id, UserRequest request) {
         UserEntity userToUpdate = findUserByIdOnRepository(id);
 
-        if (isNonBlank(request.email())) {
+        if (!request.email().isBlank()) {
             if (!userToUpdate.getEmail().equals(request.email()) && existsByEmailOnRepository(request.email())) {
                 throw new IllegalArgumentException("E-mail is already in use.");
             }
             userToUpdate.setEmail(request.email());
         }
 
-        if (isNonBlank(request.password())) {
+        if (!request.password().isBlank()) {
             userToUpdate.setPassword(request.password());
         }
 
-        if (isNonBlank(request.permissionId())) {
+        if (!request.permissionId().toString().isBlank()) {
             var newPermission = PermissionEntity.builder().id(request.permissionId()).build();
             userToUpdate.setPermission(newPermission);
         }

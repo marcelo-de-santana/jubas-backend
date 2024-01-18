@@ -6,6 +6,7 @@ import com.jubasbackend.api.dto.request.ProfileUserRequest;
 import com.jubasbackend.api.dto.response.ProfileResponse;
 import com.jubasbackend.infrastructure.entity.ProfileEntity;
 import com.jubasbackend.infrastructure.repository.ProfileRepository;
+import com.jubasbackend.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,8 +54,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public void delete(UUID profileId) {
-        ProfileEntity profileToDelete = findProfileById(profileId);
+    public void deleteProfile(UUID profileId) {
+        var profileToDelete = findProfileById(profileId);
         repository.delete(profileToDelete);
     }
 

@@ -17,7 +17,7 @@ public class EmployeeEntity {
     @NotNull
     private ProfileEntity profile;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "employee_id")
     private List<EmployeeSpecialty> specialTies;
 
