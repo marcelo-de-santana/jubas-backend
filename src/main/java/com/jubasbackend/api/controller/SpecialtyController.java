@@ -1,43 +1,46 @@
 package com.jubasbackend.api.controller;
 
+import com.jubasbackend.api.SpecialtyApi;
 import com.jubasbackend.api.dto.request.SpecialtyRequest;
 import com.jubasbackend.api.dto.response.SpecialtyCategoryResponse;
-import com.jubasbackend.service.impl.SpecialtyServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.jubasbackend.api.dto.response.SpecialtyResponse;
+import com.jubasbackend.service.SpecialtyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/specialty")
-public class SpecialtyController {
+public class SpecialtyController implements SpecialtyApi {
 
-    @Autowired
-    private SpecialtyServiceImpl service;
+    private final SpecialtyService service;
 
-    @GetMapping
-    public ResponseEntity<List<SpecialtyCategoryResponse>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    @Override
+    public ResponseEntity<List<SpecialtyResponse>> findSpecialties() {
+        return ResponseEntity.ok(service.findSpecialties());
     }
 
-    @PostMapping
-    public ResponseEntity<SpecialtyCategoryResponse> create(@RequestBody SpecialtyRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
+    @Override
+    public ResponseEntity<SpecialtyCategoryResponse> createSpecialty(SpecialtyRequest request) {
+        var specialtyCreated = service.createSpecialty(request);
+        return ResponseEntity.created(URI.create("/specialty/" + specialtyCreated.id())).body(specialtyCreated);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<SpecialtyCategoryResponse> update(
-            @RequestBody UUID id,
-            @RequestBody SpecialtyRequest request) {
-        return ResponseEntity.ok(service.update(id, request));
+    @Override
+    public ResponseEntity<Void> updateSpecialty(UUID specialtyId, SpecialtyRequest request) {
+        service.updateSpecialty(specialtyId, request);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id) {
-        service.delete(id);
-        return ResponseEntity.ok("Specialty has been deleted successfully");
+    @Override
+    public ResponseEntity<Void> deleteSpecialty(UUID specialtyId) {
+        service.deleteSpecialty(specialtyId);
+        return ResponseEntity.noContent().build();
     }
 }

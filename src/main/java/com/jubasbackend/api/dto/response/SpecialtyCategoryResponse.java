@@ -9,7 +9,8 @@ public record SpecialtyCategoryResponse(UUID id,
                                         String name,
                                         Float price,
                                         String timeDuration,
-                                        CategoryResponse category) {
+                                        CategoryResponse category
+) {
     public SpecialtyCategoryResponse(SpecialtyEntity entity) {
         this(
                 entity.getId(),
@@ -20,3 +21,4 @@ public record SpecialtyCategoryResponse(UUID id,
         );
     }
 }
+

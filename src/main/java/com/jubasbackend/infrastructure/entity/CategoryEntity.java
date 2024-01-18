@@ -24,6 +24,6 @@ public class CategoryEntity {
     private String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REFRESH)
-    private List<SpecialtyEntity> specialties = new ArrayList<>();
+    private List<SpecialtyEntity> specialties;
 
 }

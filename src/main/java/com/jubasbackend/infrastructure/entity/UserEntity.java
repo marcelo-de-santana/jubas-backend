@@ -36,9 +36,9 @@ public class UserEntity {
     @JoinColumn(name = "permission_id")
     private PermissionEntity permission;
 
-    public UserEntity(UserRequest requestUserDTO) {
-        this.email = requestUserDTO.email();
-        this.password = requestUserDTO.password();
-        this.permission = PermissionEntity.builder().id(requestUserDTO.permissionId()).build();
+    public UserEntity(UserRequest request) {
+        this.email = request.email();
+        this.password = request.password();
+        this.permission = PermissionEntity.builder().id(request.permissionId()).build();
     }
 }

@@ -1,44 +1,65 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.infrastructure.entity.SpecialtyEntity;
-import com.jubasbackend.infrastructure.repository.SpecialtyRepository;
 import com.jubasbackend.api.dto.request.SpecialtyRequest;
 import com.jubasbackend.api.dto.response.SpecialtyCategoryResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jubasbackend.api.dto.response.SpecialtyResponse;
+import com.jubasbackend.infrastructure.entity.CategoryEntity;
+import com.jubasbackend.infrastructure.entity.SpecialtyEntity;
+import com.jubasbackend.infrastructure.repository.SpecialtyRepository;
+import com.jubasbackend.service.SpecialtyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Service
-public class SpecialtyServiceImpl {
+public class SpecialtyServiceImpl implements SpecialtyService {
 
-    @Autowired
-    private SpecialtyRepository repository;
+    private final SpecialtyRepository repository;
 
-    protected SpecialtyEntity findSpecialtyById(UUID id) {
-        return repository.findById(id).orElseThrow(
+    public SpecialtyEntity findSpecialtyOnRepository(UUID specialtyId) {
+        return repository.findById(specialtyId).orElseThrow(
                 () -> new NoSuchElementException("Unregistered Specialty."));
     }
 
-    public List<SpecialtyCategoryResponse> findAll() {
-        return repository.findAll().stream().map(SpecialtyCategoryResponse::new).toList();
+    @Override
+    public List<SpecialtyResponse> findSpecialties() {
+        return repository.findAll().stream().map(SpecialtyResponse::new).toList();
     }
 
-    public SpecialtyCategoryResponse create(SpecialtyRequest request) {
-        SpecialtyEntity specialtyToCreate = new SpecialtyEntity(request);
-        return new SpecialtyCategoryResponse(repository.save(specialtyToCreate));
+    @Override
+    public SpecialtyCategoryResponse createSpecialty(SpecialtyRequest request) {
+        if (repository.existsByName(request.name())) {
+            throw new IllegalArgumentException("Specialty already registered.");
+        }
+        var newSpecialty = new SpecialtyEntity(request);
+        return new SpecialtyCategoryResponse(repository.save(newSpecialty));
     }
 
-    public SpecialtyCategoryResponse update(UUID id, SpecialtyRequest request) {
-        SpecialtyEntity specialtyToUpdate = new SpecialtyEntity(request);
-        specialtyToUpdate.setId(findSpecialtyById(id).getId());
-        return new SpecialtyCategoryResponse(repository.save(specialtyToUpdate));
+    @Override
+    public void updateSpecialty(UUID specialtyId, SpecialtyRequest request) {
+        var specialtyToUpdate = findSpecialtyOnRepository(specialtyId);
+        if (!request.name().isBlank())
+            specialtyToUpdate.setName(request.name());
+
+        if (!request.price().toString().isBlank())
+            specialtyToUpdate.setPrice(request.price());
+
+        if (!request.timeDuration().toString().isBlank())
+            specialtyToUpdate.setTimeDuration(request.timeDuration());
+
+        if (!request.categoryId().toString().isBlank())
+            specialtyToUpdate.setCategory(CategoryEntity.builder().id(request.categoryId()).build());
+
+        repository.save(specialtyToUpdate);
     }
 
-    public void delete(UUID id) {
-        SpecialtyEntity specialtyToDelete = findSpecialtyById(id);
+    @Override
+    public void deleteSpecialty(UUID specialtyId) {
+        var specialtyToDelete = findSpecialtyOnRepository(specialtyId);
         repository.delete(specialtyToDelete);
     }
 }

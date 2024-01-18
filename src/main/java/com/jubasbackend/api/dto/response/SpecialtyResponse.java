@@ -5,13 +5,16 @@ import com.jubasbackend.utils.TimeUtils;
 
 import java.util.UUID;
 
-public record SpecialtyResponse(UUID id, String name, Float price, String timeDuration) {
-    public SpecialtyResponse(SpecialtyEntity specialty) {
+public record SpecialtyResponse(UUID id,
+                                String name,
+                                Float price,
+                                String timeDuration) {
+    public SpecialtyResponse(SpecialtyEntity entity) {
         this(
-                specialty.getId(),
-                specialty.getName(),
-                specialty.getPrice(),
-                TimeUtils.formatTimeToString(specialty.getTimeDuration())
+                entity.getId(),
+                entity.getName(),
+                entity.getPrice(),
+                TimeUtils.formatTimeToString(entity.getTimeDuration())
         );
     }
 }

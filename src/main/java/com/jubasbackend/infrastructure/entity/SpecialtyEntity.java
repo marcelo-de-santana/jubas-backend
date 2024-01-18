@@ -1,14 +1,18 @@
 package com.jubasbackend.infrastructure.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jubasbackend.api.dto.request.SpecialtyRequest;
-import com.jubasbackend.utils.TimeUtils;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalTime;
 import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity(name = "tb_specialty")
 public class SpecialtyEntity {
 
@@ -24,57 +28,13 @@ public class SpecialtyEntity {
     private LocalTime timeDuration;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = true)
-    @JsonIgnore
+    @JoinColumn(name = "category_id")
     private CategoryEntity category;
-
-    public SpecialtyEntity() {
-    }
 
     public SpecialtyEntity(SpecialtyRequest request) {
         this.name = request.name();
-        this.timeDuration = TimeUtils.parseToLocalTime(request.timeDuration());
+        this.price = request.price();
+        this.timeDuration = request.timeDuration();
         this.category = CategoryEntity.builder().id(request.categoryId()).build();
     }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Float getPrice() {
-        return price;
-    }
-
-    public void setPrice(Float price) {
-        this.price = price;
-    }
-
-    public LocalTime getTimeDuration() {
-        return timeDuration;
-    }
-
-    public void setTimeDuration(LocalTime timeDuration) {
-        this.timeDuration = timeDuration;
-    }
-
-    public CategoryEntity getCategory() {
-        return category;
-    }
-
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
-    }
-
 }
