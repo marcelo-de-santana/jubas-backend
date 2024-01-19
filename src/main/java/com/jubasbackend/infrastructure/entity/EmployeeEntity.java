@@ -1,8 +1,10 @@
 package com.jubasbackend.infrastructure.entity;
 
+import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,4 +31,10 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<EmployeeSpecialtyEntity> specialties;
 
+    public EmployeeEntity(EmployeeCreateRequest request) {
+        this.id = request.profileId();
+        this.profile = ProfileEntity.builder().id(request.profileId()).build();
+        this.workingHour = WorkingHourEntity.builder().id(request.workingHourId()).build();
+        this.specialties = new ArrayList<>();
+    }
 }

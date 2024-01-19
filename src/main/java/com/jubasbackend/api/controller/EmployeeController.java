@@ -1,8 +1,11 @@
 package com.jubasbackend.api.controller;
 
 import com.jubasbackend.api.EmployeeApi;
-import com.jubasbackend.api.dto.request.EmployeeRequest;
-import com.jubasbackend.api.dto.response.EmployeeResponse;
+import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeSpecialtyRequest;
+import com.jubasbackend.api.dto.request.EmployeeWorkingHourRequest;
+import com.jubasbackend.api.dto.response.EmployeeProfileWorkingHourSpecialtiesResponse;
+import com.jubasbackend.api.dto.response.EmployeeSpecialtyResponse;
 import com.jubasbackend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,19 +23,32 @@ public class EmployeeController implements EmployeeApi {
     private final EmployeeService service;
 
     @Override
-    public ResponseEntity<EmployeeResponse> findEmployee(UUID employeeId) {
+    public ResponseEntity<EmployeeProfileWorkingHourSpecialtiesResponse> findEmployee(UUID employeeId) {
         return ResponseEntity.ok(service.findEmployee(employeeId));
     }
 
     @Override
-    public ResponseEntity<EmployeeResponse> createEmployee(EmployeeRequest request) {
-        var createdEmployee = service.createEmployee(request);
-        return ResponseEntity.created(URI.create("/employee/" + createdEmployee.id())).body(createdEmployee);
+    public ResponseEntity<EmployeeSpecialtyResponse> findEmployeeAndSpecialties(UUID employeeId) {
+        return ResponseEntity.ok(service.findEmployeeAndSpecialties(employeeId));
     }
 
     @Override
-    public ResponseEntity<Void> updateEmployee(UUID employeeId, EmployeeRequest request) {
+    public ResponseEntity<Void> createEmployee(EmployeeCreateRequest request) {
+        var createdEmployee = service.createEmployee(request);
+        return ResponseEntity.created(URI.create("/employee/" + createdEmployee.id())).build();
+    }
+
+    @Override
+    public ResponseEntity<Void> addSpecialties(UUID employeeId, EmployeeSpecialtyRequest request) {
+        service.addSpecialties(employeeId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateWorkingHour(UUID employeeId, EmployeeWorkingHourRequest request) {
         service.updateEmployee(employeeId, request);
         return ResponseEntity.noContent().build();
     }
+
+
 }

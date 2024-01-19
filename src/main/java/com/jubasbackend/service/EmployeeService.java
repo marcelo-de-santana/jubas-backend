@@ -1,15 +1,25 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.api.dto.request.EmployeeRequest;
-import com.jubasbackend.api.dto.response.EmployeeResponse;
+import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeSpecialtyRequest;
+import com.jubasbackend.api.dto.request.EmployeeWorkingHourRequest;
+import com.jubasbackend.api.dto.response.EmployeeProfileWorkingHourSpecialtiesResponse;
+import com.jubasbackend.api.dto.response.EmployeeSpecialtyResponse;
 
 import java.util.UUID;
 
 public interface EmployeeService {
 
-    EmployeeResponse findEmployee(UUID employeeId);
+    EmployeeProfileWorkingHourSpecialtiesResponse findEmployee(UUID employeeId);
 
-    EmployeeResponse createEmployee(EmployeeRequest request);
+    EmployeeProfileWorkingHourSpecialtiesResponse createEmployee(EmployeeCreateRequest request);
 
-    void updateEmployee(UUID employeeId, EmployeeRequest request);
+    EmployeeSpecialtyResponse findEmployeeAndSpecialties(UUID employeeId);
+
+    void addSpecialties(UUID employeeId, EmployeeSpecialtyRequest request);
+
+    void updateEmployee(UUID employeeId, EmployeeWorkingHourRequest request);
+
+
+
 }

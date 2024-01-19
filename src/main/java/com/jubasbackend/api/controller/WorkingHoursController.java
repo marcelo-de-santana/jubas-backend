@@ -1,7 +1,7 @@
 package com.jubasbackend.api.controller;
 
 import com.jubasbackend.api.dto.request.WorkingHourRequest;
-import com.jubasbackend.api.dto.response.WorkingHoursResponse;
+import com.jubasbackend.api.dto.response.WorkingHourResponse;
 import com.jubasbackend.service.impl.WorkingHoursServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,12 +18,12 @@ public class WorkingHoursController {
     private final WorkingHoursServiceImpl service;
 
     @GetMapping
-    public ResponseEntity<List<WorkingHoursResponse>> findAll() {
+    public ResponseEntity<List<WorkingHourResponse>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<WorkingHoursResponse> create(@RequestBody WorkingHourRequest request) {
+    public ResponseEntity<WorkingHourResponse> create(@RequestBody WorkingHourRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 

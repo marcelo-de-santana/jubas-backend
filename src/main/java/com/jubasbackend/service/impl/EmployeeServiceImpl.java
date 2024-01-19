@@ -1,7 +1,11 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.api.dto.request.EmployeeRequest;
-import com.jubasbackend.api.dto.response.EmployeeResponse;
+import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeSpecialtyRequest;
+import com.jubasbackend.api.dto.request.EmployeeWorkingHourRequest;
+import com.jubasbackend.api.dto.response.EmployeeProfileWorkingHourSpecialtiesResponse;
+import com.jubasbackend.api.dto.response.EmployeeSpecialtyResponse;
+import com.jubasbackend.infrastructure.entity.EmployeeEntity;
 import com.jubasbackend.infrastructure.repository.EmployeeRepository;
 import com.jubasbackend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -16,35 +20,47 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository repository;
 
-    //    @Autowired
-//    private ProfileServiceImpl profileService;
-//
-//    @Autowired
-//    private WorkingHoursServiceImpl workingHoursService;
+    public EmployeeEntity findEmployeeOnRepository(UUID employeeId) {
+        return repository.findById(employeeId).orElseThrow(
+                () -> new NoSuchElementException("Employee doesn't registered."));
+    }
+
+    @Override
+    public EmployeeProfileWorkingHourSpecialtiesResponse findEmployee(UUID employeeId) {
+        return new EmployeeProfileWorkingHourSpecialtiesResponse(findEmployeeOnRepository(employeeId));
+    }
+
+    @Override
+    public EmployeeProfileWorkingHourSpecialtiesResponse createEmployee(EmployeeCreateRequest request) {
+        if (repository.existsById(request.profileId())) {
+            throw new IllegalArgumentException("Profile ID already in use.");
+        }
+        var newEmployee = new EmployeeEntity(request);
+        return new EmployeeProfileWorkingHourSpecialtiesResponse(repository.save(newEmployee));
+    }
+
+    @Override
+    public EmployeeSpecialtyResponse findEmployeeAndSpecialties(UUID employeeId) {
+        var employee = findEmployeeOnRepository(employeeId);
+        return new EmployeeSpecialtyResponse(employee);
+    }
+
+    @Override
+    public void addSpecialties(UUID employeeId, EmployeeSpecialtyRequest request) {
+
+    }
+
+    @Override
+    public void updateEmployee(UUID employeeId, EmployeeWorkingHourRequest request) {
+    }
+
+
 //
 //    protected EmployeeEntity findEmployeeById(UUID id) {
 //        return repository.findById(id).orElseThrow(
 //                () -> new NoSuchElementException("Employee doesn't exist."));
 //    }
 //
-    public EmployeeResponse findEmployeeOnRepository(UUID employeeId) {
-        return new EmployeeResponse(repository.findEmployeeByProfileId(employeeId).orElseThrow(
-                () -> new NoSuchElementException("There is no profile registered for the employee")));
-    }
-
-
-    public EmployeeResponse findEmployee(UUID employeeId) {
-        return null;
-    }
-
-    @Override
-    public EmployeeResponse createEmployee(EmployeeRequest request) {
-        return null;
-    }
-
-    @Override
-    public void updateEmployee(UUID employeeId, EmployeeRequest request) {
-    }
 
 
 //

@@ -3,7 +3,7 @@ package com.jubasbackend.service.impl;
 import com.jubasbackend.infrastructure.entity.WorkingHourEntity;
 import com.jubasbackend.infrastructure.repository.WorkingHoursRepository;
 import com.jubasbackend.api.dto.request.WorkingHourRequest;
-import com.jubasbackend.api.dto.response.WorkingHoursResponse;
+import com.jubasbackend.api.dto.response.WorkingHourResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +22,11 @@ public class WorkingHoursServiceImpl {
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
-    public List<WorkingHoursResponse> findAll() {
-        return repository.findAll().stream().map(WorkingHoursResponse::new).toList();
+    public List<WorkingHourResponse> findAll() {
+        return repository.findAll().stream().map(WorkingHourResponse::new).toList();
     }
 
-    public WorkingHoursResponse create(WorkingHourRequest workingHoursToCreated) {
+    public WorkingHourResponse create(WorkingHourRequest workingHoursToCreated) {
         WorkingHourEntity workingHours = new WorkingHourEntity(workingHoursToCreated);
         //Check if working hours are already registered
         if(repository.existsByStartTimeAndStartIntervalAndEndIntervalAndEndTime(
@@ -35,7 +35,7 @@ public class WorkingHoursServiceImpl {
             throw new IllegalArgumentException("Working hours already exists.");
         }
         WorkingHourEntity savedWorkingHours = repository.save(workingHours);
-        return new WorkingHoursResponse(savedWorkingHours);
+        return new WorkingHourResponse(savedWorkingHours);
     }
 
     public void delete(Long id) {

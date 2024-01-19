@@ -1,9 +1,16 @@
 package com.jubasbackend.api;
 
-import com.jubasbackend.api.dto.request.EmployeeRequest;
-import com.jubasbackend.api.dto.response.EmployeeResponse;
+import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeSpecialtyRequest;
+import com.jubasbackend.api.dto.request.EmployeeWorkingHourRequest;
+import com.jubasbackend.api.dto.response.EmployeeProfileWorkingHourSpecialtiesResponse;
+import com.jubasbackend.api.dto.response.EmployeeSpecialtyResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +18,59 @@ import java.util.UUID;
 
 @Tag(name = "Employee")
 public interface EmployeeApi {
+
+    @Operation(summary = "Buscar todos os parâmetros do funcionário.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Funcionário não cadastrado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar parâmetros do funcionário.", content = @Content)
+    })
     @GetMapping("/{employeeId}")
-    ResponseEntity<EmployeeResponse> findEmployee(@PathVariable UUID employeeId);
+    ResponseEntity<EmployeeProfileWorkingHourSpecialtiesResponse> findEmployee(@PathVariable UUID employeeId);
 
-    @Operation(summary = "Cadastrar funcionário e jornada de trabalho.")
+    @Operation(summary = "Buscar especialidades do funcionário.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Funcionário não cadastrado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar especialidades do funcionário.", content = @Content)
+    })
+    @GetMapping("/{employeeId}/specialties")
+    ResponseEntity<EmployeeSpecialtyResponse> findEmployeeAndSpecialties(@PathVariable UUID employeeId);
+
+    @Operation(summary = "Cadastrar funcionário.", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Funcionário cadastrado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Parâmetros errados."),
+            @ApiResponse(responseCode = "401", description = "Perfil já está em uso"),
+            @ApiResponse(responseCode = "500", description = "Erro ao cadastrar funcionário.")
+    })
     @PostMapping
-    ResponseEntity<EmployeeResponse> createEmployee(@RequestBody EmployeeRequest request);
+    ResponseEntity<Void> createEmployee(@RequestBody @Valid EmployeeCreateRequest request);
 
-    @PatchMapping("/{employeeId}")
-    ResponseEntity<Void> updateEmployee(
+    @Operation(summary = "Adicionar especialidades.", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Especialidades adicionadas com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Parâmetros errados."),
+            @ApiResponse(responseCode = "401", description = "Funcionário não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro ao adicionar especialidades.")
+    })
+    @PostMapping("/{employeeId}/specialties")
+    ResponseEntity<Void> addSpecialties(
             @PathVariable UUID employeeId,
-            @RequestBody EmployeeRequest request);
+            @RequestBody @Valid EmployeeSpecialtyRequest request);
+
+    @Operation(summary = "Atualizar jornada de trabalho.", method = "PATCH")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Associação atualizada com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Parâmetro errado."),
+            @ApiResponse(responseCode = "401", description = "Funcionário não encontrado."),
+            @ApiResponse(responseCode = "404", description = "Horário não cadastrado."),
+            @ApiResponse(responseCode = "500", description = "Erro ao atualizar associação.")
+    })
+    @PatchMapping("/{employeeId}/working-hour")
+    ResponseEntity<Void> updateWorkingHour(
+            @PathVariable UUID employeeId,
+            @RequestBody @Valid EmployeeWorkingHourRequest request);
+
+
 }

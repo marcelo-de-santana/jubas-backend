@@ -10,7 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, UUID> {
-     Optional<EmployeeEntity> findEmployeeByProfileId(UUID id);
-
      boolean existsByProfile(ProfileEntity profile);
 }
