@@ -2,6 +2,8 @@ package com.jubasbackend.infrastructure.entity;
 
 import com.jubasbackend.api.dto.request.ProfileUserRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -18,6 +20,8 @@ public class ProfileEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @NotNull
+    @NotBlank
     private String name;
 
     @Column(unique = true)
@@ -34,7 +38,7 @@ public class ProfileEntity {
         this.name = request.name();
         this.cpf = request.cpf();
         this.statusProfile = request.statusProfile();
-        this.user = new UserEntity().builder().id(request.userId()).build();
+        this.user = UserEntity.builder().id(request.userId()).build();
     }
 
 }

@@ -1,6 +1,6 @@
 package com.jubasbackend.api.controller;
 
-import com.jubasbackend.api.dto.request.WorkingHoursRequest;
+import com.jubasbackend.api.dto.request.WorkingHourRequest;
 import com.jubasbackend.api.dto.response.WorkingHoursResponse;
 import com.jubasbackend.service.impl.WorkingHoursServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class WorkingHoursController {
     }
 
     @PostMapping
-    public ResponseEntity<WorkingHoursResponse> create(@RequestBody WorkingHoursRequest request) {
+    public ResponseEntity<WorkingHoursResponse> create(@RequestBody WorkingHourRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
 

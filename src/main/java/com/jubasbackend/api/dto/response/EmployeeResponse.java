@@ -6,14 +6,15 @@ import java.util.UUID;
 
 public record EmployeeResponse(
         UUID id,
-        ProfileResponse profile,
-        WorkingHoursResponse workingHour
+        ProfileResponse profile
+//        WorkingHoursResponse workingHour
 ) {
     public EmployeeResponse(EmployeeEntity employee) {
         this(
                 employee.getId(),
-                new ProfileResponse(employee.getProfile()),
-                new WorkingHoursResponse(employee.getWorkingHours())
+                new ProfileResponse(employee.getProfile())
+//                new WorkingHoursResponse(employee.getWorkingHours()
+
         );
     }
 }

@@ -5,7 +5,7 @@ import com.jubasbackend.api.dto.request.ProfileRecoveryRequest;
 import com.jubasbackend.api.dto.request.ProfileRequest;
 import com.jubasbackend.api.dto.request.ProfileUserRequest;
 import com.jubasbackend.api.dto.response.ProfileResponse;
-import com.jubasbackend.service.impl.ProfileServiceImpl;
+import com.jubasbackend.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 public class ProfileController implements ProfileApi {
-    private final ProfileServiceImpl service;
+    private final ProfileService service;
 
     @Override
     public ResponseEntity<ProfileResponse> createProfile(ProfileUserRequest request) {

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -30,6 +31,9 @@ public class SpecialtyEntity {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
+
+    @OneToMany(mappedBy = "specialty", cascade = CascadeType.REMOVE)
+    private List<EmployeeSpecialtyEntity> employees;
 
     public SpecialtyEntity(SpecialtyRequest request) {
         this.name = request.name();

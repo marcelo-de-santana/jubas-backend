@@ -4,7 +4,7 @@ import com.jubasbackend.api.CategoryApi;
 import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.api.dto.response.CategoryResponse;
 import com.jubasbackend.api.dto.response.CategorySpecialtyResponse;
-import com.jubasbackend.service.impl.CategoryServiceImpl;
+import com.jubasbackend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/category")
 public class CategoryController implements CategoryApi {
-    private final CategoryServiceImpl service;
+    private final CategoryService service;
 
     @Override
     public ResponseEntity<List<CategoryResponse>> findCategories() {

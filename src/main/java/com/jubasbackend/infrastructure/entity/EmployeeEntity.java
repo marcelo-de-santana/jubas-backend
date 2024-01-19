@@ -1,65 +1,32 @@
 package com.jubasbackend.infrastructure.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity(name = "tb_employee")
 public class EmployeeEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "employee_id")
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "profile_id")
-    @NotNull
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "employee_id")
     private ProfileEntity profile;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employee_id")
-    private List<EmployeeSpecialty> specialTies;
-
     @ManyToOne
-    @JoinColumn(name = "working_hours_id")
-    private WorkingHoursEntity workingHours;
+    @JoinColumn(name = "working_hour_id")
+    private WorkingHourEntity workingHour;
 
-    public EmployeeEntity(){
-    }
-    public EmployeeEntity(ProfileEntity profile){
-        this.profile = profile;
-    }
+    @OneToMany(mappedBy = "employee")
+    private List<EmployeeSpecialtyEntity> specialties;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public ProfileEntity getProfile() {
-        return profile;
-    }
-
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
-    }
-
-    public List<EmployeeSpecialty> getServices() {
-        return specialTies;
-    }
-
-    public void setServices(List<EmployeeSpecialty> services) {
-        this.specialTies = services;
-    }
-
-    public WorkingHoursEntity getWorkingHours() {
-        return workingHours;
-    }
-
-    public void setWorkingHours(WorkingHoursEntity workingHours) {
-        this.workingHours = workingHours;
-    }
 }
