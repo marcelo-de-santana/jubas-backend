@@ -19,7 +19,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository repository;
 
-    public ProfileEntity findProfileById(UUID profileId) {
+    public ProfileEntity findProfileOnRepository(UUID profileId) {
         return repository.findById(profileId).orElseThrow(
                 () -> new NoSuchElementException("Profile doesn't exists."));
     }
@@ -32,7 +32,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileResponse updateProfile(UUID profileId, ProfileRequest request) {
-        ProfileEntity profileToUpdate = findProfileById(profileId);
+        ProfileEntity profileToUpdate = findProfileOnRepository(profileId);
         if (!request.name().isBlank()) {
             profileToUpdate.setName(request.name());
         }
@@ -55,7 +55,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public void deleteProfile(UUID profileId) {
-        var profileToDelete = findProfileById(profileId);
+        var profileToDelete = findProfileOnRepository(profileId);
         repository.delete(profileToDelete);
     }
 

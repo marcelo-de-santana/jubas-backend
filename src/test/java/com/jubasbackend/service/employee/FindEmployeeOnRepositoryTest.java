@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class FindEmployeeOnRepository extends EmployeeServiceBaseTest {
+class FindEmployeeOnRepositoryTest extends EmployeeServiceBaseTest {
 
     UUID employeeId = UUID.randomUUID();
 
@@ -25,7 +25,7 @@ public class FindEmployeeOnRepository extends EmployeeServiceBaseTest {
     @DisplayName("Deve ocorrer um erro caso o funcionário não esteja cadastrado.")
     void shouldThrowExceptionWhenEmployeeDoesNotExists() {
         //ARRANGE
-        doReturn(Optional.empty()).when(repository).findById(uuidArgumentCaptor.capture());
+        doReturn(Optional.empty()).when(employeeRepository).findById(uuidArgumentCaptor.capture());
 
         //ACT & ASSERT
         var exception = assertThrows(NoSuchElementException.class,
@@ -36,8 +36,8 @@ public class FindEmployeeOnRepository extends EmployeeServiceBaseTest {
         assertEquals("Employee doesn't registered.", exception.getMessage());
         assertEquals(employeeId, capturedId);
 
-        verify(repository, times(1)).findById(capturedId);
-        verifyNoMoreInteractions(repository);
+        verify(employeeRepository, times(1)).findById(capturedId);
+        verifyNoMoreInteractions(employeeRepository);
 
     }
 }

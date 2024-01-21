@@ -1,7 +1,7 @@
 package com.jubasbackend.service.impl;
 
 import com.jubasbackend.infrastructure.entity.WorkingHourEntity;
-import com.jubasbackend.infrastructure.repository.WorkingHoursRepository;
+import com.jubasbackend.infrastructure.repository.WorkingHourRepository;
 import com.jubasbackend.api.dto.request.WorkingHourRequest;
 import com.jubasbackend.api.dto.response.WorkingHourResponse;
 
@@ -10,15 +10,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 public class WorkingHoursServiceImpl {
 
     @Autowired
-    private WorkingHoursRepository repository;
+    private WorkingHourRepository repository;
 
-    protected WorkingHourEntity findWorkingHoursById(Long id) {
-        return repository.findById(id).orElseThrow(
+    protected WorkingHourEntity findWorkingHourOnRepository(UUID workingHourId) {
+        return repository.findById(workingHourId).orElseThrow(
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
@@ -38,8 +39,8 @@ public class WorkingHoursServiceImpl {
         return new WorkingHourResponse(savedWorkingHours);
     }
 
-    public void delete(Long id) {
-        var WorkingHoursToDelete = findWorkingHoursById(id);
+    public void delete(UUID id) {
+        var WorkingHoursToDelete = findWorkingHourOnRepository(id);
         repository.delete(WorkingHoursToDelete);
     }
 

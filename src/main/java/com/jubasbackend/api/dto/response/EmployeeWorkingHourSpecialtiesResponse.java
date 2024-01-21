@@ -5,14 +5,14 @@ import com.jubasbackend.infrastructure.entity.EmployeeEntity;
 import java.util.List;
 import java.util.UUID;
 
-public record EmployeeProfileWorkingHourSpecialtiesResponse(
+public record EmployeeWorkingHourSpecialtiesResponse(
         UUID id,
         String name,
-        boolean status,
+        boolean statusProfile,
         WorkingHourResponse workingHour,
         List<SpecialtyResponse> specialties
 ) {
-    public EmployeeProfileWorkingHourSpecialtiesResponse(EmployeeEntity employee) {
+    public EmployeeWorkingHourSpecialtiesResponse(EmployeeEntity employee) {
         this(
                 employee.getId(),
                 employee.getProfile().getName(),

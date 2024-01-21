@@ -22,7 +22,7 @@ O [deploy da aplicação](https://jubas-backend.onrender.com/swagger-ui.html) do
 ```mermaid
 classDiagram
     direction LR
-    Permission "1" --* "1" User : has
+    Permission "1" -- "1" User : has
     
     Profile "n" -- "1" User : associated 
     
@@ -34,7 +34,7 @@ classDiagram
     
     Specialty "n" -- "1" Category : belongs
 
-    Profile "2" --* "1" Appointments : contains
+    Profile "2" -- "1" Appointments : contains
     
     Specialty "1" -- "1" Appointments : contains
     

@@ -7,6 +7,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"id"})
 @Builder
 @Entity(name = "tb_employee_associated_specialty")
 public class EmployeeSpecialtyEntity {

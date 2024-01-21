@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class FindEmployeeTest extends EmployeeServiceBaseTest {
+class FindEmployeeTest extends EmployeeServiceBaseTest {
 
     UUID employeeId = UUID.randomUUID();
 
@@ -33,7 +33,7 @@ public class FindEmployeeTest extends EmployeeServiceBaseTest {
                 .profile(ProfileEntity.builder().id(UUID.randomUUID()).build())
                 .workingHour(WorkingHourEntity.builder().id(UUID.randomUUID()).build())
                 .specialties(new ArrayList<>()).build();
-        doReturn(Optional.of(employee)).when(repository).findById(uuidArgumentCaptor.capture());
+        doReturn(Optional.of(employee)).when(employeeRepository).findById(uuidArgumentCaptor.capture());
 
         //ACT
         var response = service.findEmployee(employeeId);
@@ -44,8 +44,8 @@ public class FindEmployeeTest extends EmployeeServiceBaseTest {
         assertNotNull(response);
         assertEquals(employeeId, capturedId);
 
-        verify(repository, times(1)).findById(capturedId);
-        verifyNoMoreInteractions(repository);
+        verify(employeeRepository, times(1)).findById(capturedId);
+        verifyNoMoreInteractions(employeeRepository);
     }
 
 
