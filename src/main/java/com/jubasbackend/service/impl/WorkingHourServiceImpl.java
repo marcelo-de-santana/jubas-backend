@@ -8,7 +8,6 @@ import com.jubasbackend.service.WorkingHourService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -19,13 +18,14 @@ public class WorkingHourServiceImpl implements WorkingHourService {
 
     private final WorkingHourRepository repository;
 
+    public boolean areTimesRegisteredOnRepository(WorkingHourEntity entity) {
+        return repository.existsByStartTimeAndEndTimeAndStartIntervalAndEndInterval(
+                entity.getStartTime(), entity.getEndTime(), entity.getStartInterval(), entity.getEndInterval());
+    }
+
     public WorkingHourEntity findWorkingHourOnRepository(UUID workingHourId) {
         return repository.findById(workingHourId).orElseThrow(
                 () -> new NoSuchElementException("Unregistered working hours."));
-    }
-
-    public boolean areTimesRegisteredOnRepository(LocalTime startTime, LocalTime startInterval, LocalTime endInterval, LocalTime endTime) {
-        return repository.existsByStartTimeAndStartIntervalAndEndIntervalAndEndTime(startTime, startInterval, endInterval, endTime);
     }
 
     @Override
@@ -35,11 +35,11 @@ public class WorkingHourServiceImpl implements WorkingHourService {
 
     @Override
     public WorkingHourResponse createWorkingHour(WorkingHourRequest request) {
-        if (areTimesRegisteredOnRepository(request.startTime(), request.startInterval(), request.endInterval(), request.endTime()))
-            throw new IllegalArgumentException("Working hours already exists.");
-
         var newWorkingHour = new WorkingHourEntity(request);
         newWorkingHour.validate();
+
+        if (areTimesRegisteredOnRepository(newWorkingHour))
+            throw new IllegalArgumentException("Working hours already exists.");
 
         return new WorkingHourResponse(repository.save(newWorkingHour));
     }

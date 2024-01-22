@@ -51,7 +51,7 @@ public class WorkingHourEntity {
                 throw new IllegalArgumentException("The start time cannot be less than the break time.");
 
             if (this.endTime.isBefore(this.endInterval))
-                throw new IllegalArgumentException("The end time cannot be before the break time");
+                throw new IllegalArgumentException("The end time cannot be before the break time.");
 
         }
     }

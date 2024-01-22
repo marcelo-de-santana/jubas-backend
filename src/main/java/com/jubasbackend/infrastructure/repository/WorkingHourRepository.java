@@ -9,5 +9,9 @@ import java.util.UUID;
 
 @Repository
 public interface WorkingHourRepository extends JpaRepository<WorkingHourEntity, UUID> {
-    boolean existsByStartTimeAndStartIntervalAndEndIntervalAndEndTime(LocalTime startTime, LocalTime startInterval, LocalTime endInterval, LocalTime endTime);
+    boolean existsByStartTimeAndEndTimeAndStartIntervalAndEndInterval(
+            LocalTime startTime,
+            LocalTime endTime,
+            LocalTime startInterval,
+            LocalTime endInterval);
 }
