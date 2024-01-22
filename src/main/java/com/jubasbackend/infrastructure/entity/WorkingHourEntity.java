@@ -12,6 +12,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"startTime", "endTime", "startInterval", "endInterval"})
 @Builder
 @Entity(name = "tb_working_hour")
 public class WorkingHourEntity {
@@ -32,4 +33,27 @@ public class WorkingHourEntity {
         this.endInterval = workingHour.endInterval();
         this.endTime = workingHour.endTime();
     }
+
+    public void update(WorkingHourRequest request) {
+        this.startTime = request.startTime();
+        this.endTime = request.endTime();
+        this.startInterval = request.startInterval();
+        this.endInterval = request.endInterval();
+    }
+
+    public void validate() {
+        if (this.startTime.isAfter(this.endTime))
+            throw new IllegalArgumentException("The start time of the working day cannot be less than the end time.");
+
+        //CHECK IF BREAK TIMES ARE PROVIDED AND VALIDATE THEN
+        if (!(this.startInterval.toString().isBlank() && this.endInterval.toString().isBlank())) {
+            if (this.startTime.isAfter(this.startInterval))
+                throw new IllegalArgumentException("The start time cannot be less than the break time.");
+
+            if (this.endTime.isBefore(this.endInterval))
+                throw new IllegalArgumentException("The end time cannot be before the break time");
+
+        }
+    }
+
 }
