@@ -36,7 +36,6 @@ public class WorkingHourServiceImpl implements WorkingHourService {
     @Override
     public WorkingHourResponse createWorkingHour(WorkingHourRequest request) {
         var newWorkingHour = new WorkingHourEntity(request);
-        newWorkingHour.validate();
 
         if (areTimesRegisteredOnRepository(newWorkingHour))
             throw new IllegalArgumentException("Working hours already exists.");
@@ -48,7 +47,6 @@ public class WorkingHourServiceImpl implements WorkingHourService {
     public void updateWorkingHour(UUID workingHourId, WorkingHourRequest request) {
         var workingHour = findWorkingHourOnRepository(workingHourId);
         workingHour.update(request);
-        workingHour.validate();
         repository.save(workingHour);
     }
 
@@ -56,6 +54,5 @@ public class WorkingHourServiceImpl implements WorkingHourService {
     public void deleteWorkingHour(UUID workingHourId) {
         repository.deleteById(workingHourId);
     }
-
 
 }

@@ -32,6 +32,7 @@ public class WorkingHourEntity {
         this.startInterval = workingHour.startInterval();
         this.endInterval = workingHour.endInterval();
         this.endTime = workingHour.endTime();
+        validateEntity();
     }
 
     public void update(WorkingHourRequest request) {
@@ -39,21 +40,19 @@ public class WorkingHourEntity {
         this.endTime = request.endTime();
         this.startInterval = request.startInterval();
         this.endInterval = request.endInterval();
+        validateEntity();
     }
 
-    public void validate() {
+    public void validateEntity() {
         if (this.startTime.isAfter(this.endTime))
             throw new IllegalArgumentException("The start time of the working day cannot be less than the end time.");
 
-        //CHECK IF BREAK TIMES ARE PROVIDED AND VALIDATE THEN
-        if (!(this.startInterval.toString().isBlank() && this.endInterval.toString().isBlank())) {
-            if (this.startTime.isAfter(this.startInterval))
-                throw new IllegalArgumentException("The start time cannot be less than the break time.");
+        if (this.startTime.isAfter(this.startInterval))
+            throw new IllegalArgumentException("The start time cannot be less than the break time.");
 
-            if (this.endTime.isBefore(this.endInterval))
-                throw new IllegalArgumentException("The end time cannot be before the break time.");
+        if (this.endTime.isBefore(this.endInterval))
+            throw new IllegalArgumentException("The end time cannot be before the break time.");
 
-        }
     }
 
 }

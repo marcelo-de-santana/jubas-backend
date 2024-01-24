@@ -8,23 +8,25 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 public record WorkingHourRequest(
-        @NotBlank
         @NotNull
+        @NotBlank
         @Schema(type = "String", pattern = "HH:mm")
         @JsonFormat(pattern = "HH:mm")
         LocalTime startTime,
-        @NotBlank
         @NotNull
+        @NotBlank
         @Schema(type = "String", pattern = "HH:mm")
         @JsonFormat(pattern = "HH:mm")
         LocalTime endTime,
         @Schema(type = "String", pattern = "HH:mm")
         @JsonFormat(pattern = "HH:mm")
         @NotNull
+        @NotBlank
         LocalTime startInterval,
         @Schema(type = "String", pattern = "HH:mm")
         @JsonFormat(pattern = "HH:mm")
         @NotNull
+        @NotBlank
         LocalTime endInterval
 ) {
 }

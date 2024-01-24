@@ -49,7 +49,6 @@ class CreateWorkingHourTest extends WorkingHourServiceBaseTest {
     void shouldThrowExceptionWhenStartOfWorkdayIsGreaterThanEnd() {
         //ARRANGE
         request = newWorkingHourRequest("11:00", "10:59", "12:00", "13:00");
-        workingHour = new WorkingHourEntity(request);
 
         //ACT & ASSERT
         var exception = assertThrows(IllegalArgumentException.class,
