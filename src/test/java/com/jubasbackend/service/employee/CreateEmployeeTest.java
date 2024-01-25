@@ -1,6 +1,6 @@
 package com.jubasbackend.service.employee;
 
-import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeRequest;
 import com.jubasbackend.infrastructure.entity.EmployeeEntity;
 import com.jubasbackend.infrastructure.entity.ProfileEntity;
 import com.jubasbackend.infrastructure.entity.WorkingHourEntity;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 class CreateEmployeeTest extends EmployeeServiceBaseTest {
 
-    EmployeeCreateRequest request;
+    EmployeeRequest request;
 
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
@@ -31,7 +31,7 @@ class CreateEmployeeTest extends EmployeeServiceBaseTest {
 
     @BeforeEach
     void setup() {
-        request = new EmployeeCreateRequest(UUID.randomUUID(), UUID.randomUUID());
+        request = new EmployeeRequest(UUID.randomUUID(), UUID.randomUUID());
     }
 
     @Test

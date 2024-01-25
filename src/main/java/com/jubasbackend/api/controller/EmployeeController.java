@@ -1,7 +1,7 @@
 package com.jubasbackend.api.controller;
 
 import com.jubasbackend.api.EmployeeApi;
-import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeRequest;
 import com.jubasbackend.api.dto.response.EmployeeWorkingHourSpecialtiesResponse;
 import com.jubasbackend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class EmployeeController implements EmployeeApi {
     }
 
     @Override
-    public ResponseEntity<Void> createEmployee(EmployeeCreateRequest request) {
+    public ResponseEntity<Void> createEmployee(EmployeeRequest request) {
         var createdEmployee = service.createEmployee(request);
         return ResponseEntity.created(URI.create("/employee/" + createdEmployee.id())).build();
     }

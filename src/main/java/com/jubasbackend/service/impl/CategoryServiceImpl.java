@@ -1,6 +1,5 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.api.dto.response.CategoryResponse;
 import com.jubasbackend.api.dto.response.CategorySpecialtyResponse;
 import com.jubasbackend.infrastructure.entity.CategoryEntity;
@@ -35,18 +34,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse createCategory(CategoryRequest request) {
-        if (repository.existsByName(request.name()))
+    public CategoryResponse createCategory(String categoryName) {
+        if (repository.existsByName(categoryName))
             throw new IllegalArgumentException("Category already exists.");
 
-        var newCategory = CategoryEntity.builder().name(request.name()).build();
+        var newCategory = CategoryEntity.builder().name(categoryName).build();
         return new CategoryResponse(repository.save(newCategory));
     }
 
     @Override
-    public void updateCategory(Short categoryId, CategoryRequest request) {
+    public void updateCategory(Short categoryId, String categoryName) {
         var categoryToUpdate = findCategoryOnRepository(categoryId);
-        categoryToUpdate.setName(request.name());
+        categoryToUpdate.setName(categoryName);
         repository.save(categoryToUpdate);
     }
 

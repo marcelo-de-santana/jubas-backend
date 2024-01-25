@@ -1,6 +1,6 @@
 package com.jubasbackend.api;
 
-import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeRequest;
 import com.jubasbackend.api.dto.response.EmployeeWorkingHourSpecialtiesResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,7 +35,7 @@ public interface EmployeeApi {
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar funcionário.")
     })
     @PostMapping
-    ResponseEntity<Void> createEmployee(@RequestBody @Valid EmployeeCreateRequest request);
+    ResponseEntity<Void> createEmployee(@RequestBody @Valid EmployeeRequest request);
 
     @Operation(summary = "Adicionar especialidades.", method = "POST")
     @ApiResponses(value = {

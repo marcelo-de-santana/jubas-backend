@@ -1,6 +1,6 @@
 package com.jubasbackend.service.impl;
 
-import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeRequest;
 import com.jubasbackend.api.dto.response.EmployeeWorkingHourResponse;
 import com.jubasbackend.api.dto.response.EmployeeWorkingHourSpecialtiesResponse;
 import com.jubasbackend.infrastructure.entity.*;
@@ -47,7 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeWorkingHourResponse createEmployee(EmployeeCreateRequest request) {
+    public EmployeeWorkingHourResponse createEmployee(EmployeeRequest request) {
         if (employeeRepository.existsById(request.profileId())) {
             throw new IllegalArgumentException("Profile ID already in use.");
         }

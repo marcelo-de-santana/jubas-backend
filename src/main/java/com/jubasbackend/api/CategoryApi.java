@@ -1,6 +1,5 @@
 package com.jubasbackend.api;
 
-import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.api.dto.response.CategoryResponse;
 import com.jubasbackend.api.dto.response.CategorySpecialtyResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +38,7 @@ public interface CategoryApi {
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar categoria.", content = @Content)
     })
     @PostMapping
-    ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request);
+    ResponseEntity<CategoryResponse> createCategory(@RequestBody String name);
 
     @Operation(summary = "Atualizar categoria.", method = "PATCH")
     @ApiResponses(value = {
@@ -48,8 +47,7 @@ public interface CategoryApi {
             @ApiResponse(responseCode = "500", description = "Erro ao atualizar categoria.")
     })
     @PatchMapping("/{categoryId}")
-    ResponseEntity<Void> updateCategory(@PathVariable Short categoryId, @RequestBody CategoryRequest request
-    );
+    ResponseEntity<Void> updateCategory(@PathVariable Short categoryId, @RequestBody String name);
 
     @Operation(summary = "Excluir categoria.", method = "PATCH")
     @ApiResponses(value = {

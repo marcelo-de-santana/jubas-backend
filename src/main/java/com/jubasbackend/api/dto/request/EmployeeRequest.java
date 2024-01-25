@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record EmployeeCreateRequest(
+public record EmployeeRequest(
         @NotNull
         UUID profileId,
         @NotNull

@@ -1,7 +1,6 @@
 package com.jubasbackend.api.controller;
 
 import com.jubasbackend.api.CategoryApi;
-import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.api.dto.response.CategoryResponse;
 import com.jubasbackend.api.dto.response.CategorySpecialtyResponse;
 import com.jubasbackend.service.CategoryService;
@@ -30,14 +29,14 @@ public class CategoryController implements CategoryApi {
     }
 
     @Override
-    public ResponseEntity<CategoryResponse> createCategory(CategoryRequest request) {
-        var categoryCreated = service.createCategory(request);
+    public ResponseEntity<CategoryResponse> createCategory(String name) {
+        var categoryCreated = service.createCategory(name);
         return ResponseEntity.created(URI.create("/category/" + categoryCreated.id())).build();
     }
 
     @Override
-    public ResponseEntity<Void> updateCategory(Short categoryId, CategoryRequest request) {
-        service.updateCategory(categoryId, request);
+    public ResponseEntity<Void> updateCategory(Short categoryId, String name) {
+        service.updateCategory(categoryId, name);
         return ResponseEntity.noContent().build();
     }
 

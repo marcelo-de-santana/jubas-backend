@@ -1,6 +1,5 @@
 package com.jubasbackend.service.category;
 
-import com.jubasbackend.api.dto.request.CategoryRequest;
 import com.jubasbackend.infrastructure.entity.CategoryEntity;
 import com.jubasbackend.service.CategoryServiceBaseTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +12,11 @@ import static org.mockito.Mockito.*;
 
 public class CreateCategoryTest extends CategoryServiceBaseTest {
 
-    CategoryRequest request;
+    String categoryName;
 
     @BeforeEach()
     void setup() {
-        this.request = new CategoryRequest("Cabelo de cabelo masculino");
+        this.categoryName = "Cabelo de cabelo masculino";
     }
 
     @Test
@@ -28,7 +27,7 @@ public class CreateCategoryTest extends CategoryServiceBaseTest {
 
         //ACT & ASSERT
         var exception = assertThrows(IllegalArgumentException.class,
-                () -> service.createCategory(request));
+                () -> service.createCategory(categoryName));
 
         assertEquals("Category already exists.", exception.getMessage());
         verify(repository, times(1)).existsByName(stringArgumentCaptor.getValue());
@@ -38,21 +37,20 @@ public class CreateCategoryTest extends CategoryServiceBaseTest {
     @Test
     @DisplayName("Deve criar categoria com sucesso.")
     void shouldCreateCategoryWithSuccessfully() {
-        var category = CategoryEntity.builder().id((short) 1).name(request.name()).build();
+        var category = CategoryEntity.builder().id((short) 1).name(categoryName).build();
 
         //ARRANGE
-        var request = new CategoryRequest("Cabelo de cabelo masculino");
         doReturn(false).when(repository).existsByName(stringArgumentCaptor.capture());
         doReturn(category).when(repository).save(categoryEntityArgumentCaptor.capture());
 
         //ACT
-        service.createCategory(request);
+        service.createCategory(categoryName);
 
         //ASSERT
         var categoryNameCaptured = stringArgumentCaptor.getValue();
         var categoryCaptured = categoryEntityArgumentCaptor.getValue();
 
-        assertEquals(request.name(), categoryNameCaptured);
+        assertEquals(categoryName, categoryNameCaptured);
         verify(repository, times(1)).existsByName(categoryNameCaptured);
         verify(repository, times(1)).save(categoryCaptured);
         verifyNoMoreInteractions(repository);

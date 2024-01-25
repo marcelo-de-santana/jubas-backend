@@ -1,6 +1,6 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.api.dto.request.EmployeeCreateRequest;
+import com.jubasbackend.api.dto.request.EmployeeRequest;
 import com.jubasbackend.api.dto.response.EmployeeWorkingHourResponse;
 import com.jubasbackend.api.dto.response.EmployeeWorkingHourSpecialtiesResponse;
 
@@ -11,7 +11,7 @@ public interface EmployeeService {
 
     EmployeeWorkingHourSpecialtiesResponse findEmployee(UUID employeeId);
 
-    EmployeeWorkingHourResponse createEmployee(EmployeeCreateRequest request);
+    EmployeeWorkingHourResponse createEmployee(EmployeeRequest request);
 
     void addSpecialties(UUID employeeId, List<UUID> newSpecialties);
 
