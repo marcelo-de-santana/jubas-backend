@@ -1,6 +1,8 @@
 package com.jubasbackend.core.employee;
 
-import com.jubasbackend.core.employee.dto.EmployeeScheduleResponse;
+import com.jubasbackend.core.employee.dto.EmployeeRequest;
+import com.jubasbackend.core.employee.dto.EmployeeWorkingHourResponse;
+import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
@@ -9,9 +11,6 @@ import com.jubasbackend.core.profile.ProfileRepository;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.workingHour.WorkingHourEntity;
 import com.jubasbackend.core.workingHour.WorkingHourRepository;
-import com.jubasbackend.core.employee.dto.EmployeeRequest;
-import com.jubasbackend.core.employee.dto.EmployeeWorkingHourResponse;
-import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,11 +47,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeWorkingHourSpecialtiesResponse findEmployee(UUID employeeId) {
         return new EmployeeWorkingHourSpecialtiesResponse(findEmployeeOnRepository(employeeId));
-    }
-
-    @Override
-    public EmployeeScheduleResponse findScheduleByEmployee(UUID employeeId) {
-        return new EmployeeScheduleResponse(findEmployeeOnRepository(employeeId));
     }
 
     @Override

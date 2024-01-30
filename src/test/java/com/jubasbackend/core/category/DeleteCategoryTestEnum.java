@@ -8,7 +8,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class DeleteCategoryTest extends CategoryServiceBaseTest {
+public class DeleteCategoryTestEnum extends CategoryEnumServiceBaseTest {
 
     @Test
     @DisplayName("Deve excluir categoria com sucesso.")

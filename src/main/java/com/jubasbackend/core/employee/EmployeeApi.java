@@ -1,6 +1,5 @@
 package com.jubasbackend.core.employee;
 
-import com.jubasbackend.core.employee.dto.EmployeeScheduleResponse;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,15 +26,6 @@ public interface EmployeeApi {
     })
     @GetMapping("/{employeeId}")
     ResponseEntity<EmployeeWorkingHourSpecialtiesResponse> findEmployee(@PathVariable UUID employeeId);
-
-    @Operation(summary = "Buscar parâmetros de atendimento do funcionário.", method = "GET")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Funcionário não cadastrado.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro ao buscar parâmetros do funcionário.", content = @Content)
-    })
-    @GetMapping("/{employeeId}/schedule")
-    ResponseEntity<EmployeeScheduleResponse> findScheduleByEmployee(@PathVariable UUID employeeId);
 
     @Operation(summary = "Cadastrar funcionário.", method = "POST")
     @ApiResponses(value = {

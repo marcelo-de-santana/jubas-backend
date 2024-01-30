@@ -8,7 +8,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class UpdateCategoryTest extends CategoryServiceBaseTest {
+class UpdateCategoryTestEnum extends CategoryEnumServiceBaseTest {
 
     @Test
     @DisplayName("Deve atualizar categoria com sucesso.")

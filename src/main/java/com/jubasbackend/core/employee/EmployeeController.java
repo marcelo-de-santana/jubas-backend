@@ -1,6 +1,5 @@
 package com.jubasbackend.core.employee;
 
-import com.jubasbackend.core.employee.dto.EmployeeScheduleResponse;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +21,6 @@ public class EmployeeController implements EmployeeApi {
     @Override
     public ResponseEntity<EmployeeWorkingHourSpecialtiesResponse> findEmployee(UUID employeeId) {
         return ResponseEntity.ok(service.findEmployee(employeeId));
-    }
-
-    @Override
-    public ResponseEntity<EmployeeScheduleResponse> findScheduleByEmployee(UUID employeeId) {
-        return ResponseEntity.ok(service.findScheduleByEmployee(employeeId));
     }
 
     @Override

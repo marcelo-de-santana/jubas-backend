@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public abstract class CategoryServiceBaseTest {
+public abstract class CategoryEnumServiceBaseTest {
 
     @Mock
     protected CategoryRepository repository;

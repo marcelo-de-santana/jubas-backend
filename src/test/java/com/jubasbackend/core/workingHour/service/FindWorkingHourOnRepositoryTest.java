@@ -19,7 +19,7 @@ class FindWorkingHourOnRepositoryTest extends WorkingHourServiceBaseTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     @Test
-    @DisplayName("Deve retorna jornada de trabalho com sucesso.")
+    @DisplayName("Deve retornar jornada de trabalho com sucesso.")
     void shouldReturnWorkingHourSuccessfully() {
         //ARRANGE
         var workingHourId = UUID.randomUUID();

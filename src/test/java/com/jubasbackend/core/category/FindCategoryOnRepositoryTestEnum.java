@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class FindCategoryOnRepositoryTest extends CategoryServiceBaseTest {
+public class FindCategoryOnRepositoryTestEnum extends CategoryEnumServiceBaseTest {
 
     @Test
     @DisplayName("Deve ocorrer uma exceção caso a categoria não exista.")
