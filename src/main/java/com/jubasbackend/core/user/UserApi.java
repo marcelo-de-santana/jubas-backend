@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@Tag(name = "User")
-@RequestMapping("/user")
+@Tag(name = "Users")
+@RequestMapping("/users")
 public interface UserApi {
 
     @Operation(summary = "Buscar todos os usuários.", method = "GET")
@@ -26,7 +26,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuários.", content = @Content)
     })
     @GetMapping
-    ResponseEntity<List<UserResponse>> findAllUsers();
+    ResponseEntity<List<UserResponse>> findUsers();
 
     @Operation(summary = "Buscar usuário por id.", method = "GET")
     @ApiResponses(value = {
@@ -35,7 +35,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuário.", content = @Content)
     })
     @GetMapping("/{userId}")
-    ResponseEntity<UserPermissionResponse> findUserById(@PathVariable UUID userId);
+    ResponseEntity<UserPermissionResponse> findUser(@PathVariable UUID userId);
 
     @Operation(summary = "Buscar perfis associados ao usuário.", method = "GET")
     @ApiResponses(value = {
@@ -44,7 +44,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuário.", content = @Content)
     })
     @GetMapping("/{userId}/profiles")
-    ResponseEntity<UserPermissionProfileResponse> findProfilesByUserId(@PathVariable UUID userId);
+    ResponseEntity<UserPermissionProfileResponse> findProfilesByUser(@PathVariable UUID userId);
 
     @Operation(summary = "Cadastrar novo usuário.", method = "POST")
     @ApiResponses(value = {
@@ -62,8 +62,8 @@ public interface UserApi {
             @ApiResponse(responseCode = "404", description = "E-mail não cadastrado.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro ao autenticar usuário.", content = @Content)
     })
-    @PostMapping("/login")
-    ResponseEntity<UserPermissionResponse> findUserAccount(@RequestBody UserRequest request);
+    @PostMapping("/auth")
+    ResponseEntity<UserPermissionResponse> authenticateUserAccount(@RequestBody UserRequest request);
 
     @Operation(summary = "Atualizar usuário.", method = "PATCH")
     @ApiResponses(value = {

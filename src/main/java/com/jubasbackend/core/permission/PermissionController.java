@@ -13,7 +13,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/permission")
 public class PermissionController implements PermissionApi {
 
     private final PermissionService service;

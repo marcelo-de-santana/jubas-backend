@@ -1,26 +1,25 @@
 package com.jubasbackend.core.appointment.dto;
 
 import com.jubasbackend.core.employee.EmployeeEntity;
-import com.jubasbackend.core.workingHour.dto.AvailableTimeResponse;
 import com.jubasbackend.core.specialty.dto.SpecialtyResponse;
+import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithoutId;
 
 import java.util.List;
 import java.util.UUID;
 
-public record AppointmentResponse(
+public record AppointmentScheduleResponse(
         UUID id,
         String name,
         boolean statusProfile,
-        List<SpecialtyResponse> specialties,
-        List<AvailableTimeResponse> availableTime
+        List<SpecialtyResponse> specialties, List<ScheduledTimeWithoutId> availableTime
 ) {
-    public AppointmentResponse(EmployeeEntity employee) {
+    public AppointmentScheduleResponse(EmployeeEntity employee, List<ScheduledTimeWithoutId> availableTimes) {
         this(
                 employee.getId(),
                 employee.getProfile().getName(),
                 employee.getProfile().isStatusProfile(),
                 employee.getSpecialties().stream().map(SpecialtyResponse::new).toList(),
-                employee.getWorkingHour().getOpeningHours()
+                availableTimes
         );
     }
 }

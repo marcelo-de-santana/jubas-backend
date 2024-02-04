@@ -1,4 +1,4 @@
-package com.jubasbackend.core.workingHour.service;
+package com.jubasbackend.core.workingHour;
 
 import com.jubasbackend.core.workingHour.WorkingHourEntity;
 import org.junit.jupiter.api.DisplayName;
@@ -52,9 +52,9 @@ class GetOpeningHoursTest {
         //ASSERT
         for (var availableTime : availableTimes) {
             if (workingHour.isInterval(availableTime.time()))
-                assertFalse(availableTime.available());
+                assertFalse(availableTime.isAvailable());
             else
-                assertTrue(availableTime.available());
+                assertTrue(availableTime.isAvailable());
         }
     }
 }

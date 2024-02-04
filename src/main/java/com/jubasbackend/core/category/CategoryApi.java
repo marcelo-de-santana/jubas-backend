@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Category")
+@Tag(name = "Categories")
+@RequestMapping("/categories")
 public interface CategoryApi {
 
     @Operation(summary = "Buscar todas as categorias.", method = "GET")

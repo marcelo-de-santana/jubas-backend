@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/specialty")
 public class SpecialtyController implements SpecialtyApi {
 
     private final SpecialtyService service;

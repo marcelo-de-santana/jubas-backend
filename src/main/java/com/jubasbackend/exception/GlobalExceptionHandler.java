@@ -27,4 +27,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<StandardResponseError> handleNotFoundException(NoSuchElementException exception, HttpServletRequest request) {
         return response(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<StandardResponseError> handleConflictException(ConflictException exception, HttpServletRequest request) {
+        return response(HttpStatus.CONFLICT, exception.getMessage(), request);
+    }
 }

@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/working-hour")
 public class WorkingHourController implements WorkingHourApi {
 
     private final WorkingHourService service;

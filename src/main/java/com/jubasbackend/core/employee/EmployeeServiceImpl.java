@@ -1,5 +1,7 @@
 package com.jubasbackend.core.employee;
 
+import com.jubasbackend.core.appointment.AppointmentEntity;
+import com.jubasbackend.core.appointment.AppointmentRepository;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeWorkingHourResponse;
 import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
@@ -11,13 +13,14 @@ import com.jubasbackend.core.profile.ProfileRepository;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.workingHour.WorkingHourEntity;
 import com.jubasbackend.core.workingHour.WorkingHourRepository;
+import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithoutId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,26 +30,31 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final ProfileRepository profileRepository;
     private final WorkingHourRepository workingHourRepository;
     private final EmployeeSpecialtyRepository employeeSpecialtyRepository;
-
-    public EmployeeEntity findEmployeeOnRepository(UUID employeeId) {
-        return employeeRepository.findById(employeeId).orElseThrow(
-                () -> new NoSuchElementException("Employee doesn't registered."));
-    }
-
-    public ProfileEntity findProfileOnRepository(UUID profileId) {
-        return profileRepository.findById(profileId).orElseThrow(
-                () -> new NoSuchElementException("Profile doesn't exists."));
-    }
-
-    public WorkingHourEntity findWorkingHourOnRepository(UUID workingHourId) {
-        return workingHourRepository.findById(workingHourId).orElseThrow(
-                () -> new NoSuchElementException("Unregistered working hours."));
-    }
-
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public EmployeeWorkingHourSpecialtiesResponse findEmployee(UUID employeeId) {
-        return new EmployeeWorkingHourSpecialtiesResponse(findEmployeeOnRepository(employeeId));
+        return new EmployeeWorkingHourSpecialtiesResponse(findEmployeeInTheRepository(employeeId));
+    }
+
+    @Override
+    public List<? extends ScheduleTime> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> requestDate) {
+        LocalDateTime selectedDate;
+        if (requestDate.isEmpty() || requestDate.get().equals(LocalDate.now()))
+            selectedDate = LocalDateTime.now();
+        else
+            selectedDate = requestDate.get().atStartOfDay();
+
+        //BUSCA HORÁRIOS AGENDADOS COM O FUNCIONÁRIO
+        var appointments = findAppointmentsInTheRepository(selectedDate, employeeId);
+
+        //GERA OS HORÁRIOS
+        var workingHours = findEmployeeInTheRepository(employeeId).getWorkingHour();
+        if (appointments.isEmpty()) {
+            return workingHours.getOpeningHours().stream().map(ScheduledTimeWithoutId::new).toList();
+        }
+
+        return workingHours.getAvailableTimes(appointments);
     }
 
     @Override
@@ -65,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void addSpecialties(UUID employeeId, List<UUID> newSpecialties) {
-        var currentSpecialties = findEmployeeOnRepository(employeeId).getSpecialties();
+        var currentSpecialties = findEmployeeInTheRepository(employeeId).getSpecialties();
 
         for (var newSpecialtyId : newSpecialties) {
             var compoundId = new EmployeeSpecialtyId(employeeId, newSpecialtyId);
@@ -82,9 +90,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void updateWorkingHour(UUID employeeId, UUID workingHourId) {
-        var employeeToUpdate = findEmployeeOnRepository(employeeId);
+        var employeeToUpdate = findEmployeeInTheRepository(employeeId);
         employeeToUpdate.setWorkingHour(WorkingHourEntity.builder().id(workingHourId).build());
         employeeRepository.save(employeeToUpdate);
+    }
+
+    private EmployeeEntity findEmployeeInTheRepository(UUID employeeId) {
+        return employeeRepository.findById(employeeId).orElseThrow(
+                () -> new NoSuchElementException("Employee doesn't registered."));
+    }
+
+    private ProfileEntity findProfileOnRepository(UUID profileId) {
+        return profileRepository.findById(profileId).orElseThrow(
+                () -> new NoSuchElementException("Profile doesn't exists."));
+    }
+
+    private WorkingHourEntity findWorkingHourOnRepository(UUID workingHourId) {
+        return workingHourRepository.findById(workingHourId).orElseThrow(
+                () -> new NoSuchElementException("Unregistered working hours."));
+    }
+
+    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDateTime dateTime, UUID employeeId) {
+        return appointmentRepository.findAllByDateAndEmployeeId(dateTime, employeeId);
     }
 
 }

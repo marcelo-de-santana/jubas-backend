@@ -1,37 +1,54 @@
 package com.jubasbackend.core.appointment;
 
+import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
+import com.jubasbackend.core.employee.EmployeeEntity;
+import com.jubasbackend.core.employee.EmployeeRepository;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
+import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithoutId;
+import com.jubasbackend.exception.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService{
 
     private final AppointmentRepository appointmentRepository;
+    private final EmployeeSpecialtyRepository employeeSpecialtyRepository;
+    private final EmployeeRepository employeeRepository;
+
 
     @Override
-    public AppointmentEntity createAppointment(AppointmentEntity newAppointment) {
+    public AppointmentEntity createAppointment(AppointmentCreateRequest request) {
 
-        var existingAppointments = findAppointmentsOnRepository(newAppointment);
+        var compoundEntity = findEmployeeSpecialtyInTheRepository(request.employeeId(), request.specialtyId());
+        var newAppointment = new AppointmentEntity(request, compoundEntity);
 
-        if (!existingAppointments.isEmpty()) {
-            for (var existingAppointment : existingAppointments) {
-                validateSameSpecialty(newAppointment, existingAppointment);
-                validateEndTimeOverlap(newAppointment, existingAppointment);
-                validateStartTimeOverlap(newAppointment, existingAppointment);
-                validateWithinTimePeriod(newAppointment, existingAppointment);
-                validateStartOrEndConflict(newAppointment, existingAppointment);
-            }
-        }
-
-        return appointmentRepository.save(newAppointment);
+        return newAppointment;
     }
 
-    private List<AppointmentEntity> findAppointmentsOnRepository(AppointmentEntity appointment) {
-        return appointmentRepository.findAllByDate_DateAndEmployeeIdOrClientId(
-                appointment.getDate().toLocalDate(), appointment.getEmployee().getId(), appointment.getClient().getId());
+    private EmployeeEntity findEmployeeInTheRepository(UUID employeeId) {
+        return employeeRepository.findById(employeeId).orElseThrow(
+                () -> new NoSuchElementException("Employee doesn't registered."));
+    }
+
+    private List<AppointmentEntity> findAppointmentsInTheRepository(AppointmentEntity appointment) {
+        return appointmentRepository.findAllByDateAndEmployeeIdOrClientId(
+                appointment.getDate(), appointment.getEmployee().getId(), appointment.getClient().getId());
+    }
+
+    private EmployeeSpecialtyEntity findEmployeeSpecialtyInTheRepository(UUID employeeId, UUID specialtyId) {
+        return employeeSpecialtyRepository.findByEmployeeIdAndSpecialtyId(employeeId, specialtyId)
+                .orElseThrow(() -> new NoSuchElementException("Employee doesn't perform the specialty."));
     }
 
     //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
@@ -42,25 +59,25 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     //VERIFICA SE O FIM DO ATENDIMENTO NÃO EXCEDE O INÍCIO DO PRÓXIMO
     private void validateEndTimeOverlap(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.getEndTime().isAfter(existingAppointment.getDate().toLocalTime()) && newAppointment.getEndTime().isBefore(existingAppointment.getEndTime()))
-            throw new IllegalArgumentException("The end time of the service must not occur after the start time of another service.");
+        if (newAppointment.endTime().isAfter(existingAppointment.getDate().toLocalTime()) && newAppointment.endTime().isBefore(existingAppointment.endTime()))
+            throw new ConflictException("The end time of the service must not occur after the start time of another service.");
     }
 
     //VERIFICA SE O INÍCIO DO ATENDIMENTO NÃO SOBRESCREVE O FIM DO ANTERIOR
     private void validateStartTimeOverlap(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.getStartTime().isAfter(existingAppointment.getDate().toLocalTime()) && newAppointment.getStartTime().isBefore(existingAppointment.getEndTime()))
-            throw new IllegalArgumentException("The start time of the service must not occur before the end time of another service.");
+        if (newAppointment.startTime().isAfter(existingAppointment.getDate().toLocalTime()) && newAppointment.startTime().isBefore(existingAppointment.endTime()))
+            throw new ConflictException("The start time of the service must not occur before the end time of another service.");
     }
 
     //VERIFICA SE NÃO HÁ AGENDAMENTO DENTRO DO PERÍODO
     private void validateWithinTimePeriod(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.getStartTime().isBefore(existingAppointment.getDate().toLocalTime()) && newAppointment.getEndTime().isAfter(existingAppointment.getEndTime()))
-            throw new IllegalArgumentException("There is another appointment scheduled within the specified time period.");
+        if (newAppointment.startTime().isBefore(existingAppointment.getDate().toLocalTime()) && newAppointment.endTime().isAfter(existingAppointment.endTime()))
+            throw new ConflictException("There is another appointment scheduled within the specified time period.");
     }
 
     //VERIFICA SE O INÍCIO OU O FIM DO NOVO HORÁRIO COINCIDE DOM O AGENDADO
     private void validateStartOrEndConflict(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.getStartTime().equals(existingAppointment.getDate().toLocalTime()) || newAppointment.getEndTime().equals(existingAppointment.getEndTime()))
-            throw new IllegalArgumentException("The start or end of the new schedule conflicts with the booked one.");
+        if (newAppointment.startTime().equals(existingAppointment.getDate().toLocalTime()) || newAppointment.endTime().equals(existingAppointment.endTime()))
+            throw new ConflictException("The start or end of the new schedule conflicts with the booked one.");
     }
 }

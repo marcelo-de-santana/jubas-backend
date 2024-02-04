@@ -1,7 +1,8 @@
 package com.jubasbackend.core.profile;
 
-import com.jubasbackend.core.user.UserEntity;
+import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.profile.dto.ProfileUserRequest;
+import com.jubasbackend.core.user.UserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +35,9 @@ public class ProfileEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @OneToOne(mappedBy = "profile")
+    private EmployeeEntity employee;
 
     public ProfileEntity(ProfileUserRequest request) {
         this.name = request.name();

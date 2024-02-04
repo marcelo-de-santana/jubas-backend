@@ -16,18 +16,6 @@ public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository repository;
 
-    public PermissionEntity findPermissionOnRepository(Short permissionId) {
-        return repository.findById(permissionId)
-                .orElseThrow(() -> new NoSuchElementException("Permission not found."));
-    }
-
-    public List<PermissionEntity> findPermissionsOnRepository() {
-        var permissions = repository.findAll();
-        if (permissions.isEmpty())
-            throw new NoSuchElementException("Couldn't find any permissions.");
-        return permissions;
-    }
-
     @Override
     public List<PermissionUserProfileResponse> findPermissionsUsersAndProfiles() {
         var permissions = repository.findAll();
@@ -54,5 +42,17 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public PermissionProfileResponse findProfilesByPermission(Short permissionId) {
         return new PermissionProfileResponse(findPermissionOnRepository(permissionId));
+    }
+
+    private PermissionEntity findPermissionOnRepository(Short permissionId) {
+        return repository.findById(permissionId)
+                .orElseThrow(() -> new NoSuchElementException("Permission not found."));
+    }
+
+    private List<PermissionEntity> findPermissionsOnRepository() {
+        var permissions = repository.findAll();
+        if (permissions.isEmpty())
+            throw new NoSuchElementException("Couldn't find any permissions.");
+        return permissions;
     }
 }

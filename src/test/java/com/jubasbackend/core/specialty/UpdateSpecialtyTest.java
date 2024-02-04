@@ -1,15 +1,17 @@
 package com.jubasbackend.core.specialty;
 
-import com.jubasbackend.core.specialty.dto.SpecialtyRequest;
 import com.jubasbackend.core.category.CategoryEntity;
+import com.jubasbackend.core.specialty.dto.SpecialtyRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UpdateSpecialtyTest extends SpecialtyServiceBaseTest {
@@ -53,6 +55,24 @@ public class UpdateSpecialtyTest extends SpecialtyServiceBaseTest {
         verifyNoMoreInteractions(repository);
     }
 
+    @Test
+    @DisplayName("Deve ocorrer um erro caso a especialidade não exista.")
+    void shouldThrowExceptionWhenSpecialtyDoesNotExists() {
+        //ARRANGE
+        doReturn(Optional.empty()).when(repository).findById(uuidArgumentCaptor.capture());
+
+        //ACT & ASSERT
+        var exception = assertThrows(NoSuchElementException.class,
+                () -> service.updateSpecialty(specialtyId, request));
+
+        var capturedCategoryId = uuidArgumentCaptor.getValue();
+
+        assertEquals("Unregistered Specialty.", exception.getMessage());
+        assertEquals(specialtyId, capturedCategoryId);
+
+        verify(repository).findById(capturedCategoryId);
+        verifyNoMoreInteractions(repository);
+    }
 
 
 }

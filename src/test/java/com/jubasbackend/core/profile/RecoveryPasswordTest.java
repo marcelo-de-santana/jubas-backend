@@ -1,6 +1,7 @@
-package com.jubasbackend.core.profile.service;
+package com.jubasbackend.core.profile;
 
 import com.jubasbackend.core.profile.ProfileEntity;
+import com.jubasbackend.core.profile.ProfileServiceBaseTest;
 import com.jubasbackend.core.profile.dto.ProfileRecoveryRequest;
 import com.jubasbackend.core.user.UserEntity;
 import org.junit.jupiter.api.BeforeEach;

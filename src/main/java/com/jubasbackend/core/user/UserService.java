@@ -1,30 +1,21 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserRequest;
-import com.jubasbackend.core.user.dto.UserPermissionRequest;
-import com.jubasbackend.core.user.dto.UserResponse;
-import com.jubasbackend.core.user.dto.UserPermissionProfileResponse;
-import com.jubasbackend.core.user.dto.UserPermissionResponse;
+import com.jubasbackend.core.user.dto.*;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
-    UserEntity findUserByIdOnRepository(UUID id);
 
-    UserEntity findUserByEmailOnRepository(String email);
+    List<UserResponse> findUsers();
 
-    boolean existsByEmailOnRepository(String email);
+    UserPermissionResponse findUser(UUID userId);
+
+    UserPermissionProfileResponse findProfilesByUser(UUID userId);
 
     UserPermissionResponse createUser(UserPermissionRequest request);
 
-    UserPermissionResponse findUserAccount(UserRequest request);
-
-    UserPermissionResponse findUserById(UUID userId);
-
-    UserPermissionProfileResponse findProfilesByUserId(UUID userId);
-
-    List<UserResponse> findAllUsers();
+    UserPermissionResponse authenticateUserAccount(UserRequest request);
 
     UserPermissionResponse updateUser(UUID id, UserPermissionRequest request);
 }

@@ -1,6 +1,8 @@
 package com.jubasbackend.core.appointment;
 
+import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
 import com.jubasbackend.core.appointment.enums.AppointmentStatus;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
 import jakarta.persistence.*;
@@ -35,13 +37,26 @@ public class AppointmentEntity {
     private Instant createdAt;
     private Instant updatedAt;
 
-    public LocalTime getStartTime() {
+    public AppointmentEntity(AppointmentCreateRequest request, EmployeeSpecialtyEntity compoundEntity) {
+        this.client = ProfileEntity.builder().id(request.clientId()).build();
+        this.employee = compoundEntity.getEmployee().getProfile();
+        this.specialty = compoundEntity.getSpecialty();
+        this.appointmentStatus = request.appointmentStatus();
+        this.date = request.date();
+        this.createdAt = Instant.now();
+    }
+
+    public LocalTime startTime() {
         return getDate().toLocalTime();
     }
 
-    public LocalTime getEndTime() {
+    public LocalTime endTime() {
         var duration = getSpecialty().getTimeDuration();
-        var startTime = getStartTime();
+        var startTime = startTime();
         return startTime.plusHours(duration.getHour()).plusMinutes(duration.getMinute());
+    }
+
+    public boolean isInThePeriod(LocalTime time) {
+        return (time.equals(startTime()) || (time.isAfter(startTime()) && time.isBefore(endTime())));
     }
 }

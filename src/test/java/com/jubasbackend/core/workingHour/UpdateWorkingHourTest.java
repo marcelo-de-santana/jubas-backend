@@ -1,13 +1,12 @@
-package com.jubasbackend.core.workingHour.service;
+package com.jubasbackend.core.workingHour;
 
-import com.jubasbackend.core.workingHour.WorkingHourEntity;
 import com.jubasbackend.core.workingHour.dto.WorkingHourRequest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,20 +18,15 @@ class UpdateWorkingHourTest extends WorkingHourServiceBaseTest {
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
 
-    UUID workingHourId;
-    WorkingHourRequest request;
+    UUID workingHourId = UUID.randomUUID();
+    WorkingHourRequest request = super.createWorkingHourRequest("09:00", "17:00", "12:00", "13:00");
 
-    @BeforeEach
-    void setup() {
-        workingHourId = UUID.randomUUID();
-        request = WorkingHourRequest.create("09:00", "17:00", "12:00", "13:00");
-    }
+    WorkingHourEntity existingWorkingHour = WorkingHourEntity.builder().id(workingHourId).build();
 
     @Test
     @DisplayName("Deve atualizar jornada de trabalho com sucesso.")
     void shouldUpdateWorkingHourSuccessfully() {
         //ARRANGE
-        var existingWorkingHour = WorkingHourEntity.builder().id(workingHourId).build();
         doReturn(Optional.of(existingWorkingHour)).when(repository).findById(uuidArgumentCaptor.capture());
 
         //ACT
@@ -52,8 +46,8 @@ class UpdateWorkingHourTest extends WorkingHourServiceBaseTest {
     void shouldThrowExceptionWhenUpdatingWithInvalidTimes() {
         //ARRANGE
         var workingHourId = UUID.randomUUID();
-        var request = WorkingHourRequest.create("11:00", "10:59", "12:00", "13:00");
-        var existingWorkingHour = WorkingHourEntity.builder().id(workingHourId).build();
+        var request = createWorkingHourRequest("11:00", "10:59", "12:00", "13:00");
+
         doReturn(Optional.of(existingWorkingHour)).when(repository).findById(uuidArgumentCaptor.capture());
 
         //ACT & ASSERT
@@ -68,4 +62,24 @@ class UpdateWorkingHourTest extends WorkingHourServiceBaseTest {
         verify(repository, times(1)).findById(capturedId);
         verifyNoMoreInteractions(repository);
     }
+
+    @Test
+    @DisplayName("Deve lançar uma exceção ao tentar encontrar uma jornada de trabalho não registrada.")
+    void shouldThrowNoSuchElementExceptionWhenWorkingHourNotRegistered() {
+        //ARRANGE
+        doReturn(Optional.empty()).when(repository).findById(uuidArgumentCaptor.capture());
+
+        //ACT & ASSERT
+        var exception = assertThrows(NoSuchElementException.class,
+                () -> service.updateWorkingHour(workingHourId, request));
+
+        assertEquals("Unregistered working hours.", exception.getMessage());
+
+        var capturedId = uuidArgumentCaptor.getValue();
+        assertEquals(workingHourId, capturedId);
+
+        verify(repository, times(1)).findById(capturedId);
+        verifyNoMoreInteractions(repository);
+    }
+
 }

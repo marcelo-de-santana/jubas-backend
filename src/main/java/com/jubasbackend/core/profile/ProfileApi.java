@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@Tag(name = "Profile")
-@RequestMapping("/profile")
+@Tag(name = "Profiles")
+@RequestMapping("/profiles")
 public interface ProfileApi {
 
     @Operation(summary = "Buscar todos os perfis.", method = "GET")

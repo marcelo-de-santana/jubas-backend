@@ -1,4 +1,4 @@
-package com.jubasbackend.core.profile.service;
+package com.jubasbackend.core.profile;
 
 import com.jubasbackend.core.profile.ProfileRepository;
 import com.jubasbackend.core.profile.ProfileServiceImpl;

@@ -5,9 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class FindUsersByPermissionIdTest extends PermissionServiceBaseTest {
@@ -26,5 +27,21 @@ public class FindUsersByPermissionIdTest extends PermissionServiceBaseTest {
         //ASSERT
         assertNotNull(response);
         verify(repository, times(1)).findById(permissionId);
+    }
+
+    @Test
+    @DisplayName("Deve ocorrer uma exceção caso a permissão não exista.")
+    void shouldThrowErrorWhenPermissionDoesNotExists() {
+        //ARRANGE
+        Short nonExistentPermissionId = 0;
+        doReturn(Optional.empty()).when(repository).findById(nonExistentPermissionId);
+
+        //ACT & ASSERT
+        var exception = assertThrows(NoSuchElementException.class,
+                () -> service.findUsersByPermission(nonExistentPermissionId));
+
+        assertEquals("Permission not found.", exception.getMessage());
+        verify(repository, times(1)).findById(nonExistentPermissionId);
+
     }
 }

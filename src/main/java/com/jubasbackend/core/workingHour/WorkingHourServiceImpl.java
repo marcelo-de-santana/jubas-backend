@@ -2,6 +2,7 @@ package com.jubasbackend.core.workingHour;
 
 import com.jubasbackend.core.workingHour.dto.WorkingHourRequest;
 import com.jubasbackend.core.workingHour.dto.WorkingHourResponse;
+import com.jubasbackend.exception.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +16,6 @@ public class WorkingHourServiceImpl implements WorkingHourService {
 
     private final WorkingHourRepository repository;
 
-    public boolean areTimesRegisteredOnRepository(WorkingHourEntity entity) {
-        return repository.existsByStartTimeAndEndTimeAndStartIntervalAndEndInterval(
-                entity.getStartTime(), entity.getEndTime(), entity.getStartInterval(), entity.getEndInterval());
-    }
-
-    public WorkingHourEntity findWorkingHourOnRepository(UUID workingHourId) {
-        return repository.findById(workingHourId).orElseThrow(
-                () -> new NoSuchElementException("Unregistered working hours."));
-    }
-
     @Override
     public List<WorkingHourResponse> findWorkingHours() {
         return repository.findAll().stream().map(WorkingHourResponse::new).toList();
@@ -35,7 +26,7 @@ public class WorkingHourServiceImpl implements WorkingHourService {
         var newWorkingHour = new WorkingHourEntity(request);
 
         if (areTimesRegisteredOnRepository(newWorkingHour))
-            throw new IllegalArgumentException("Working hours already exists.");
+            throw new ConflictException("Working hours already exists.");
 
         return new WorkingHourResponse(repository.save(newWorkingHour));
     }
@@ -52,4 +43,13 @@ public class WorkingHourServiceImpl implements WorkingHourService {
         repository.deleteById(workingHourId);
     }
 
+    private WorkingHourEntity findWorkingHourOnRepository(UUID workingHourId) {
+        return repository.findById(workingHourId).orElseThrow(
+                () -> new NoSuchElementException("Unregistered working hours."));
+    }
+
+    private boolean areTimesRegisteredOnRepository(WorkingHourEntity entity) {
+        return repository.existsByStartTimeAndEndTimeAndStartIntervalAndEndInterval(
+                entity.getStartTime(), entity.getEndTime(), entity.getStartInterval(), entity.getEndInterval());
+    }
 }

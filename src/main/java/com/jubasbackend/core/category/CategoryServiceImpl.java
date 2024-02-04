@@ -14,18 +14,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository repository;
 
-    public CategoryEntity findCategoryOnRepository(Short id) {
-        return repository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("Category doesn't exists."));
-    }
-
     @Override
     public List<CategoryResponse> findCategories() {
         return repository.findAll().stream().map(CategoryResponse::new).toList();
     }
 
     @Override
-
     public List<CategorySpecialtyResponse> findCategoriesAndSpecialties() {
         return repository.findAll().stream().map(CategorySpecialtyResponse::new).toList();
     }
@@ -48,7 +42,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Short categoryId) {
-        var categoryToDelete = findCategoryOnRepository(categoryId);
-        repository.delete(categoryToDelete);
+        repository.deleteById(categoryId);
+    }
+
+    private CategoryEntity findCategoryOnRepository(Short id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("Category doesn't exists."));
     }
 }

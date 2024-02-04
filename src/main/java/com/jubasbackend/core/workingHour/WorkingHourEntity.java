@@ -1,7 +1,10 @@
 package com.jubasbackend.core.workingHour;
 
+import com.jubasbackend.core.appointment.AppointmentEntity;
+import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithId;
+import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithoutId;
 import com.jubasbackend.core.employee.EmployeeEntity;
-import com.jubasbackend.core.workingHour.dto.AvailableTimeResponse;
 import com.jubasbackend.core.workingHour.dto.WorkingHourRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -67,15 +70,12 @@ public class WorkingHourEntity {
 
     }
 
-    public boolean isInterval(LocalTime time) {
-        return (time.equals(this.startInterval) || (time.isAfter(this.startInterval) && time.isBefore(this.endInterval)));
-    }
 
-    public List<AvailableTimeResponse> getOpeningHours() {
-        var openingHours = new ArrayList<AvailableTimeResponse>();
+    public List<ScheduledTimeWithoutId> getOpeningHours() {
+        var openingHours = new ArrayList<ScheduledTimeWithoutId>();
         var lastTime = startTime;
 
-        openingHours.add(new AvailableTimeResponse(startTime, true));
+        openingHours.add(new ScheduledTimeWithoutId(startTime, true));
 
         while (lastTime.isBefore(endTime.minusMinutes(10))) {
             lastTime = openingHours.get(openingHours.size() - 1).time();
@@ -83,9 +83,32 @@ public class WorkingHourEntity {
             var newTime = lastTime.plusMinutes(10);
             if (!newTime.equals(endTime)) {
                 var isAvailable = !isInterval(newTime);
-                openingHours.add(new AvailableTimeResponse(newTime, isAvailable));
+                openingHours.add(new ScheduledTimeWithoutId(newTime, isAvailable));
             }
         }
         return openingHours;
     }
+
+    public List<? extends ScheduleTime> getAvailableTimes(List<AppointmentEntity> appointments) {
+        var availableTimes = new ArrayList<ScheduleTime>();
+        //MARCA HORÁRIOS AGENDADOS
+        getOpeningHours().forEach(openingHour -> {
+            var appointmentMatch = appointments.stream()
+                    .filter(appointment -> appointment.isInThePeriod(openingHour.time()))
+                    .findFirst();
+
+            if (appointmentMatch.isPresent())
+                availableTimes.add(new ScheduledTimeWithId(openingHour, appointmentMatch.get().getId()));
+            else
+                availableTimes.add(new ScheduledTimeWithoutId(openingHour));
+
+        });
+
+        return availableTimes;
+    }
+
+    public boolean isInterval(LocalTime time) {
+        return (time.equals(this.startInterval) || (time.isAfter(this.startInterval) && time.isBefore(this.endInterval)));
+    }
+
 }

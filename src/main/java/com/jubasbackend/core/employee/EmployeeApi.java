@@ -1,7 +1,9 @@
 package com.jubasbackend.core.employee;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
+import com.jubasbackend.core.workingHour.dto.ScheduleTime;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,10 +14,13 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-@Tag(name = "Employee")
+@Tag(name = "Employees")
+@RequestMapping("/employees")
 public interface EmployeeApi {
 
     @Operation(summary = "Buscar todos os parâmetros do funcionário.", method = "GET")
@@ -26,6 +31,19 @@ public interface EmployeeApi {
     })
     @GetMapping("/{employeeId}")
     ResponseEntity<EmployeeWorkingHourSpecialtiesResponse> findEmployee(@PathVariable UUID employeeId);
+
+    @Operation(summary = "Buscar agenda de atendimento do funcionário.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Funcionário não cadastrado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar a agenda do funcionário.", content = @Content)
+    })
+    @GetMapping("/{employeeId}/appointments")
+    ResponseEntity<List<? extends ScheduleTime>> findAppointmentsByEmployee(
+            @PathVariable UUID employeeId,
+            @JsonFormat(pattern = "yyyy-MM-dd")
+            @RequestParam
+            Optional<LocalDate> date);
 
     @Operation(summary = "Cadastrar funcionário.", method = "POST")
     @ApiResponses(value = {

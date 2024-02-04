@@ -1,11 +1,11 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserPermissionRequest;
 import com.jubasbackend.core.permission.PermissionEntity;
-import org.junit.jupiter.api.BeforeEach;
+import com.jubasbackend.core.user.dto.UserPermissionRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,21 +15,15 @@ import static org.mockito.Mockito.*;
 
 class UpdateUserTest extends UserServiceBaseTest {
 
-    UUID userId;
-    PermissionEntity currentPermission;
-    UserEntity currentUser;
-
-    @BeforeEach
-    void setup() {
-        this.userId = UUID.randomUUID();
-        this.currentPermission = PermissionEntity.builder().id((short) 3).build();
-        this.currentUser = UserEntity.builder()
-                .id(userId)
-                .email("atual@email.com")
-                .password("00000000")
-                .permission(currentPermission)
-                .build();
-    }
+    UUID userId = UUID.randomUUID();
+    ;
+    PermissionEntity currentPermission = PermissionEntity.builder().id((short) 3).build();
+    UserEntity currentUser = UserEntity.builder()
+            .id(userId)
+            .email("atual@email.com")
+            .password("00000000")
+            .permission(currentPermission)
+            .build();
 
     @Test
     @DisplayName("Deve atualizar o usuário com sucesso.")
@@ -73,5 +67,20 @@ class UpdateUserTest extends UserServiceBaseTest {
         var exception = assertThrows(IllegalArgumentException.class,
                 () -> service.updateUser(userId, request));
         assertEquals("E-mail is already in use.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve ocorrer uma exceção caso o ID não esteja cadastrado.")
+    void shouldThrowErrorWhenUserIdIsNotRegistred() {
+        //ARRANGE
+        var request = new UserPermissionRequest("novo@email.com", "12345678", (short) 2);
+        doReturn(Optional.empty()).when(repository).findById(any());
+
+        //ACT & ASSERT
+        var exception = assertThrows(NoSuchElementException.class,
+                () -> service.updateUser(userId, request));
+        assertEquals("User doesn't exists.", exception.getMessage());
+        verify(repository, times(1)).findById(any());
+        verifyNoMoreInteractions(repository);
     }
 }

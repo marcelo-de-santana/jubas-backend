@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class FindPermissionsAndUsersTest extends PermissionServiceBaseTest {
@@ -23,4 +23,5 @@ public class FindPermissionsAndUsersTest extends PermissionServiceBaseTest {
         assertNotNull(service.findPermissionsAndUsers());
         verify(repository, times(1)).findAll();
     }
+
 }

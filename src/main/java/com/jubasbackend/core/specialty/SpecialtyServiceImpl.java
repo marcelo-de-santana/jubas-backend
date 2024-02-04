@@ -1,8 +1,8 @@
 package com.jubasbackend.core.specialty;
 
 import com.jubasbackend.core.category.CategoryEntity;
-import com.jubasbackend.core.specialty.dto.SpecialtyRequest;
 import com.jubasbackend.core.specialty.dto.SpecialtyCategoryResponse;
+import com.jubasbackend.core.specialty.dto.SpecialtyRequest;
 import com.jubasbackend.core.specialty.dto.SpecialtyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,11 +16,6 @@ import java.util.UUID;
 public class SpecialtyServiceImpl implements SpecialtyService {
 
     private final SpecialtyRepository repository;
-
-    public SpecialtyEntity findSpecialtyOnRepository(UUID specialtyId) {
-        return repository.findById(specialtyId).orElseThrow(
-                () -> new NoSuchElementException("Unregistered Specialty."));
-    }
 
     @Override
     public List<SpecialtyResponse> findSpecialties() {
@@ -56,7 +51,11 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 
     @Override
     public void deleteSpecialty(UUID specialtyId) {
-        var specialtyToDelete = findSpecialtyOnRepository(specialtyId);
-        repository.delete(specialtyToDelete);
+        repository.deleteById(specialtyId);
+    }
+
+    private SpecialtyEntity findSpecialtyOnRepository(UUID specialtyId) {
+        return repository.findById(specialtyId).orElseThrow(
+                () -> new NoSuchElementException("Unregistered Specialty."));
     }
 }

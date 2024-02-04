@@ -1,10 +1,6 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserRequest;
-import com.jubasbackend.core.user.dto.UserPermissionRequest;
-import com.jubasbackend.core.user.dto.UserPermissionResponse;
-import com.jubasbackend.core.user.dto.UserPermissionProfileResponse;
-import com.jubasbackend.core.user.dto.UserResponse;
+import com.jubasbackend.core.user.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,27 +15,33 @@ public class UserController implements UserApi {
 
     private final UserService service;
 
-    public ResponseEntity<List<UserResponse>> findAllUsers() {
-        return ResponseEntity.ok(service.findAllUsers());
+    @Override
+    public ResponseEntity<List<UserResponse>> findUsers() {
+        return ResponseEntity.ok(service.findUsers());
     }
 
-    public ResponseEntity<UserPermissionResponse> findUserById(UUID userId) {
-        return ResponseEntity.ok(service.findUserById(userId));
+    @Override
+    public ResponseEntity<UserPermissionResponse> findUser(UUID userId) {
+        return ResponseEntity.ok(service.findUser(userId));
     }
 
-    public ResponseEntity<UserPermissionProfileResponse> findProfilesByUserId(UUID userId) {
-        return ResponseEntity.ok(service.findProfilesByUserId(userId));
+    @Override
+    public ResponseEntity<UserPermissionProfileResponse> findProfilesByUser(UUID userId) {
+        return ResponseEntity.ok(service.findProfilesByUser(userId));
     }
 
+    @Override
     public ResponseEntity<UserPermissionResponse> createUser(UserPermissionRequest request) {
         UserPermissionResponse userCreated = service.createUser(request);
         return ResponseEntity.created(URI.create("/user/" + userCreated.id())).body(userCreated);
     }
 
-    public ResponseEntity<UserPermissionResponse> findUserAccount(UserRequest request) {
-        return ResponseEntity.ok(service.findUserAccount(request));
+    @Override
+    public ResponseEntity<UserPermissionResponse> authenticateUserAccount(UserRequest request) {
+        return ResponseEntity.ok(service.authenticateUserAccount(request));
     }
 
+    @Override
     public ResponseEntity<UserPermissionResponse> updateUser(UUID userId, UserPermissionRequest request) {
         return ResponseEntity.ok(service.updateUser(userId, request));
     }

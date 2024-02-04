@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@Tag(name = "WorkingHour")
+@Tag(name = "WorkingHours")
+@RequestMapping("/working-hours")
 public interface WorkingHourApi {
 
     @Operation(summary = "Buscar jornadas de trabalho.", method = "GET")
@@ -28,7 +29,7 @@ public interface WorkingHourApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Cadastro realizado com sucesso.", content = @Content),
             @ApiResponse(responseCode = "400", description = "Parâmetros inválidos.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Jornada de trabalho já cadastrada.", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Jornada de trabalho já cadastrada.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar jornada de trabalho.", content = @Content)
     })
     @PostMapping

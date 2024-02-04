@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@Tag(name = "Specialty")
+@Tag(name = "Specialties")
+@RequestMapping("/specialties")
 public interface SpecialtyApi {
 
     @Operation(summary = "Buscar especialidades.", method = "GET")

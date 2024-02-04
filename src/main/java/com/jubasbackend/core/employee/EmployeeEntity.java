@@ -32,4 +32,4 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<EmployeeSpecialtyEntity> specialties;
 
-}
+    }

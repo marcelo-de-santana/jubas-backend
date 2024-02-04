@@ -32,8 +32,4 @@ public record WorkingHourRequest(
         LocalTime endInterval
 ) {
 
-        public static WorkingHourRequest create(String startTime, String endTime, String startInterval, String endInterval) {
-                return new WorkingHourRequest(parse(startTime), parse(endTime), parse(startInterval), parse(endInterval));
-        }
-
 }

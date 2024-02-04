@@ -1,11 +1,7 @@
 package com.jubasbackend.core.user;
 
 import com.jubasbackend.core.permission.PermissionEntity;
-import com.jubasbackend.core.user.dto.UserRequest;
-import com.jubasbackend.core.user.dto.UserPermissionRequest;
-import com.jubasbackend.core.user.dto.UserPermissionProfileResponse;
-import com.jubasbackend.core.user.dto.UserPermissionResponse;
-import com.jubasbackend.core.user.dto.UserResponse;
+import com.jubasbackend.core.user.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,20 +15,23 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
 
-    public UserEntity findUserByIdOnRepository(UUID id) {
-        return repository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("User doesn't exists."));
+    @Override
+    public List<UserResponse> findUsers() {
+        return repository.findAll().stream().map(UserResponse::new).toList();
     }
 
-    public UserEntity findUserByEmailOnRepository(String email) {
-        return repository.findByEmail(email).orElseThrow(
-                () -> new NoSuchElementException("The provided email is not registered in our system."));
+    @Override
+    public UserPermissionResponse findUser(UUID userId) {
+        return new UserPermissionResponse(findUserOnRepository(userId));
     }
 
-    public boolean existsByEmailOnRepository(String email) {
-        return repository.existsByEmail(email);
+    @Override
+    public UserPermissionProfileResponse findProfilesByUser(UUID userId) {
+        var user = findUserOnRepository(userId);
+        return new UserPermissionProfileResponse(user);
     }
 
+    @Override
     public UserPermissionResponse createUser(UserPermissionRequest request) {
         if (existsByEmailOnRepository(request.email())) {
             throw new IllegalArgumentException("User already exists.");
@@ -42,29 +41,18 @@ public class UserServiceImpl implements UserService {
         return new UserPermissionResponse(repository.save(userToSave));
     }
 
-    public UserPermissionResponse findUserAccount(UserRequest request) {
-        var user = findUserByEmailOnRepository(request.email());
+    @Override
+    public UserPermissionResponse authenticateUserAccount(UserRequest request) {
+        var user = findUserOnRepository(request.email());
         if (!request.password().equals(user.getPassword())) {
             throw new IllegalArgumentException("Incorrect Email or Password.");
         }
         return new UserPermissionResponse(user);
     }
 
-    public UserPermissionResponse findUserById(UUID userId) {
-        return new UserPermissionResponse(findUserByIdOnRepository(userId));
-    }
-
-    public UserPermissionProfileResponse findProfilesByUserId(UUID userId) {
-        var user = findUserByIdOnRepository(userId);
-        return new UserPermissionProfileResponse(user);
-    }
-
-    public List<UserResponse> findAllUsers() {
-        return repository.findAll().stream().map(UserResponse::new).toList();
-    }
-
+    @Override
     public UserPermissionResponse updateUser(UUID id, UserPermissionRequest request) {
-        UserEntity userToUpdate = findUserByIdOnRepository(id);
+        UserEntity userToUpdate = findUserOnRepository(id);
 
         if (!request.email().isBlank()) {
             if (!userToUpdate.getEmail().equals(request.email()) && existsByEmailOnRepository(request.email())) {
@@ -84,4 +72,17 @@ public class UserServiceImpl implements UserService {
         return new UserPermissionResponse(repository.save(userToUpdate));
     }
 
+    private UserEntity findUserOnRepository(UUID id) {
+        return repository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("User doesn't exists."));
+    }
+
+    private UserEntity findUserOnRepository(String email) {
+        return repository.findByEmail(email).orElseThrow(
+                () -> new NoSuchElementException("The provided email is not registered in our system."));
+    }
+
+    private boolean existsByEmailOnRepository(String email) {
+        return repository.existsByEmail(email);
+    }
 }

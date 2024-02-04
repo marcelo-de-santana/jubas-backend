@@ -8,14 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class CreateCategoryTestEnum extends CategoryEnumServiceBaseTest {
+class CreateCategoryTest extends CategoryServiceBaseTest {
 
-    String categoryName;
-
-    @BeforeEach()
-    void setup() {
-        this.categoryName = "Cabelo de cabelo masculino";
-    }
+    String categoryName = "Cabelo de cabelo masculino";
 
     @Test
     @DisplayName("Deve ocorrer uma exceção ao tentar cadastrar uma categoria existente.")
