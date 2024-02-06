@@ -3,8 +3,8 @@ package com.jubasbackend.core.employee;
 import com.jubasbackend.core.appointment.AppointmentEntity;
 import com.jubasbackend.core.appointment.AppointmentRepository;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
-import com.jubasbackend.core.employee.dto.EmployeeWorkingHourResponse;
-import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
+import com.jubasbackend.core.employee.dto.EmployeeWithoutSpecialtiesResponse;
+import com.jubasbackend.core.employee.dto.EmployeeResponse;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
@@ -33,8 +33,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final AppointmentRepository appointmentRepository;
 
     @Override
-    public EmployeeWorkingHourSpecialtiesResponse findEmployee(UUID employeeId) {
-        return new EmployeeWorkingHourSpecialtiesResponse(findEmployeeInTheRepository(employeeId));
+    public List<EmployeeResponse> findEmployees() {
+        return employeeRepository.findAll().stream().map(EmployeeResponse::new).toList();
+    }
+
+    @Override
+    public EmployeeResponse findEmployee(UUID employeeId) {
+        return new EmployeeResponse(findEmployeeInTheRepository(employeeId));
     }
 
     @Override
@@ -58,7 +63,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeWorkingHourResponse createEmployee(EmployeeRequest request) {
+    public EmployeeWithoutSpecialtiesResponse createEmployee(EmployeeRequest request) {
         if (employeeRepository.existsById(request.profileId())) {
             throw new IllegalArgumentException("Profile ID already in use.");
         }
@@ -68,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         var newEmployee = new EmployeeEntity(request.profileId(), profile, workingHour, new ArrayList<>());
 
-        return new EmployeeWorkingHourResponse(employeeRepository.save(newEmployee));
+        return new EmployeeWithoutSpecialtiesResponse(employeeRepository.save(newEmployee));
     }
 
     @Override

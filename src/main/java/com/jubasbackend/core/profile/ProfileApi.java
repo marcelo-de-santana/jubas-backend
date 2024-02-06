@@ -25,14 +25,14 @@ public interface ProfileApi {
     @GetMapping
     ResponseEntity<List<ProfileResponse>> findProfiles();
 
-    @Operation(summary = "Buscar perfis com usuário e permissão associadas", method = "GET")
+    @Operation(summary = "Buscar perfis e usuário", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sucesso na recuperação dos perfis com usuários e permissões."),
             @ApiResponse(responseCode = "404", description = "Nenhum perfil encontrado.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Erro ao buscar os perfis.", content = @Content)
     })
     @GetMapping("/user/permission")
-    ResponseEntity<List<ProfileUserPermissionResponse>> findProfilesWithUserAndPermission();
+    ResponseEntity<List<ProfileUserPermissionResponse>> findProfilesAndUser();
 
     @Operation(summary = "Cadastrar novo perfil de usuário.", method = "POST")
     @ApiResponses(value = {

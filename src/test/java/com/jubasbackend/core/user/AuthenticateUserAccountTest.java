@@ -1,7 +1,7 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.permission.PermissionEntity;
 import com.jubasbackend.core.user.dto.UserRequest;
+import com.jubasbackend.core.user.enums.PermissionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class AuthenticateUserAccountTest extends UserServiceBaseTest {
     @DisplayName("Deve autenticar o usuário com sucesso.")
     void shouldAuthenticateUserSuccessfully() {
         //ARRANGE
-        var permission = PermissionEntity.builder().id((short) 3).build();
+        var permission = PermissionType.CLIENTE;
         var user = UserEntity.builder().email("cliente@gmail.com").password("12345678").permission(permission).build();
         doReturn(Optional.of(user)).when(repository).findByEmail(request.email());
 
@@ -34,7 +34,7 @@ class AuthenticateUserAccountTest extends UserServiceBaseTest {
         //ASSERT
         assertNotNull(response);
         assertEquals(request.email(), response.email());
-        assertNotNull(response.permission().id());
+        assertNotNull(response.permission());
         verify(repository, times(1)).findByEmail(request.email());
         verifyNoMoreInteractions(repository);
     }
@@ -43,7 +43,7 @@ class AuthenticateUserAccountTest extends UserServiceBaseTest {
     @DisplayName("Deve ocorrer uma exceção caso a senha esteja incorreta.")
     void shouldThrowErrorWhenIncorrectPassword() {
         //ARRANGE
-        var permission = PermissionEntity.builder().id((short) 3).build();
+        var permission = PermissionType.CLIENTE;
         var user = UserEntity.builder().email("cliente@gmail.com").password("12345678910").permission(permission).build();
         doReturn(Optional.ofNullable(user)).when(repository).findByEmail(request.email());
 

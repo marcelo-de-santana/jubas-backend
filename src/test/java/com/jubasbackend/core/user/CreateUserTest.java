@@ -1,12 +1,10 @@
 package com.jubasbackend.core.user;
 
 import com.jubasbackend.core.user.dto.UserPermissionRequest;
+import com.jubasbackend.core.user.enums.PermissionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,7 +15,7 @@ class CreateUserTest extends UserServiceBaseTest {
 
     @BeforeEach
     void setup() {
-        this.request = new UserPermissionRequest("novoCliente@teste.com", "12345678", (short) 3);
+        this.request = new UserPermissionRequest("novoCliente@teste.com", "12345678", PermissionType.CLIENTE);
     }
 
     @Test
@@ -34,7 +32,7 @@ class CreateUserTest extends UserServiceBaseTest {
         //ASSERT
         assertNotNull(response);
         assertEquals(request.email(), response.email());
-        assertEquals(request.permissionId(), response.permission().id());
+        assertEquals(request.permission(), response.permission());
         verify(repository, times(1)).existsByEmail(request.email());
         verify(repository, times(1)).save(any(UserEntity.class));
         verifyNoMoreInteractions(repository);

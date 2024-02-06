@@ -1,11 +1,10 @@
 package com.jubasbackend.core.employee;
 
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
-import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
+import com.jubasbackend.core.employee.dto.EmployeeResponse;
 import com.jubasbackend.core.workingHour.dto.ScheduleTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -21,7 +20,12 @@ public class EmployeeController implements EmployeeApi {
     private final EmployeeService service;
 
     @Override
-    public ResponseEntity<EmployeeWorkingHourSpecialtiesResponse> findEmployee(UUID employeeId) {
+    public ResponseEntity<List<EmployeeResponse>> findEmployees() {
+        return ResponseEntity.ok(service.findEmployees());
+    }
+
+    @Override
+    public ResponseEntity<EmployeeResponse> findEmployee(UUID employeeId) {
         return ResponseEntity.ok(service.findEmployee(employeeId));
     }
 

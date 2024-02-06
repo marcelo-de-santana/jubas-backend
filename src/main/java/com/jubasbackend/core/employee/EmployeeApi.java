@@ -2,7 +2,7 @@ package com.jubasbackend.core.employee;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
-import com.jubasbackend.core.employee.dto.EmployeeWorkingHourSpecialtiesResponse;
+import com.jubasbackend.core.employee.dto.EmployeeResponse;
 import com.jubasbackend.core.workingHour.dto.ScheduleTime;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,14 +23,22 @@ import java.util.UUID;
 @RequestMapping("/employees")
 public interface EmployeeApi {
 
-    @Operation(summary = "Buscar todos os parâmetros do funcionário.", method = "GET")
+    @Operation(summary = "Buscar todos os funcionários cadastrados.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar funcionários.", content = @Content),
+    })
+    @GetMapping
+    ResponseEntity<List<EmployeeResponse>> findEmployees();
+
+    @Operation(summary = "Buscar funcionário por id.", method = "GET")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Funcionário não cadastrado.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro ao buscar parâmetros do funcionário.", content = @Content)
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar funcionário.", content = @Content)
     })
     @GetMapping("/{employeeId}")
-    ResponseEntity<EmployeeWorkingHourSpecialtiesResponse> findEmployee(@PathVariable UUID employeeId);
+    ResponseEntity<EmployeeResponse> findEmployee(@PathVariable UUID employeeId);
 
     @Operation(summary = "Buscar agenda de atendimento do funcionário.", method = "GET")
     @ApiResponses(value = {

@@ -1,7 +1,8 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.permission.PermissionEntity;
+
 import com.jubasbackend.core.user.dto.UserPermissionRequest;
+import com.jubasbackend.core.user.enums.PermissionType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class UpdateUserTest extends UserServiceBaseTest {
 
     UUID userId = UUID.randomUUID();
     ;
-    PermissionEntity currentPermission = PermissionEntity.builder().id((short) 3).build();
+    PermissionType currentPermission = PermissionType.CLIENTE;
     UserEntity currentUser = UserEntity.builder()
             .id(userId)
             .email("atual@email.com")
@@ -29,8 +30,8 @@ class UpdateUserTest extends UserServiceBaseTest {
     @DisplayName("Deve atualizar o usuário com sucesso.")
     void shouldUpdateUserSuccessfully() {
         //ARRANGE
-        var newPermission = PermissionEntity.builder().id((short) 2).build();
-        var request = new UserPermissionRequest("novo@email.com", "12345678", (short) 2);
+        var newPermission = PermissionType.BARBEIRO;
+        var request = new UserPermissionRequest("novo@email.com", "12345678", newPermission);
         var updatedUser = UserEntity.builder()
                 .id(userId)
                 .email(request.email())
@@ -48,7 +49,7 @@ class UpdateUserTest extends UserServiceBaseTest {
         //ASSERT
         assertNotNull(response);
         assertEquals(request.email(), response.email());
-        assertEquals(request.permissionId(), response.permission().id());
+        assertEquals(newPermission, response.permission());
         verify(repository, times(1)).findById(userId);
         verify(repository, times(1)).existsByEmail(request.email());
         verify(repository, times(1)).save(any(UserEntity.class));
@@ -59,7 +60,7 @@ class UpdateUserTest extends UserServiceBaseTest {
     @DisplayName("Deve ocorrer uma exceção caso o e-mail já esteja em uso.")
     void shouldThrowErrorWhenEmailIsInUse() {
         //ARRANGE
-        var request = new UserPermissionRequest("existente@gmail.com", "012345678", (short) 3);
+        var request = new UserPermissionRequest("existente@gmail.com", "012345678", PermissionType.CLIENTE);
         doReturn(Optional.of(currentUser)).when(repository).findById(userId);
         doReturn(true).when(repository).existsByEmail(request.email());
 
@@ -73,7 +74,7 @@ class UpdateUserTest extends UserServiceBaseTest {
     @DisplayName("Deve ocorrer uma exceção caso o ID não esteja cadastrado.")
     void shouldThrowErrorWhenUserIdIsNotRegistred() {
         //ARRANGE
-        var request = new UserPermissionRequest("novo@email.com", "12345678", (short) 2);
+        var request = new UserPermissionRequest("novo@email.com", "12345678", PermissionType.BARBEIRO);
         doReturn(Optional.empty()).when(repository).findById(any());
 
         //ACT & ASSERT

@@ -7,14 +7,14 @@ import com.jubasbackend.core.workingHour.dto.WorkingHourResponse;
 import java.util.List;
 import java.util.UUID;
 
-public record EmployeeWorkingHourSpecialtiesResponse(
+public record EmployeeResponse(
         UUID id,
         String name,
         boolean statusProfile,
         WorkingHourResponse workingHour,
         List<SpecialtyResponse> specialties
 ) {
-    public EmployeeWorkingHourSpecialtiesResponse(EmployeeEntity employee) {
+    public EmployeeResponse(EmployeeEntity employee) {
         this(
                 employee.getId(),
                 employee.getProfile().getName(),

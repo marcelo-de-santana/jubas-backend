@@ -1,4 +1,6 @@
 package com.jubasbackend.core.user.dto;
 
-public record UserPermissionRequest(String email, String password, Short permissionId) {
+import com.jubasbackend.core.user.enums.PermissionType;
+
+public record UserPermissionRequest(String email, String password, PermissionType permission) {
 }

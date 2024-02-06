@@ -1,5 +1,6 @@
 package com.jubasbackend.core.user;
 
+import com.jubasbackend.core.user.enums.PermissionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +15,7 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByEmailAndPassword(String email, String password);
 
-    List<UserEntity> findUsersByPermissionId(Short permissionId);
+    List<UserEntity> findAllByPermission(PermissionType permissionId);
 
     Optional<UserEntity> findByEmail(String email);
 

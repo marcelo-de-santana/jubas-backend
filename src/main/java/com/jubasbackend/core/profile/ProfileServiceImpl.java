@@ -32,7 +32,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public List<ProfileUserPermissionResponse> findProfilesWithUserAndPermission() {
+    public List<ProfileUserPermissionResponse> findProfilesAndUser() {
         var profiles = repository.findAll();
         return profiles.stream().map(ProfileUserPermissionResponse::new).toList();
     }

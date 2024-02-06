@@ -1,8 +1,8 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.permission.PermissionEntity;
 import com.jubasbackend.core.user.dto.UserPermissionRequest;
 import com.jubasbackend.core.profile.ProfileEntity;
+import com.jubasbackend.core.user.enums.PermissionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -35,14 +35,12 @@ public class UserEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<ProfileEntity> profile;
 
-    @ManyToOne
     @NotNull
-    @JoinColumn(name = "permission_id")
-    private PermissionEntity permission;
+    private PermissionType permission;
 
     public UserEntity(UserPermissionRequest request) {
         this.email = request.email();
         this.password = request.password();
-        this.permission = PermissionEntity.builder().id(request.permissionId()).build();
+        this.permission = request.permission();
     }
 }

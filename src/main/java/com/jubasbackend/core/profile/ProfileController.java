@@ -20,8 +20,8 @@ public class ProfileController implements ProfileApi {
     }
 
     @Override
-    public ResponseEntity<List<ProfileUserPermissionResponse>> findProfilesWithUserAndPermission() {
-        return ResponseEntity.ok(service.findProfilesWithUserAndPermission());
+    public ResponseEntity<List<ProfileUserPermissionResponse>> findProfilesAndUser() {
+        return ResponseEntity.ok(service.findProfilesAndUser());
     }
 
     @Override

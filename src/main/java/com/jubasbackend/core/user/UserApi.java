@@ -1,10 +1,6 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserRequest;
-import com.jubasbackend.core.user.dto.UserPermissionRequest;
-import com.jubasbackend.core.user.dto.UserPermissionResponse;
-import com.jubasbackend.core.user.dto.UserPermissionProfileResponse;
-import com.jubasbackend.core.user.dto.UserResponse;
+import com.jubasbackend.core.user.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

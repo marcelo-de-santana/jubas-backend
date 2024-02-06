@@ -9,7 +9,7 @@ public interface ProfileService {
 
     List<ProfileResponse> findProfiles();
 
-    List<ProfileUserPermissionResponse> findProfilesWithUserAndPermission();
+    List<ProfileUserPermissionResponse> findProfilesAndUser();
 
     ProfileResponse updateProfile(UUID profileId, ProfileRequest request);
 

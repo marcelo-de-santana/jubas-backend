@@ -5,13 +5,13 @@ import com.jubasbackend.core.workingHour.dto.WorkingHourResponse;
 
 import java.util.UUID;
 
-public record EmployeeWorkingHourResponse(
+public record EmployeeWithoutSpecialtiesResponse(
         UUID id,
         String name,
         boolean statusProfile,
         WorkingHourResponse workingHour
 ) {
-    public EmployeeWorkingHourResponse(EmployeeEntity entity) {
+    public EmployeeWithoutSpecialtiesResponse(EmployeeEntity entity) {
         this(
                 entity.getId(),
                 entity.getProfile().getName(),

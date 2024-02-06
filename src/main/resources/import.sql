@@ -1,17 +1,18 @@
-INSERT INTO tb_permission VALUES (1, 'Admin');
-INSERT INTO tb_permission VALUES (2, 'Barbeiro');
-INSERT INTO tb_permission VALUES (3, 'Cliente');
+# INSERT INTO tb_permission VALUES (1, 'Admin');
+# INSERT INTO tb_permission VALUES (2, 'Barbeiro');
+# INSERT INTO tb_permission VALUES (3, 'Cliente');
 
-INSERT INTO tb_user (id, email, password, permission_id) VALUES (0x2EBA17A0F7384107BF5A85BE53EC0FE3,'admin@jubas.com', '12345678',1);
-INSERT INTO tb_user (id, email, password, permission_id) VALUES (0xC2FCC2E5D07748BA8604E735D77168EE,'gerente@jubas.com','12345678',2);
-INSERT INTO tb_user (id, email, password, permission_id) VALUES (0xD526F2C160B047198C5DFDB60CE7E72A,'gabriel.navalha@jubas.com','12345678',2);
-INSERT INTO tb_user (id, email, password, permission_id) VALUES (0xDEECD1007DEC4DBDAC0F4211650AE528,'gerson.castro@jubas.com','12345678',2);
-INSERT INTO tb_user (id, email, password, permission_id) VALUES (0xE8488082ACD9436F9AEBC22F9F409133, 'oliver.castro@jubas.com', '12345678', 2);
-INSERT INTO tb_user (id, email, password, permission_id) VALUES (0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9, 'cliente@gmail.com', '12345678', 3);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0x2EBA17A0F7384107BF5A85BE53EC0FE3,'admin@jubas.com','12345678',0);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xC2FCC2E5D07748BA8604E735D77168EE,'gerente@jubas.com','12345678',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xD526F2C160B047198C5DFDB60CE7E72A,'gabriel.navalha@jubas.com','12345678',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xDEECD1007DEC4DBDAC0F4211650AE528,'gerson.castro@jubas.com','12345678',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xE8488082ACD9436F9AEBC22F9F409133,'oliver.castro@jubas.com','12345678',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9,'cliente@gmail.com','12345678',2);
 
 INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_interval) VALUES (1, '09:00:00', '18:00:00', '13:00:00', '14:00:00');
 INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_interval) VALUES (2, '08:00:00', '19:00:00', '13:00:00', '14:00:00');
 INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_interval) VALUES (3, '10:00:00', '20:00:00', '13:00:00', '14:00:00');
+
 -- CLIENT
 INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (0xE8CB8B11508E4E099DBD6FADF015E28C,'Pai do Fulano','00000000000',true,0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9);
 INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (0x0B8B82F6A8EF474893EAFA3FCBDC8D8B,'Filho de Fulano','00000000001',true,0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9);

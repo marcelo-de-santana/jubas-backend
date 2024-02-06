@@ -1,7 +1,7 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.permission.PermissionEntity;
 import com.jubasbackend.core.user.dto.*;
+import com.jubasbackend.core.user.enums.PermissionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -65,9 +65,8 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setPassword(request.password());
         }
 
-        if (!request.permissionId().toString().isBlank()) {
-            var newPermission = PermissionEntity.builder().id(request.permissionId()).build();
-            userToUpdate.setPermission(newPermission);
+        if (!request.permission().toString().isBlank()) {
+            userToUpdate.setPermission(request.permission());
         }
         return new UserPermissionResponse(repository.save(userToUpdate));
     }
@@ -80,6 +79,10 @@ public class UserServiceImpl implements UserService {
     private UserEntity findUserOnRepository(String email) {
         return repository.findByEmail(email).orElseThrow(
                 () -> new NoSuchElementException("The provided email is not registered in our system."));
+    }
+
+    private List<UserEntity> findUsersByPermission(PermissionType permission){
+        return repository.findAllByPermission(permission);
     }
 
     private boolean existsByEmailOnRepository(String email) {
