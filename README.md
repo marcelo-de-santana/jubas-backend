@@ -34,7 +34,9 @@ classDiagram
     
     Specialty "n" -- "1" Category : belongs
 
-    Profile "2" -- "1" Appointments : contains
+    Employee "1" -- "1" Appointments : contains
+
+    Profile "1" -- "1" Appointments : contains
     
     Specialty "1" -- "1" Appointments : contains
     
