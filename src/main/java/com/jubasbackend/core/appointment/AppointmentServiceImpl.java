@@ -1,83 +1,97 @@
 package com.jubasbackend.core.appointment;
 
 import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
+import com.jubasbackend.core.appointment.dto.AppointmentResponse;
+import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
+import com.jubasbackend.core.appointment.dto.ScheduleResponse;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
-import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
-import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
-import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithoutId;
-import com.jubasbackend.exception.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.jubasbackend.utils.DateTimeUtils.getEndDay;
+import static com.jubasbackend.utils.DateTimeUtils.getSelectedDate;
 
 @Service
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService{
 
     private final AppointmentRepository appointmentRepository;
-    private final EmployeeSpecialtyRepository employeeSpecialtyRepository;
     private final EmployeeRepository employeeRepository;
 
+    @Override
+    public List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate) {
+
+        var employees = employeeRepository.findAll();
+        if (employees.isEmpty())
+            throw new NoSuchElementException("No employees.");
+
+        var appointments = findAppointmentsInTheRepository(requestDate);
+
+        if (appointments.isEmpty())
+            return employees.stream().map(ScheduleResponse::new).toList();
+
+        return employees.stream().map(employee -> new ScheduleResponse(employee, appointments)).toList();
+    }
+
+    @Override
+    public AppointmentResponse findAppointment(UUID appointmentId) {
+        return new AppointmentResponse(findAppointmentInTheRepository(appointmentId));
+    }
 
     @Override
     public AppointmentEntity createAppointment(AppointmentCreateRequest request) {
+        var employee = findEmployeeInTheRepository(request.employeeId());
+        if (!employee.makesSpecialty(request.specialtyId()))
+            throw new IllegalArgumentException("Employee doesn't makes specialty.");
 
-        var compoundEntity = findEmployeeSpecialtyInTheRepository(request.employeeId(), request.specialtyId());
-        var newAppointment = new AppointmentEntity(request, compoundEntity);
+        var registeredAppointments = findAppointmentsInTheRepository(request.date(), request.employeeId(), request.clientId());
+        var newAppointment = new AppointmentEntity(request, employee);
 
-        return newAppointment;
+        if (!registeredAppointments.isEmpty())
+            registeredAppointments.forEach(existingAppointment -> existingAppointment.compare(newAppointment));
+
+        return appointmentRepository.save(newAppointment);
+    }
+
+    @Override
+    public void updateAppointment(UUID appointmentId, AppointmentUpdateRequest request) {
+        //REALIZAR VERIFICAÇÕES DE FORMA QUE NÃO GERE CONFLITO  NA AGENDA
+        //DESCONSIDERAR O AGENDAMENTO ATUAL NA HORA DE SELECIONAR O OUTRO
+        //LEMBRAR DE VERIFICAR, PARA NÃO GERAR CONFLITOS NA AGENDA
+    }
+
+    @Override
+    public void cancelAppointment(UUID appointmentId) {
+        //REGRAS
+        //VERIFICAR, SE O HORÁRIO JÁ PASSOU, REMOVE, SENÃO COLOCA COMO CANCELADO
+        //IMPLICAÇÃO NO CADASTRO
+        //AO CLIENTE DEVE SER DADA A POSSIBILIDADE DE REAGENDAR O SERVIÇO NOVAMENTE, MESMO SENDO O MESMO DIA
+        //MODIFICAR REGRA DE CADASTRO
+    }
+
+    private List<AppointmentEntity> findAppointmentsInTheRepository(Optional<LocalDate> date) {
+        var selectedDate = getSelectedDate(date);
+        return appointmentRepository.findAllByDateBetween(selectedDate, getEndDay(selectedDate));
+    }
+
+    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDate date, UUID employeeId, UUID clientId) {
+        var selectedDate = getSelectedDate(date);
+        return appointmentRepository.findAllByDateBetweenAndEmployeeIdOrClientId(selectedDate, getEndDay(selectedDate), employeeId, clientId);
     }
 
     private EmployeeEntity findEmployeeInTheRepository(UUID employeeId) {
-        return employeeRepository.findById(employeeId).orElseThrow(
-                () -> new NoSuchElementException("Employee doesn't registered."));
+        return employeeRepository.findById(employeeId).orElseThrow(() -> new NoSuchElementException("Employee doesn't registered."));
     }
 
-    private List<AppointmentEntity> findAppointmentsInTheRepository(AppointmentEntity appointment) {
-        return appointmentRepository.findAllByDateAndEmployeeIdOrClientId(
-                appointment.getDate(), appointment.getEmployee().getId(), appointment.getClient().getId());
+    private AppointmentEntity findAppointmentInTheRepository(UUID appointmentId) {
+        return appointmentRepository.findById(appointmentId).orElseThrow(() -> new NoSuchElementException("Appointment not found."));
     }
 
-    private EmployeeSpecialtyEntity findEmployeeSpecialtyInTheRepository(UUID employeeId, UUID specialtyId) {
-        return employeeSpecialtyRepository.findByEmployeeIdAndSpecialtyId(employeeId, specialtyId)
-                .orElseThrow(() -> new NoSuchElementException("Employee doesn't perform the specialty."));
-    }
-
-    //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
-    private void validateSameSpecialty(AppointmentEntity newSpecialty, AppointmentEntity existingAppointment) {
-        if (newSpecialty.getSpecialty().getId() == existingAppointment.getSpecialty().getId() && newSpecialty.getClient().getId() == existingAppointment.getClient().getId())
-            throw new IllegalArgumentException("The same profile cannot schedule two services for the same day.");
-    }
-
-    //VERIFICA SE O FIM DO ATENDIMENTO NÃO EXCEDE O INÍCIO DO PRÓXIMO
-    private void validateEndTimeOverlap(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.endTime().isAfter(existingAppointment.getDate().toLocalTime()) && newAppointment.endTime().isBefore(existingAppointment.endTime()))
-            throw new ConflictException("The end time of the service must not occur after the start time of another service.");
-    }
-
-    //VERIFICA SE O INÍCIO DO ATENDIMENTO NÃO SOBRESCREVE O FIM DO ANTERIOR
-    private void validateStartTimeOverlap(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.startTime().isAfter(existingAppointment.getDate().toLocalTime()) && newAppointment.startTime().isBefore(existingAppointment.endTime()))
-            throw new ConflictException("The start time of the service must not occur before the end time of another service.");
-    }
-
-    //VERIFICA SE NÃO HÁ AGENDAMENTO DENTRO DO PERÍODO
-    private void validateWithinTimePeriod(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.startTime().isBefore(existingAppointment.getDate().toLocalTime()) && newAppointment.endTime().isAfter(existingAppointment.endTime()))
-            throw new ConflictException("There is another appointment scheduled within the specified time period.");
-    }
-
-    //VERIFICA SE O INÍCIO OU O FIM DO NOVO HORÁRIO COINCIDE DOM O AGENDADO
-    private void validateStartOrEndConflict(AppointmentEntity newAppointment, AppointmentEntity existingAppointment) {
-        if (newAppointment.startTime().equals(existingAppointment.getDate().toLocalTime()) || newAppointment.endTime().equals(existingAppointment.endTime()))
-            throw new ConflictException("The start or end of the new schedule conflicts with the booked one.");
-    }
 }

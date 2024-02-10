@@ -2,7 +2,9 @@ package com.jubasbackend.core.appointment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.appointment.dto.AppointmentResponse;
+import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
+import com.jubasbackend.core.appointment.dto.ScheduleResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,7 +23,27 @@ import java.util.UUID;
 @RequestMapping("/appointments")
 public interface AppointmentApi {
 
-    @Operation(summary = "Cadastrar novo agendamento.", method = "GET")
+    @Operation(summary = "Buscar agendamentos.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamentos.", content = @Content)
+    })
+    @GetMapping
+    ResponseEntity<List<ScheduleResponse>> findAppointments(
+            @JsonFormat(pattern = "yyyy-MM-dd")
+            @RequestParam
+            Optional<LocalDate> date);
+
+    @Operation(summary = "Buscar agendamento.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamento.", content = @Content)
+    })
+    @GetMapping("/{appointmentId}")
+    ResponseEntity<AppointmentResponse> findAppointment(@PathVariable UUID appointmentId);
+
+    @Operation(summary = "Cadastrar novo agendamento.", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Agendamento realizado com sucesso."),
             @ApiResponse(responseCode = "401", description = "Especialidade já agendada para o cliente."),
@@ -31,4 +53,22 @@ public interface AppointmentApi {
     })
     @PostMapping
     ResponseEntity<Void> createAppointment(@Valid @RequestBody AppointmentCreateRequest request);
+
+    @Operation(summary = "Alterar agendamento.", method = "PATCH")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Alteração realizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro ao alterar o agendamento.")
+    })
+    @PatchMapping("/{appointmentId}")
+    ResponseEntity<Void> updateAppointment(@PathVariable UUID appointmentId, @RequestBody AppointmentUpdateRequest request);
+
+    @Operation(summary = "Cancelar agendamento.", method = "DELETE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Cancelamento realizado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro ao cancelar agendamento.")
+    })
+    @DeleteMapping("/{appointmentId}")
+    ResponseEntity<Void> cancelAppointment(@PathVariable UUID appointmentId);
 }

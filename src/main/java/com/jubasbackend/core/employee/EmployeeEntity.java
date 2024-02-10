@@ -1,7 +1,9 @@
 package com.jubasbackend.core.employee;
 
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.profile.ProfileEntity;
+import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.workingHour.WorkingHourEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,4 +34,16 @@ public class EmployeeEntity {
     @OneToMany(mappedBy = "employee")
     private List<EmployeeSpecialtyEntity> specialties;
 
+    public boolean makesSpecialty(UUID specialtyId) {
+        var compoundId = new EmployeeSpecialtyId(getId(), specialtyId);
+        var compoundEntity = EmployeeSpecialtyEntity.builder().id(compoundId).build();
+        return getSpecialties().contains(compoundEntity);
     }
+
+    public SpecialtyEntity getSpecialty(UUID specialtyId) {
+        var compoundId = new EmployeeSpecialtyId(getId(), specialtyId);
+        var compoundEntity = EmployeeSpecialtyEntity.builder().id(compoundId).build();
+        var indexOf = getSpecialties().indexOf(compoundEntity);
+        return getSpecialties().get(indexOf).getSpecialty();
+    }
+}

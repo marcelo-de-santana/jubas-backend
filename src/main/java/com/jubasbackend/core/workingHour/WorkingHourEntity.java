@@ -107,6 +107,7 @@ public class WorkingHourEntity {
         return availableTimes;
     }
 
+    //MODIFICAR PARA PRIVADO
     public boolean isInterval(LocalTime time) {
         return (time.equals(this.startInterval) || (time.isAfter(this.startInterval) && time.isBefore(this.endInterval)));
     }

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public enum AppointmentStatus {
-    MARCADO((short) 1), EM_ATENDIMENTO((short) 2), FINALIZADO((short) 3);
+    MARCADO((short) 0), EM_ATENDIMENTO((short) 1), FINALIZADO((short) 2);
 
     private final Short id;
 

@@ -39,6 +39,4 @@ public abstract class AppointmentServiceBaseTest extends TestEntityFactory {
     @Captor
     ArgumentCaptor<AppointmentEntity> appointmentEntityCaptor;
 
-
-
 }

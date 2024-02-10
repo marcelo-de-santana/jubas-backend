@@ -3,8 +3,8 @@ package com.jubasbackend.core.employee;
 import com.jubasbackend.core.appointment.AppointmentEntity;
 import com.jubasbackend.core.appointment.AppointmentRepository;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
-import com.jubasbackend.core.employee.dto.EmployeeWithoutSpecialtiesResponse;
 import com.jubasbackend.core.employee.dto.EmployeeResponse;
+import com.jubasbackend.core.employee.dto.EmployeeWithoutSpecialtiesResponse;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
@@ -19,8 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
+
+import static com.jubasbackend.utils.DateTimeUtils.getEndDay;
+import static com.jubasbackend.utils.DateTimeUtils.getSelectedDate;
 
 @Service
 @RequiredArgsConstructor
@@ -44,14 +46,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<? extends ScheduleTime> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> requestDate) {
-        LocalDateTime selectedDate;
-        if (requestDate.isEmpty() || requestDate.get().equals(LocalDate.now()))
-            selectedDate = LocalDateTime.now();
-        else
-            selectedDate = requestDate.get().atStartOfDay();
-
         //BUSCA HORÁRIOS AGENDADOS COM O FUNCIONÁRIO
-        var appointments = findAppointmentsInTheRepository(selectedDate, employeeId);
+        var appointments = findAppointmentsInTheRepository(requestDate, employeeId);
 
         //GERA OS HORÁRIOS
         var workingHours = findEmployeeInTheRepository(employeeId).getWorkingHour();
@@ -115,8 +111,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
-    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDateTime dateTime, UUID employeeId) {
-        return appointmentRepository.findAllByDateAndEmployeeId(dateTime, employeeId);
+    private List<AppointmentEntity> findAppointmentsInTheRepository(Optional<LocalDate> date, UUID employeeId) {
+        var selectedDate = getSelectedDate(date);
+        return appointmentRepository.findAllByDateBetweenAndEmployeeId(selectedDate, getEndDay(selectedDate), employeeId);
     }
 
 }

@@ -33,7 +33,7 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<UserPermissionResponse> createUser(UserPermissionRequest request) {
         UserPermissionResponse userCreated = service.createUser(request);
-        return ResponseEntity.created(URI.create("/user/" + userCreated.id())).body(userCreated);
+        return ResponseEntity.created(URI.create("/users/" + userCreated.id())).body(userCreated);
     }
 
     @Override

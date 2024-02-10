@@ -2,9 +2,10 @@ package com.jubasbackend.core.appointment;
 
 import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
 import com.jubasbackend.core.appointment.enums.AppointmentStatus;
-import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
+import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
+import com.jubasbackend.exception.ConflictException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +26,7 @@ public class AppointmentEntity {
     private UUID id;
     @ManyToOne
     @JoinColumn(name = "employee_id")
-    private ProfileEntity employee;
+    private EmployeeEntity employee;
     @ManyToOne
     @JoinColumn(name = "client_id")
     private ProfileEntity client;
@@ -37,12 +38,12 @@ public class AppointmentEntity {
     private Instant createdAt;
     private Instant updatedAt;
 
-    public AppointmentEntity(AppointmentCreateRequest request, EmployeeSpecialtyEntity compoundEntity) {
+    public AppointmentEntity(AppointmentCreateRequest request, EmployeeEntity employee) {
         this.client = ProfileEntity.builder().id(request.clientId()).build();
-        this.employee = compoundEntity.getEmployee().getProfile();
-        this.specialty = compoundEntity.getSpecialty();
-        this.appointmentStatus = request.appointmentStatus();
-        this.date = request.date();
+        this.employee = employee;
+        this.specialty = employee.getSpecialty(request.specialtyId());
+        this.appointmentStatus = AppointmentStatus.MARCADO;
+        this.date = request.dateTime();
         this.createdAt = Instant.now();
     }
 
@@ -59,4 +60,43 @@ public class AppointmentEntity {
     public boolean isInThePeriod(LocalTime time) {
         return (time.equals(startTime()) || (time.isAfter(startTime()) && time.isBefore(endTime())));
     }
+
+    public void compare(AppointmentEntity newAppointment) {
+        validateSameSpecialty(newAppointment.getSpecialty(), newAppointment.client);
+        validateStartTimeOverlap(newAppointment.startTime());
+        validateEndTimeOverlap(newAppointment.endTime());
+        validateStartOrEndConflict(newAppointment.startTime(), newAppointment.endTime());
+        validateWithinTimePeriod(newAppointment.startTime(), newAppointment.endTime());
+    }
+
+    //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
+    private void validateSameSpecialty(SpecialtyEntity specialty, ProfileEntity client) {
+        if (specialty.getId() == getSpecialty().getId() && client.getId() == getClient().getId())
+            throw new IllegalArgumentException("The same profile cannot schedule two services for the same day.");
+    }
+
+    //VERIFICA SE O FIM DO ATENDIMENTO NÃO EXCEDE O INÍCIO DO PRÓXIMO
+    private void validateEndTimeOverlap(LocalTime endTime) {
+        if (endTime.isAfter(getDate().toLocalTime()) && endTime.isBefore(endTime()))
+            throw new ConflictException("The end time of the service must not occur after the start time of another service.");
+    }
+
+    //VERIFICA SE O INÍCIO DO ATENDIMENTO NÃO SOBRESCREVE O FIM DO ANTERIOR
+    private void validateStartTimeOverlap(LocalTime startTime) {
+        if (startTime.isAfter(getDate().toLocalTime()) && startTime.isBefore(endTime()))
+            throw new ConflictException("The start time of the service must not occur before the end time of another service.");
+    }
+
+    //VERIFICA SE NÃO HÁ AGENDAMENTO DENTRO DO PERÍODO
+    private void validateWithinTimePeriod(LocalTime startTime, LocalTime endTime) {
+        if (startTime.isBefore(getDate().toLocalTime()) && endTime.isAfter(endTime()))
+            throw new ConflictException("There is another appointment scheduled within the specified time period.");
+    }
+
+    //VERIFICA SE O INÍCIO OU O FIM DO NOVO HORÁRIO COINCIDE COM O AGENDADO
+    private void validateStartOrEndConflict(LocalTime startTime, LocalTime endTime) {
+        if (startTime.equals(getDate().toLocalTime()) || endTime.equals(endTime()))
+            throw new ConflictException("The start or end of the new schedule conflicts with the booked one.");
+    }
+
 }

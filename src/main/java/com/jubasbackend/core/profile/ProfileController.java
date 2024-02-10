@@ -27,7 +27,7 @@ public class ProfileController implements ProfileApi {
     @Override
     public ResponseEntity<ProfileResponse> createProfile(ProfileUserRequest request) {
         var profileCreated = service.createProfile(request);
-        return ResponseEntity.created(URI.create("/profile/" + profileCreated.id())).body(profileCreated);
+        return ResponseEntity.created(URI.create("/profiles/" + profileCreated.id())).body(profileCreated);
     }
 
     @Override

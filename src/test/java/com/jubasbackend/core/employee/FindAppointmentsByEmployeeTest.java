@@ -1,8 +1,6 @@
 package com.jubasbackend.core.employee;
 
 import com.jubasbackend.core.appointment.AppointmentEntity;
-import com.jubasbackend.core.appointment.AppointmentServiceBaseTest;
-import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
@@ -67,13 +65,13 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
     void shouldReturnAppointmentsWhenThereIsNoSchedule() {
         //ARRANGE
         doReturn(Optional.of(employeeOfRepository)).when(employeeRepository).findById(uuidCaptor.capture());
-        doReturn(List.of()).when(appointmentRepository).findAllByDateAndEmployeeId(localDateTimeCaptor.capture(), uuidCaptor.capture());
+        doReturn(List.of()).when(appointmentRepository).findAllByDateBetweenAndEmployeeId(localDateTimeCaptor.capture(), localDateTimeCaptor.capture(), uuidCaptor.capture());
 
         //ACT
         var response = service.findAppointmentsByEmployee(employeeId, requestDate);
 
         //ASSERT
-        var dateTimeCaptured = localDateTimeCaptor.getValue();
+        var capturedDateTimes = localDateTimeCaptor.getAllValues();
         var capturedId = uuidCaptor.getAllValues();
 
         assertNotNull(response);
@@ -81,11 +79,11 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
         assertEquals(employeeId, capturedId.get(0));
         assertEquals(employeeId, capturedId.get(1));
 
-        assertEquals(requestDate.get(), dateTimeCaptured.toLocalDate());
+        assertEquals(requestDate.get(), capturedDateTimes.get(0).toLocalDate());
         assertEquals(18, response.size(), "Eighteen times returned.");
 
         verify(employeeRepository, times(1)).findById(capturedId.get(0));
-        verify(appointmentRepository, times(1)).findAllByDateAndEmployeeId(dateTimeCaptured, capturedId.get(1));
+        verify(appointmentRepository, times(1)).findAllByDateBetweenAndEmployeeId(capturedDateTimes.get(0), capturedDateTimes.get(1), capturedId.get(1));
         verifyNoMoreInteractions(employeeRepository);
     }
 
@@ -97,13 +95,13 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
         var dateOfAppointment = LocalDateTime.parse("2024-02-03T13:10");
         var listOfAppointments = List.of(AppointmentEntity.builder()
                 .id(UUID.randomUUID())
-                .employee(profileOfEmployee)
+                .employee(employeeOfRepository)
                 .specialty(specialty)
                 .date(dateOfAppointment)
                 .createdAt(Instant.parse("2024-02-01T12:30:45Z")).build());
 
         doReturn(Optional.of(employeeOfRepository)).when(employeeRepository).findById(any());
-        doReturn(listOfAppointments).when(appointmentRepository).findAllByDateAndEmployeeId(any(), any());
+        doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeId(any(),any(), any());
 
         //ACT
         var response = service.findAppointmentsByEmployee(employeeId, requestDate);
@@ -130,13 +128,13 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
         var dateOfAppointment = LocalDateTime.parse("2024-02-03T13:10");
         var appointment = AppointmentEntity.builder()
                 .id(UUID.randomUUID())
-                .employee(profileOfEmployee)
+                .employee(employeeOfRepository)
                 .specialty(specialty)
                 .date(dateOfAppointment)
                 .createdAt(Instant.parse("2024-02-01T12:30:45Z")).build();
 
         doReturn(Optional.of(employeeOfRepository)).when(employeeRepository).findById(any());
-        doReturn(List.of(appointment)).when(appointmentRepository).findAllByDateAndEmployeeId(any(), any());
+        doReturn(List.of(appointment)).when(appointmentRepository).findAllByDateBetweenAndEmployeeId(any(),any(), any());
 
         //ACT
         var response = service.findAppointmentsByEmployee(employeeId, requestDate);

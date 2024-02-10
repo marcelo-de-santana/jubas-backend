@@ -5,6 +5,8 @@ import com.jubasbackend.core.specialty.SpecialtyEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor

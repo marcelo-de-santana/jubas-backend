@@ -1,7 +1,9 @@
 package com.jubasbackend.core.appointment;
 
 import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.appointment.dto.AppointmentResponse;
+import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
+import com.jubasbackend.core.appointment.dto.ScheduleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,8 +21,30 @@ public class AppointmentController implements AppointmentApi {
     private final AppointmentService service;
 
     @Override
+    public ResponseEntity<List<ScheduleResponse>> findAppointments(Optional<LocalDate> date) {
+        return ResponseEntity.ok(service.findAppointments(date));
+    }
+
+    @Override
+    public ResponseEntity<AppointmentResponse> findAppointment(UUID appointmentId) {
+        return ResponseEntity.ok(service.findAppointment(appointmentId));
+    }
+
+    @Override
     public ResponseEntity<Void> createAppointment(AppointmentCreateRequest request) {
         var createdAppointment = service.createAppointment(request);
-        return ResponseEntity.created(URI.create("/appointment/" + createdAppointment.getId())).build();
+        return ResponseEntity.created(URI.create("/appointments/" + createdAppointment.getId())).build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateAppointment(UUID appointmentId, AppointmentUpdateRequest request) {
+        service.updateAppointment(appointmentId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelAppointment(UUID appointmentId) {
+        service.cancelAppointment(appointmentId);
+        return ResponseEntity.noContent().build();
     }
 }

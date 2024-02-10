@@ -26,7 +26,7 @@ public class SpecialtyController implements SpecialtyApi {
     @Override
     public ResponseEntity<SpecialtyCategoryResponse> createSpecialty(SpecialtyRequest request) {
         var specialtyCreated = service.createSpecialty(request);
-        return ResponseEntity.created(URI.create("/specialty/" + specialtyCreated.id())).body(specialtyCreated);
+        return ResponseEntity.created(URI.create("/specialties/" + specialtyCreated.id())).body(specialtyCreated);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class CategoryController implements CategoryApi {
     @Override
     public ResponseEntity<CategoryResponse> createCategory(String name) {
         var categoryCreated = service.createCategory(name);
-        return ResponseEntity.created(URI.create("/category/" + categoryCreated.id())).build();
+        return ResponseEntity.created(URI.create("/categories/" + categoryCreated.id())).build();
     }
 
     @Override

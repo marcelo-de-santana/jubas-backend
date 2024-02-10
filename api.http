@@ -1,0 +1,41 @@
+###
+GET http://localhost:8080/users
+Content-Type: application/json
+
+
+###
+GET http://localhost:8080/employees
+Content-Type: application/json
+
+###
+POST http://localhost:8080/appointments
+Content-Type: application/json
+
+{
+  "employeeId": "1253fc44-45c5-440c-b0d8-1b9a2c5dc919",
+  "clientId": "0b8b82f6-a8ef-4748-93ea-fa3fcbdc8d8b",
+  "specialtyId": "78be8b22-9576-42c9-a819-0e217b10fa30",
+  "appointmentStatus": 0,
+  "dateTime": "2024-02-09 16:41"
+}
+
+###
+POST http://localhost:8080/appointments
+Content-Type: application/json
+
+{
+  "employeeId": "1253fc44-45c5-440c-b0d8-1b9a2c5dc919",
+  "clientId": "cbf3717a-c2cc-4dfd-93f8-b2e6c67aa7f9",
+  "specialtyId": "78be8b22-9576-42c9-a819-0e217b10fa30",
+  "appointmentStatus": 0,
+  "dateTime": "2024-02-09 16:30"
+}
+
+
+###
+GET http://localhost:8080/appointments?date=2024-02-09
+Content-Type: application/json
+
+###
+GET http://localhost:8080/appointments/UUID
+Content-Type: application/json

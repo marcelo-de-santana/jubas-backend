@@ -1,12 +1,14 @@
 package com.jubasbackend.core.appointment;
 
 import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
-import com.jubasbackend.core.appointment.enums.AppointmentStatus;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
+import com.jubasbackend.core.workingHour.WorkingHourEntity;
 import com.jubasbackend.exception.ConflictException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,21 +31,27 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
     UUID specialtyId = UUID.randomUUID();
     Instant createdAt = Instant.parse("2024-01-20T10:00:00Z");
 
-    ProfileEntity employeeOfRequest = ProfileEntity.builder().id(employeeId).build();
-    ProfileEntity clientOfRequest = ProfileEntity.builder().id(clientId).build();
-
-    EmployeeEntity employeeEntityOfRequest = EmployeeEntity.builder()
-            .profile(employeeOfRequest).build();
-
-    SpecialtyEntity specialtyOfRequest = SpecialtyEntity.builder()
+    ProfileEntity employeeProfile = ProfileEntity.builder().id(employeeId).build();
+    ProfileEntity clientEntity = ProfileEntity.builder().id(clientId).build();
+    SpecialtyEntity specialtyEntity = SpecialtyEntity.builder()
             .id(specialtyId).name("Corte de cabelo").timeDuration(LocalTime.parse("00:30")).build();
 
-    EmployeeSpecialtyEntity compoundEntity = EmployeeSpecialtyEntity.builder()
-            .employee(employeeEntityOfRequest)
-            .specialty(specialtyOfRequest).build();
+    WorkingHourEntity workingHour = WorkingHourEntity.builder()
+            .id(UUID.randomUUID())
+            .startTime(LocalTime.parse("09:00"))
+            .endTime(LocalTime.parse("17:00"))
+            .startInterval(LocalTime.parse("12:00"))
+            .endInterval(LocalTime.parse("13:00")).build();
+
+    EmployeeSpecialtyId compoundId = new EmployeeSpecialtyId(employeeId, specialtyId);
+
+    EmployeeEntity employeeEntity = EmployeeEntity.builder()
+            .id(employeeId).profile(employeeProfile).workingHour(workingHour).build();
+
+    EmployeeSpecialtyEntity compoundEntity = new EmployeeSpecialtyEntity(compoundId, employeeEntity, specialtyEntity);
 
     AppointmentCreateRequest createRequest(LocalDateTime date) {
-        return new AppointmentCreateRequest(employeeId, clientId, specialtyId, AppointmentStatus.MARCADO, date);
+        return new AppointmentCreateRequest(employeeId, clientId, specialtyId, date);
     }
 
     @Nested
@@ -55,11 +62,13 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
         void shouldCreateAnAppointment() {
             //ARRANGE
             var request = createRequest(LocalDateTime.now());
-            var ofResult = Optional.of(compoundEntity);
+            employeeEntity.setSpecialties(List.of(compoundEntity));
+            var newAppointment = new AppointmentEntity(request, employeeEntity);
 
-            doReturn(ofResult).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(uuidCaptor.capture(), uuidCaptor.capture());
-            doReturn(List.of()).when(appointmentRepository).findAllByDateAndEmployeeIdOrClientId(localDateTimeCaptor.capture(), uuidCaptor.capture(), uuidCaptor.capture());
-            doReturn(new AppointmentEntity()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(uuidCaptor.capture());
+            doReturn(List.of()).when(appointmentRepository)
+                    .findAllByDateBetweenAndEmployeeIdOrClientId(localDateTimeCaptor.capture(), localDateTimeCaptor.capture(), uuidCaptor.capture(), uuidCaptor.capture());
+            doReturn(newAppointment).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 
             //ACT & ASSERT
             assertNotNull(service.createAppointment(request));
@@ -69,14 +78,14 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
             var capturedEntity = appointmentEntityCaptor.getValue();
 
             assertEquals(request.employeeId(), capturedIds.get(0));
-            assertEquals(request.specialtyId(), capturedIds.get(1));
 
-            assertEquals(request.date().toLocalDate(), capturedDateTimes.get(0));
-            assertEquals(request.employeeId(), capturedIds.get(2));
-            assertEquals(request.clientId(), capturedIds.get(3));
+            assertEquals(request.dateTime().toLocalDate(), capturedDateTimes.get(0).toLocalDate());
+            assertEquals(request.employeeId(), capturedIds.get(1));
+            assertEquals(request.clientId(), capturedIds.get(2));
 
-            verify(employeeSpecialtyRepository, times(1)).findByEmployeeIdAndSpecialtyId(capturedIds.get(0), capturedIds.get(1));
-            verify(appointmentRepository, times(1)).findAllByDateAndEmployeeIdOrClientId(capturedDateTimes.get(0), capturedIds.get(2), capturedIds.get(3));
+            verify(employeeRepository, times(1)).findById(capturedIds.get(0));
+            verify(appointmentRepository, times(1))
+                    .findAllByDateBetweenAndEmployeeIdOrClientId(capturedDateTimes.get(0), capturedDateTimes.get(1), capturedIds.get(1), capturedIds.get(2));
             verify(appointmentRepository, times(1)).save(capturedEntity);
 
             verifyNoMoreInteractions(appointmentRepository);
@@ -87,6 +96,30 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
     @Nested
     class ValidateAppointment {
 
+        @BeforeEach
+        void setUp() {
+            employeeEntity.setSpecialties(List.of(compoundEntity));
+        }
+
+        @Test
+        @DisplayName("Deve lançar uma exceção quando o funcionário não realiza a especialidade.")
+        void shouldThrowExceptionWhenEmployeeDoesNotMakesSpecialty() {
+            //ARRANGE
+            var request = new AppointmentCreateRequest(employeeId, clientId, UUID.randomUUID(), LocalDateTime.now());
+
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+
+            //ACT & ASSERT
+            var exception = assertThrows(IllegalArgumentException.class,
+                    () -> service.createAppointment(request));
+
+            assertEquals("Employee doesn't makes specialty.", exception.getMessage());
+
+            verify(employeeRepository, times(1)).findById(any());
+            verifyNoMoreInteractions(employeeRepository);
+            verifyNoInteractions(appointmentRepository);
+        }
+
         @Test
         @DisplayName("Deve lançar uma exceção caso o cliente possua agendamento para o mesmo serviço no dia.")
         void shouldThrowExceptionForDuplicateBookingOnSameDay() {
@@ -94,20 +127,19 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:50"));
             var listOfAppointments = List.of(AppointmentEntity.builder()
                     .id(UUID.randomUUID())
-                    .client(clientOfRequest)
-                    .employee(employeeOfRequest)
-                    .specialty(specialtyOfRequest)
+                    .client(clientEntity)
+                    .employee(employeeEntity)
+                    .specialty(specialtyEntity)
                     .createdAt(createdAt)
                     .date(LocalDateTime.parse("2024-01-30T14:00")).build());
 
-            doReturn(Optional.of(compoundEntity)).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(any(), any());
-            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateAndEmployeeIdOrClientId(any(), any(), any());
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
 
-            //ACT
+            //ACT & ASSERT
             var exception = assertThrows(IllegalArgumentException.class,
                     () -> service.createAppointment(request));
 
-            //ASSERT
             assertEquals("The same profile cannot schedule two services for the same day.", exception.getMessage());
         }
 
@@ -116,23 +148,24 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
         void shouldNotThrowExceptionIfAppointmentBelongsToAnotherClient() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:50"));
+            var newAppointment = new AppointmentEntity(request, employeeEntity);
             var otherClient = ProfileEntity.builder()
                     .id(UUID.randomUUID()).name("Juninho").cpf("10333333333").statusProfile(true).build();
 
             var listOfAppointments = List.of(AppointmentEntity.builder()
                     .id(UUID.randomUUID())
                     .client(otherClient)
-                    .employee(employeeOfRequest)
-                    .specialty(specialtyOfRequest)
+                    .employee(employeeEntity)
+                    .specialty(specialtyEntity)
                     .createdAt(createdAt)
                     .date(LocalDateTime.parse("2024-01-30T14:00")).build());
 
-            doReturn(Optional.of(compoundEntity)).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(any(), any());
-            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateAndEmployeeIdOrClientId(any(), any(), any());
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
+            doReturn(newAppointment).when(appointmentRepository).save(any());
 
             //ACT & ASSERT
             assertDoesNotThrow(() -> service.createAppointment(request));
-
         }
 
         @Test
@@ -146,14 +179,14 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
 
             var listOfAppointments = List.of(AppointmentEntity.builder()
                     .id(UUID.randomUUID())
-                    .client(clientOfRequest)
-                    .employee(employeeOfRequest)
+                    .client(clientEntity)
+                    .employee(employeeEntity)
                     .specialty(otherSpecialty)
                     .createdAt(createdAt)
                     .date(sameDateAndTime).build());
 
-            doReturn(Optional.of(compoundEntity)).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(any(), any());
-            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateAndEmployeeIdOrClientId(any(), any(), any());
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
 
             //ACT & ASSERT
             var exception = assertThrows(ConflictException.class,
@@ -173,14 +206,14 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
 
             var listOfAppointments = List.of(AppointmentEntity.builder()
                     .id(UUID.randomUUID())
-                    .client(clientOfRequest)
-                    .employee(employeeOfRequest)
+                    .client(clientEntity)
+                    .employee(employeeEntity)
                     .specialty(scheduledSpecialty)
                     .createdAt(createdAt)
                     .date(LocalDateTime.parse("2024-01-30T10:50")).build());
 
-            doReturn(Optional.of(compoundEntity)).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(any(), any());
-            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateAndEmployeeIdOrClientId(any(), any(), any());
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
 
             //ACT & ASSERT
             var exception = assertThrows(ConflictException.class, () -> service.createAppointment(request));
@@ -198,14 +231,14 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
 
             var listOfAppointments = List.of(AppointmentEntity.builder()
                     .id(UUID.randomUUID())
-                    .client(clientOfRequest)
-                    .employee(employeeOfRequest)
+                    .client(clientEntity)
+                    .employee(employeeEntity)
                     .specialty(scheduledSpecialty)
                     .date(LocalDateTime.parse("2024-01-30T10:20"))
                     .createdAt(createdAt).build());
 
-            doReturn(Optional.of(compoundEntity)).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(any(), any());
-            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateAndEmployeeIdOrClientId(any(), any(), any());
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
 
             //ACT & ASSERT
             var exception = assertThrows(ConflictException.class, () -> service.createAppointment(request));
@@ -223,14 +256,14 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
 
             var listOfAppointments = List.of(AppointmentEntity.builder()
                     .id(UUID.randomUUID())
-                    .client(clientOfRequest)
-                    .employee(employeeOfRequest)
+                    .client(clientEntity)
+                    .employee(employeeEntity)
                     .specialty(scheduledSpecialty)
                     .date(LocalDateTime.parse("2024-01-30T10:10"))
                     .createdAt(createdAt).build());
 
-            doReturn(Optional.of(compoundEntity)).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(any(), any());
-            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateAndEmployeeIdOrClientId(any(), any(), any());
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
 
             //ACT
             var exception = assertThrows(ConflictException.class, () -> service.createAppointment(request));
@@ -240,24 +273,4 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
         }
     }
 
-    @Nested
-    class ValidateEmployeeSpecialty {
-        @Test
-        @DisplayName("Deve lançar uma exceção se a especialidade não for encontrada para o funcionário.")
-        void shouldThrowAnExceptionIfTheSpecialtyIsNotFoundForTheEmployee() {
-            //ARRANGE
-            var request = createRequest(LocalDateTime.now());
-
-            doReturn(Optional.empty()).when(employeeSpecialtyRepository).findByEmployeeIdAndSpecialtyId(employeeId, specialtyId);
-
-            //ACT & ASSERT
-            assertThrows(NoSuchElementException.class,
-                    () -> service.createAppointment(request),
-                    "Employee doesn't perform the specialty.");
-
-            verify(employeeSpecialtyRepository, times(1)).findByEmployeeIdAndSpecialtyId(employeeId, specialtyId);
-            verifyNoMoreInteractions(employeeSpecialtyRepository);
-            verifyNoInteractions(appointmentRepository);
-        }
-    }
 }

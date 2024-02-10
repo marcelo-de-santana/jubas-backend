@@ -25,7 +25,7 @@ public class WorkingHourController implements WorkingHourApi {
     @Override
     public ResponseEntity<Void> createWorkingHour(WorkingHourRequest request) {
         var createdWorkingHour = service.createWorkingHour(request);
-        return ResponseEntity.created(URI.create("working-hour/" + createdWorkingHour.id())).build();
+        return ResponseEntity.created(URI.create("working-hours/" + createdWorkingHour.id())).build();
     }
 
     @Override

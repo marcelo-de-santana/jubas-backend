@@ -6,25 +6,28 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 public record AppointmentCreateRequest(
         @NotNull
-        @NotBlank
         UUID employeeId,
         @NotNull
-        @NotBlank
         UUID clientId,
         @NotNull
-        @NotBlank
         UUID specialtyId,
         @NotNull
-        @NotBlank
-        AppointmentStatus appointmentStatus,
-        @NotNull
-        @NotBlank
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-        LocalDateTime date
+        @Schema(type = "String", pattern = "yyyy-MM-dd HH:mm")
+        @JsonFormat( pattern = "yyyy-MM-dd HH:mm")
+        LocalDateTime dateTime
 ) {
+        public LocalTime time() {
+                return dateTime.toLocalTime();
+        }
+
+        public LocalDate date(){
+                return dateTime.toLocalDate();
+        }
 }
