@@ -21,37 +21,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserPermissionResponse findUser(UUID userId) {
-        return new UserPermissionResponse(findUserOnRepository(userId));
+    public UserResponse findUser(UUID userId) {
+        return new UserResponse(findUserOnRepository(userId));
     }
 
     @Override
-    public UserPermissionProfileResponse findProfilesByUser(UUID userId) {
+    public UserProfileResponse findProfilesByUser(UUID userId) {
         var user = findUserOnRepository(userId);
-        return new UserPermissionProfileResponse(user);
+        return new UserProfileResponse(user);
     }
 
     @Override
-    public UserPermissionResponse createUser(UserPermissionRequest request) {
+    public UserResponse createUser(UserRequest request) {
         if (existsByEmailOnRepository(request.email())) {
             throw new IllegalArgumentException("User already exists.");
         }
         UserEntity userToSave = new UserEntity(request);
 
-        return new UserPermissionResponse(repository.save(userToSave));
+        return new UserResponse(repository.save(userToSave));
     }
 
     @Override
-    public UserPermissionResponse authenticateUserAccount(UserRequest request) {
+    public UserResponse authenticateUserAccount(UserAuthRequest request) {
         var user = findUserOnRepository(request.email());
         if (!request.password().equals(user.getPassword())) {
             throw new IllegalArgumentException("Incorrect Email or Password.");
         }
-        return new UserPermissionResponse(user);
+        return new UserResponse(user);
     }
 
     @Override
-    public UserPermissionResponse updateUser(UUID id, UserPermissionRequest request) {
+    public UserResponse updateUser(UUID id, UserRequest request) {
         UserEntity userToUpdate = findUserOnRepository(id);
 
         if (!request.email().isBlank()) {
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
         if (!request.permission().toString().isBlank()) {
             userToUpdate.setPermission(request.permission());
         }
-        return new UserPermissionResponse(repository.save(userToUpdate));
+        return new UserResponse(repository.save(userToUpdate));
     }
 
     private UserEntity findUserOnRepository(UUID id) {

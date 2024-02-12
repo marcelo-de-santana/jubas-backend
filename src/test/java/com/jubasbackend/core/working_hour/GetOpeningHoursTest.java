@@ -1,6 +1,5 @@
-package com.jubasbackend.core.workingHour;
+package com.jubasbackend.core.working_hour;
 
-import com.jubasbackend.core.workingHour.WorkingHourEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

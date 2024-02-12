@@ -31,7 +31,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuário.", content = @Content)
     })
     @GetMapping("/{userId}")
-    ResponseEntity<UserPermissionResponse> findUser(@PathVariable UUID userId);
+    ResponseEntity<UserResponse> findUser(@PathVariable UUID userId);
 
     @Operation(summary = "Buscar perfis associados ao usuário.", method = "GET")
     @ApiResponses(value = {
@@ -40,7 +40,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuário.", content = @Content)
     })
     @GetMapping("/{userId}/profiles")
-    ResponseEntity<UserPermissionProfileResponse> findProfilesByUser(@PathVariable UUID userId);
+    ResponseEntity<UserProfileResponse> findProfilesByUser(@PathVariable UUID userId);
 
     @Operation(summary = "Cadastrar novo usuário.", method = "POST")
     @ApiResponses(value = {
@@ -49,7 +49,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar usuário.", content = @Content)
     })
     @PostMapping
-    ResponseEntity<UserPermissionResponse> createUser(@RequestBody UserPermissionRequest request);
+    ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request);
 
     @Operation(summary = "Autenticar usuário.", method = "POST")
     @ApiResponses(value = {
@@ -59,7 +59,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao autenticar usuário.", content = @Content)
     })
     @PostMapping("/auth")
-    ResponseEntity<UserPermissionResponse> authenticateUserAccount(@RequestBody UserRequest request);
+    ResponseEntity<UserResponse> authenticateUserAccount(@RequestBody UserAuthRequest request);
 
     @Operation(summary = "Atualizar usuário.", method = "PATCH")
     @ApiResponses(value = {
@@ -68,5 +68,5 @@ public interface UserApi {
             @ApiResponse(responseCode = "500", description = "Erro ao atualizar usuário.", content = @Content)
     })
     @PatchMapping("/{userId}")
-    ResponseEntity<UserPermissionResponse> updateUser(@PathVariable UUID userId, @RequestBody UserPermissionRequest request);
+    ResponseEntity<UserResponse> updateUser(@PathVariable UUID userId, @RequestBody UserRequest request);
 }

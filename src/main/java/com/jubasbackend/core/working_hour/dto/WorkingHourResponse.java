@@ -1,7 +1,7 @@
-package com.jubasbackend.core.workingHour.dto;
+package com.jubasbackend.core.working_hour.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.jubasbackend.core.workingHour.WorkingHourEntity;
+import com.jubasbackend.core.working_hour.WorkingHourEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalTime;

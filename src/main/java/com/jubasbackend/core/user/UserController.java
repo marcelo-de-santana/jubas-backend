@@ -21,28 +21,28 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserPermissionResponse> findUser(UUID userId) {
+    public ResponseEntity<UserResponse> findUser(UUID userId) {
         return ResponseEntity.ok(service.findUser(userId));
     }
 
     @Override
-    public ResponseEntity<UserPermissionProfileResponse> findProfilesByUser(UUID userId) {
+    public ResponseEntity<UserProfileResponse> findProfilesByUser(UUID userId) {
         return ResponseEntity.ok(service.findProfilesByUser(userId));
     }
 
     @Override
-    public ResponseEntity<UserPermissionResponse> createUser(UserPermissionRequest request) {
-        UserPermissionResponse userCreated = service.createUser(request);
+    public ResponseEntity<UserResponse> createUser(UserRequest request) {
+        UserResponse userCreated = service.createUser(request);
         return ResponseEntity.created(URI.create("/users/" + userCreated.id())).body(userCreated);
     }
 
     @Override
-    public ResponseEntity<UserPermissionResponse> authenticateUserAccount(UserRequest request) {
+    public ResponseEntity<UserResponse> authenticateUserAccount(UserAuthRequest request) {
         return ResponseEntity.ok(service.authenticateUserAccount(request));
     }
 
     @Override
-    public ResponseEntity<UserPermissionResponse> updateUser(UUID userId, UserPermissionRequest request) {
+    public ResponseEntity<UserResponse> updateUser(UUID userId, UserRequest request) {
         return ResponseEntity.ok(service.updateUser(userId, request));
     }
 

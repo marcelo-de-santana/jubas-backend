@@ -11,10 +11,10 @@ import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.profile.ProfileRepository;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
-import com.jubasbackend.core.workingHour.WorkingHourEntity;
-import com.jubasbackend.core.workingHour.WorkingHourRepository;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
-import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithoutId;
+import com.jubasbackend.core.working_hour.WorkingHourEntity;
+import com.jubasbackend.core.working_hour.WorkingHourRepository;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse.WithoutId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,14 +45,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<? extends ScheduleTime> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> requestDate) {
+    public List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> requestDate) {
         //BUSCA HORÁRIOS AGENDADOS COM O FUNCIONÁRIO
         var appointments = findAppointmentsInTheRepository(requestDate, employeeId);
 
         //GERA OS HORÁRIOS
         var workingHours = findEmployeeInTheRepository(employeeId).getWorkingHour();
         if (appointments.isEmpty()) {
-            return workingHours.getOpeningHours().stream().map(ScheduledTimeWithoutId::new).toList();
+            return workingHours.getOpeningHours().stream().map(WithoutId::new).toList();
         }
 
         return workingHours.getAvailableTimes(appointments);

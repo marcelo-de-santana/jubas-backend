@@ -1,6 +1,6 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserPermissionRequest;
+import com.jubasbackend.core.user.dto.UserRequest;
 import com.jubasbackend.core.user.enums.PermissionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,11 +11,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class CreateUserTest extends UserServiceBaseTest {
-    UserPermissionRequest request;
+    UserRequest request;
 
     @BeforeEach
     void setup() {
-        this.request = new UserPermissionRequest("novoCliente@teste.com", "12345678", PermissionType.CLIENTE);
+        this.request = new UserRequest("novoCliente@teste.com", "12345678", PermissionType.CLIENTE);
     }
 
     @Test

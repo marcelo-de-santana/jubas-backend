@@ -1,11 +1,11 @@
-package com.jubasbackend.core.workingHour;
+package com.jubasbackend.core.working_hour;
 
 import com.jubasbackend.core.appointment.AppointmentEntity;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
-import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithId;
-import com.jubasbackend.core.workingHour.dto.ScheduledTimeWithoutId;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse.WithId;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse.WithoutId;
 import com.jubasbackend.core.employee.EmployeeEntity;
-import com.jubasbackend.core.workingHour.dto.WorkingHourRequest;
+import com.jubasbackend.core.working_hour.dto.WorkingHourRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -71,11 +71,11 @@ public class WorkingHourEntity {
     }
 
 
-    public List<ScheduledTimeWithoutId> getOpeningHours() {
-        var openingHours = new ArrayList<ScheduledTimeWithoutId>();
+    public List<WithoutId> getOpeningHours() {
+        var openingHours = new ArrayList<WithoutId>();
         var lastTime = startTime;
 
-        openingHours.add(new ScheduledTimeWithoutId(startTime, true));
+        openingHours.add(new WithoutId(startTime, true));
 
         while (lastTime.isBefore(endTime.minusMinutes(10))) {
             lastTime = openingHours.get(openingHours.size() - 1).time();
@@ -83,14 +83,14 @@ public class WorkingHourEntity {
             var newTime = lastTime.plusMinutes(10);
             if (!newTime.equals(endTime)) {
                 var isAvailable = !isInterval(newTime);
-                openingHours.add(new ScheduledTimeWithoutId(newTime, isAvailable));
+                openingHours.add(new WithoutId(newTime, isAvailable));
             }
         }
         return openingHours;
     }
 
-    public List<? extends ScheduleTime> getAvailableTimes(List<AppointmentEntity> appointments) {
-        var availableTimes = new ArrayList<ScheduleTime>();
+    public List<? extends ScheduleTimeResponse> getAvailableTimes(List<AppointmentEntity> appointments) {
+        var availableTimes = new ArrayList<ScheduleTimeResponse>();
         //MARCA HORÁRIOS AGENDADOS
         getOpeningHours().forEach(openingHour -> {
             var appointmentMatch = appointments.stream()
@@ -98,9 +98,9 @@ public class WorkingHourEntity {
                     .findFirst();
 
             if (appointmentMatch.isPresent())
-                availableTimes.add(new ScheduledTimeWithId(openingHour, appointmentMatch.get().getId()));
+                availableTimes.add(new WithId(openingHour, appointmentMatch.get().getId()));
             else
-                availableTimes.add(new ScheduledTimeWithoutId(openingHour));
+                availableTimes.add(new WithoutId(openingHour));
 
         });
 

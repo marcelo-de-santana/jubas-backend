@@ -1,7 +1,7 @@
 package com.jubasbackend.core.profile.dto;
 
 import com.jubasbackend.core.profile.ProfileEntity;
-import com.jubasbackend.core.user.dto.UserPermissionResponse;
+import com.jubasbackend.core.user.dto.UserResponse;
 
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ public record ProfileUserPermissionResponse(
         String name,
         String cpf,
         boolean statusProfile,
-        UserPermissionResponse user
+        UserResponse user
 ) {
     public ProfileUserPermissionResponse(ProfileEntity entity) {
         this(
@@ -18,7 +18,7 @@ public record ProfileUserPermissionResponse(
                 entity.getName(),
                 entity.getCpf(),
                 entity.isStatusProfile(),
-                new UserPermissionResponse(entity.getUser())
+                new UserResponse(entity.getUser())
         );
     }
 }

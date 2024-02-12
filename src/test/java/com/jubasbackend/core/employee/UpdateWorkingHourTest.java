@@ -1,6 +1,6 @@
 package com.jubasbackend.core.employee;
 
-import com.jubasbackend.core.workingHour.WorkingHourEntity;
+import com.jubasbackend.core.working_hour.WorkingHourEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

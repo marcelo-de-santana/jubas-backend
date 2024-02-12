@@ -6,7 +6,7 @@ import com.jubasbackend.core.user.enums.PermissionType;
 import java.util.UUID;
 
 public record UserResponse(UUID id, String email, PermissionType permission) {
-    public UserResponse(UserEntity entity) {
-        this(entity.getId(), entity.getEmail(), entity.getPermission());
+    public UserResponse(UserEntity user) {
+        this(user.getId(), user.getEmail(), user.getPermission());
     }
 }

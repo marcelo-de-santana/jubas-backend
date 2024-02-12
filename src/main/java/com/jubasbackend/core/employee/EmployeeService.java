@@ -3,7 +3,7 @@ package com.jubasbackend.core.employee;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeWithoutSpecialtiesResponse;
 import com.jubasbackend.core.employee.dto.EmployeeResponse;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,7 +16,7 @@ public interface EmployeeService {
 
     EmployeeResponse findEmployee(UUID employeeId);
 
-    List<? extends ScheduleTime> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> date);
+    List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> date);
 
     EmployeeWithoutSpecialtiesResponse createEmployee(EmployeeRequest request);
 

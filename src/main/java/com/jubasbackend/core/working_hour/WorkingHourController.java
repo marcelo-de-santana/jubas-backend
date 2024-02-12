@@ -1,10 +1,9 @@
-package com.jubasbackend.core.workingHour;
+package com.jubasbackend.core.working_hour;
 
-import com.jubasbackend.core.workingHour.dto.WorkingHourRequest;
-import com.jubasbackend.core.workingHour.dto.WorkingHourResponse;
+import com.jubasbackend.core.working_hour.dto.WorkingHourRequest;
+import com.jubasbackend.core.working_hour.dto.WorkingHourResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;

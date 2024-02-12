@@ -1,7 +1,7 @@
 package com.jubasbackend.core.employee.dto;
 
 import com.jubasbackend.core.employee.EmployeeEntity;
-import com.jubasbackend.core.workingHour.dto.WorkingHourResponse;
+import com.jubasbackend.core.working_hour.dto.WorkingHourResponse;
 
 import java.util.UUID;
 

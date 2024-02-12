@@ -4,7 +4,7 @@ import com.jubasbackend.core.TestEntityFactory;
 import com.jubasbackend.core.appointment.AppointmentRepository;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
 import com.jubasbackend.core.profile.ProfileRepository;
-import com.jubasbackend.core.workingHour.WorkingHourRepository;
+import com.jubasbackend.core.working_hour.WorkingHourRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;

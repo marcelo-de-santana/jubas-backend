@@ -1,6 +1,6 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserRequest;
+import com.jubasbackend.core.user.dto.UserAuthRequest;
 import com.jubasbackend.core.user.enums.PermissionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AuthenticateUserAccountTest extends UserServiceBaseTest {
-    UserRequest request;
+    UserAuthRequest request;
 
     @BeforeEach
     void setup() {
-        this.request = new UserRequest("cliente@gmail.com", "12345678");
+        this.request = new UserAuthRequest("cliente@gmail.com", "12345678");
     }
 
     @Test

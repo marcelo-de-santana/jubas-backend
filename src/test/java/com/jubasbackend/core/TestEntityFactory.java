@@ -1,7 +1,7 @@
 package com.jubasbackend.core;
 
-import com.jubasbackend.core.workingHour.WorkingHourEntity;
-import com.jubasbackend.core.workingHour.dto.WorkingHourRequest;
+import com.jubasbackend.core.working_hour.WorkingHourEntity;
+import com.jubasbackend.core.working_hour.dto.WorkingHourRequest;
 
 import static java.time.LocalTime.parse;
 

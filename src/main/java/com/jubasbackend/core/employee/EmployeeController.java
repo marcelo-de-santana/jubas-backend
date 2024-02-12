@@ -2,7 +2,7 @@ package com.jubasbackend.core.employee;
 
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeResponse;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +30,7 @@ public class EmployeeController implements EmployeeApi {
     }
 
     @Override
-    public ResponseEntity<List<? extends ScheduleTime>> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> date) {
+    public ResponseEntity<List<? extends ScheduleTimeResponse>> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> date) {
         return ResponseEntity.ok(service.findAppointmentsByEmployee(employeeId, date));
     }
 

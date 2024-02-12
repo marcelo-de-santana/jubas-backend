@@ -1,6 +1,6 @@
-package com.jubasbackend.core.workingHour;
+package com.jubasbackend.core.working_hour;
 
-import com.jubasbackend.core.workingHour.dto.WorkingHourRequest;
+import com.jubasbackend.core.working_hour.dto.WorkingHourRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

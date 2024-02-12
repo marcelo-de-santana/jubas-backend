@@ -1,4 +1,4 @@
-package com.jubasbackend.core.workingHour;
+package com.jubasbackend.core.working_hour;
 
 import com.jubasbackend.core.TestEntityFactory;
 import org.junit.jupiter.api.extension.ExtendWith;

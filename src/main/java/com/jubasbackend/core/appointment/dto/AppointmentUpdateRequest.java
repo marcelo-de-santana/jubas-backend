@@ -8,12 +8,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public record AppointmentUpdateRequest(
-        Optional<UUID> employeeId,
-        Optional<UUID> clientId,
-        Optional<UUID> specialtyId,
+        UUID employeeId,
+        UUID clientId,
+        UUID specialtyId,
         @Schema(type = "String", pattern = "yyyy-MM-dd HH:mm")
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-        Optional<LocalDateTime> dateTime
+        LocalDateTime dateTime
 
 ) {
 }

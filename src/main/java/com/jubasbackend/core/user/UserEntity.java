@@ -1,6 +1,6 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserPermissionRequest;
+import com.jubasbackend.core.user.dto.UserRequest;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.user.enums.PermissionType;
 import jakarta.persistence.*;
@@ -38,7 +38,7 @@ public class UserEntity {
     @NotNull
     private PermissionType permission;
 
-    public UserEntity(UserPermissionRequest request) {
+    public UserEntity(UserRequest request) {
         this.email = request.email();
         this.password = request.password();
         this.permission = request.permission();

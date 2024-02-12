@@ -6,7 +6,7 @@ import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
-import com.jubasbackend.core.workingHour.WorkingHourEntity;
+import com.jubasbackend.core.working_hour.WorkingHourEntity;
 import com.jubasbackend.exception.ConflictException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

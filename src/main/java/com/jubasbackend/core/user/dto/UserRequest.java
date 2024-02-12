@@ -1,6 +1,6 @@
 package com.jubasbackend.core.user.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.jubasbackend.core.user.enums.PermissionType;
 
-public record UserRequest(@NotBlank String email, @NotBlank String password) {
+public record UserRequest(String email, String password, PermissionType permission) {
 }

@@ -3,7 +3,7 @@ package com.jubasbackend.core.employee;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeResponse;
-import com.jubasbackend.core.workingHour.dto.ScheduleTime;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,7 +47,7 @@ public interface EmployeeApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar a agenda do funcionário.", content = @Content)
     })
     @GetMapping("/{employeeId}/appointments")
-    ResponseEntity<List<? extends ScheduleTime>> findAppointmentsByEmployee(
+    ResponseEntity<List<? extends ScheduleTimeResponse>> findAppointmentsByEmployee(
             @PathVariable UUID employeeId,
             @JsonFormat(pattern = "yyyy-MM-dd")
             @RequestParam

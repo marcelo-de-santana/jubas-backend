@@ -1,4 +1,4 @@
-package com.jubasbackend.core.workingHour.dto;
+package com.jubasbackend.core.working_hour.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;

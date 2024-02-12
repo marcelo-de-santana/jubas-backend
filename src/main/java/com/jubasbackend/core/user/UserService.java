@@ -9,13 +9,13 @@ public interface UserService {
 
     List<UserResponse> findUsers();
 
-    UserPermissionResponse findUser(UUID userId);
+    UserResponse findUser(UUID userId);
 
-    UserPermissionProfileResponse findProfilesByUser(UUID userId);
+    UserProfileResponse findProfilesByUser(UUID userId);
 
-    UserPermissionResponse createUser(UserPermissionRequest request);
+    UserResponse createUser(UserRequest request);
 
-    UserPermissionResponse authenticateUserAccount(UserRequest request);
+    UserResponse authenticateUserAccount(UserAuthRequest request);
 
-    UserPermissionResponse updateUser(UUID id, UserPermissionRequest request);
+    UserResponse updateUser(UUID id, UserRequest request);
 }
