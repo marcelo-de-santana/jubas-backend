@@ -56,7 +56,7 @@ public interface AppointmentApi {
 
     @Operation(summary = "Alterar agendamento.", method = "PATCH")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Alteração realizada com sucesso."),
+            @ApiResponse(responseCode = "200", description = "Alteração realizada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Agendamento não encontrado."),
             @ApiResponse(responseCode = "500", description = "Erro ao alterar o agendamento.")
     })
@@ -65,7 +65,7 @@ public interface AppointmentApi {
 
     @Operation(summary = "Cancelar agendamento.", method = "DELETE")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Cancelamento realizado com sucesso."),
+            @ApiResponse(responseCode = "200", description = "Cancelamento realizado com sucesso."),
             @ApiResponse(responseCode = "404", description = "Agendamento não encontrado."),
             @ApiResponse(responseCode = "500", description = "Erro ao cancelar agendamento.")
     })

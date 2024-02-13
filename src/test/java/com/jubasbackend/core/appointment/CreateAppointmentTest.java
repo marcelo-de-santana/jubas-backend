@@ -1,6 +1,7 @@
 package com.jubasbackend.core.appointment;
 
 import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
+import com.jubasbackend.core.appointment.enums.AppointmentStatus;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
@@ -121,8 +122,8 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
         }
 
         @Test
-        @DisplayName("Deve lançar uma exceção caso o cliente possua agendamento para o mesmo serviço no dia.")
-        void shouldThrowExceptionForDuplicateBookingOnSameDay() {
+        @DisplayName("Deve lançar uma exceção caso o cliente possua agendamento pendente para o mesmo serviço no dia.")
+        void shouldThrowExceptionIfTheCustomerHasAPendingAppointmentForTheSameSpecialtyOnTheDay() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:50"));
             var listOfAppointments = List.of(AppointmentEntity.builder()
@@ -131,6 +132,7 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
                     .employee(employeeEntity)
                     .specialty(specialtyEntity)
                     .createdAt(createdAt)
+                    .appointmentStatus(AppointmentStatus.MARCADO)
                     .date(LocalDateTime.parse("2024-01-30T14:00")).build());
 
             doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
@@ -141,6 +143,28 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
                     () -> service.createAppointment(request));
 
             assertEquals("The same profile cannot schedule two services for the same day.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("Não deve lançar uma exceção em caso de serviço duplicado, porém cancelado.")
+        void shouldNotThrowCaseOfDuplicateButCanceledSpecialty() {
+            //ARRANGE
+            var request = createRequest(LocalDateTime.parse("2024-01-30T10:50"));
+            var listOfAppointments = List.of(AppointmentEntity.builder()
+                    .id(UUID.randomUUID())
+                    .client(clientEntity)
+                    .employee(employeeEntity)
+                    .specialty(specialtyEntity)
+                    .createdAt(createdAt)
+                    .appointmentStatus(AppointmentStatus.CANCELADO)
+                    .date(LocalDateTime.parse("2024-01-30T14:00")).build());
+
+            doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
+            doReturn(listOfAppointments).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
+
+            //ACT & ASSERT
+            assertDoesNotThrow(() -> service.createAppointment(request));
+
         }
 
         @Test
@@ -158,6 +182,7 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
                     .employee(employeeEntity)
                     .specialty(specialtyEntity)
                     .createdAt(createdAt)
+                    .appointmentStatus(AppointmentStatus.MARCADO)
                     .date(LocalDateTime.parse("2024-01-30T14:00")).build());
 
             doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
@@ -183,6 +208,7 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
                     .employee(employeeEntity)
                     .specialty(otherSpecialty)
                     .createdAt(createdAt)
+                    .appointmentStatus(AppointmentStatus.MARCADO)
                     .date(sameDateAndTime).build());
 
             doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
@@ -209,6 +235,7 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
                     .client(clientEntity)
                     .employee(employeeEntity)
                     .specialty(scheduledSpecialty)
+                    .appointmentStatus(AppointmentStatus.MARCADO)
                     .createdAt(createdAt)
                     .date(LocalDateTime.parse("2024-01-30T10:50")).build());
 
@@ -235,6 +262,7 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
                     .employee(employeeEntity)
                     .specialty(scheduledSpecialty)
                     .date(LocalDateTime.parse("2024-01-30T10:20"))
+                    .appointmentStatus(AppointmentStatus.MARCADO)
                     .createdAt(createdAt).build());
 
             doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
@@ -260,6 +288,7 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
                     .employee(employeeEntity)
                     .specialty(scheduledSpecialty)
                     .date(LocalDateTime.parse("2024-01-30T10:10"))
+                    .appointmentStatus(AppointmentStatus.MARCADO)
                     .createdAt(createdAt).build());
 
             doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());

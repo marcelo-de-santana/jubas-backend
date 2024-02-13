@@ -4,6 +4,7 @@ import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
 import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
+import com.jubasbackend.core.appointment.enums.AppointmentStatus;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
 import com.jubasbackend.core.profile.ProfileEntity;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -29,7 +31,6 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Override
     public List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate) {
-
         var employees = employeeRepository.findAll();
         if (employees.isEmpty())
             throw new NoSuchElementException("No employees.");
@@ -96,11 +97,15 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Override
     public void cancelAppointment(UUID appointmentId) {
-        //REGRAS
-        //VERIFICAR, SE O HORÁRIO JÁ PASSOU, REMOVE, SENÃO COLOCA COMO CANCELADO
-        //IMPLICAÇÃO NO CADASTRO
-        //AO CLIENTE DEVE SER DADA A POSSIBILIDADE DE REAGENDAR O SERVIÇO NOVAMENTE, MESMO SENDO O MESMO DIA
-        //MODIFICAR REGRA DE CADASTRO
+        var appointmentToCancel = findAppointmentInTheRepository(appointmentId);
+
+        //VERIFICA SE O HORÁRIO JÁ PASSOU PARA MARCAR COMO CANCELADO, SENÃO EXCLUI
+        if (LocalDateTime.now().isAfter(appointmentToCancel.getDate())) {
+            appointmentToCancel.setAppointmentStatus(AppointmentStatus.CANCELADO);
+            appointmentRepository.save(appointmentToCancel);
+        } else {
+            appointmentRepository.delete(appointmentToCancel);
+        }
     }
 
     private List<AppointmentEntity> findAppointmentsInTheRepository(Optional<LocalDate> date) {

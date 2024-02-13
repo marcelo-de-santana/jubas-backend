@@ -81,8 +81,10 @@ public class AppointmentEntity {
 
     //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
     private void validateSameSpecialty(SpecialtyEntity specialty, ProfileEntity client) {
-        if (specialty.getId() == getSpecialty().getId() && client.getId() == getClient().getId())
+        if (getAppointmentStatus().equals(AppointmentStatus.MARCADO)&& specialty.getId().equals(getSpecialty().getId())
+                && client.getId().equals(getClient().getId())) {
             throw new IllegalArgumentException("The same profile cannot schedule two services for the same day.");
+        }
     }
 
     //VERIFICA SE O FIM DO ATENDIMENTO NÃO EXCEDE O INÍCIO DO PRÓXIMO
