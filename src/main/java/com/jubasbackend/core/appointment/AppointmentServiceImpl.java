@@ -6,6 +6,8 @@ import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
+import com.jubasbackend.core.profile.ProfileEntity;
+import com.jubasbackend.core.specialty.SpecialtyEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,17 +56,42 @@ public class AppointmentServiceImpl implements AppointmentService{
         var registeredAppointments = findAppointmentsInTheRepository(request.date(), request.employeeId(), request.clientId());
         var newAppointment = new AppointmentEntity(request, employee);
 
-        if (!registeredAppointments.isEmpty())
-            registeredAppointments.forEach(existingAppointment -> existingAppointment.compare(newAppointment));
+        //VERIFICA SE O FUNCIONÁRIO REALIZA O SERVIÇO
+        newAppointment.validateIfEmployeeMakesSpecialty();
+
+        validateAppointment(registeredAppointments, newAppointment);
 
         return appointmentRepository.save(newAppointment);
     }
 
     @Override
     public void updateAppointment(UUID appointmentId, AppointmentUpdateRequest request) {
-        //REALIZAR VERIFICAÇÕES DE FORMA QUE NÃO GERE CONFLITO  NA AGENDA
-        //DESCONSIDERAR O AGENDAMENTO ATUAL NA HORA DE SELECIONAR O OUTRO
-        //LEMBRAR DE VERIFICAR, PARA NÃO GERAR CONFLITOS NA AGENDA
+        var appointmentToUpdate = findAppointmentInTheRepository(appointmentId);
+
+        //VERIFICA SE É OUTRO FUNCIONÁRIO
+        if (request.employeeId() != null && (!appointmentToUpdate.getEmployee().isEqual(request.employeeId())))
+            appointmentToUpdate.setEmployee(findEmployeeInTheRepository(request.employeeId()));
+
+        if (request.specialtyId() != null)
+            appointmentToUpdate.setSpecialty(SpecialtyEntity.builder().id(request.specialtyId()).build());
+
+        if (request.clientId() != null)
+            appointmentToUpdate.setClient(ProfileEntity.builder().id(request.clientId()).build());
+
+        if (request.dateTime() != null)
+            appointmentToUpdate.setDate(request.dateTime());
+
+        //VERIFICA SE O FUNCIONÁRIO REALIZA O SERVIÇO
+        appointmentToUpdate.validateIfEmployeeMakesSpecialty();
+
+        var registeredAppointments = findAppointmentsInTheRepository(
+                appointmentToUpdate.getDate().toLocalDate(),
+                appointmentToUpdate.getEmployee().getId(),
+                appointmentToUpdate.getClient().getId());
+
+        validateAppointment(registeredAppointments, appointmentToUpdate);
+        appointmentRepository.save(appointmentToUpdate);
+
     }
 
     @Override
@@ -92,6 +119,11 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     private AppointmentEntity findAppointmentInTheRepository(UUID appointmentId) {
         return appointmentRepository.findById(appointmentId).orElseThrow(() -> new NoSuchElementException("Appointment not found."));
+    }
+
+    private void validateAppointment(List<AppointmentEntity> registeredAppointments, AppointmentEntity requestAppointment) {
+        if (!registeredAppointments.isEmpty())
+            registeredAppointments.forEach(existingAppointment -> existingAppointment.validate(requestAppointment));
     }
 
 }

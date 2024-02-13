@@ -40,6 +40,10 @@ public class EmployeeEntity {
         return getSpecialties().contains(compoundEntity);
     }
 
+    public boolean isEqual(UUID employeeId) {
+        return employeeId.equals(this.getId());
+    }
+
     public SpecialtyEntity getSpecialty(UUID specialtyId) {
         var compoundId = new EmployeeSpecialtyId(getId(), specialtyId);
         var compoundEntity = EmployeeSpecialtyEntity.builder().id(compoundId).build();

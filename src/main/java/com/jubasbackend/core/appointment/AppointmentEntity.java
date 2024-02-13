@@ -12,6 +12,7 @@ import lombok.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Getter
@@ -61,12 +62,21 @@ public class AppointmentEntity {
         return (time.equals(startTime()) || (time.isAfter(startTime()) && time.isBefore(endTime())));
     }
 
-    public void compare(AppointmentEntity newAppointment) {
-        validateSameSpecialty(newAppointment.getSpecialty(), newAppointment.client);
-        validateStartTimeOverlap(newAppointment.startTime());
-        validateEndTimeOverlap(newAppointment.endTime());
-        validateStartOrEndConflict(newAppointment.startTime(), newAppointment.endTime());
-        validateWithinTimePeriod(newAppointment.startTime(), newAppointment.endTime());
+    public void validate(AppointmentEntity newAppointment) {
+        if (!getId().equals(newAppointment.getId())) {
+            validateSameSpecialty(newAppointment.getSpecialty(), newAppointment.client);
+            validateStartTimeOverlap(newAppointment.startTime());
+            validateEndTimeOverlap(newAppointment.endTime());
+            validateStartOrEndConflict(newAppointment.startTime(), newAppointment.endTime());
+            validateWithinTimePeriod(newAppointment.startTime(), newAppointment.endTime());
+        }
+    }
+
+    //VERIFICA SE O FUNCIONÁRIO REALIZA O SERVIÇO
+    public void validateIfEmployeeMakesSpecialty() {
+        if (!getEmployee().makesSpecialty(specialty.getId()))
+            throw new NoSuchElementException("Employee doesn't execute this specialty.");
+
     }
 
     //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
@@ -98,5 +108,4 @@ public class AppointmentEntity {
         if (startTime.equals(getDate().toLocalTime()) || endTime.equals(endTime()))
             throw new ConflictException("The start or end of the new schedule conflicts with the booked one.");
     }
-
 }
