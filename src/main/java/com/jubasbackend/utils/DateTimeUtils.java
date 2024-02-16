@@ -13,7 +13,7 @@ public class DateTimeUtils {
         return date.get().atStartOfDay();
     }
 
-    public static LocalDateTime getSelectedDate(LocalDate date) {
+    public static LocalDateTime getCurrentOrFutureDate(LocalDate date) {
         if (date.equals(LocalDate.now()))
             return LocalDateTime.now();
 

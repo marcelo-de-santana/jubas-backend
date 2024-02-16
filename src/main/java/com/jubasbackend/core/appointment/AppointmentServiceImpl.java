@@ -19,8 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.jubasbackend.utils.DateTimeUtils.getEndDay;
-import static com.jubasbackend.utils.DateTimeUtils.getSelectedDate;
+import static com.jubasbackend.utils.DateTimeUtils.*;
 
 @Service
 @RequiredArgsConstructor
@@ -113,9 +112,9 @@ public class AppointmentServiceImpl implements AppointmentService{
         return appointmentRepository.findAllByDateBetween(selectedDate, getEndDay(selectedDate));
     }
 
-    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDate date, UUID employeeId, UUID clientId) {
-        var selectedDate = getSelectedDate(date);
-        return appointmentRepository.findAllByDateBetweenAndEmployeeIdOrClientId(selectedDate, getEndDay(selectedDate), employeeId, clientId);
+    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDate requestDate, UUID employeeId, UUID clientId) {
+        var date = getCurrentOrFutureDate(requestDate);
+        return appointmentRepository.findAllByDateBetweenAndEmployeeIdOrClientId(date, getEndDay(date), employeeId, clientId);
     }
 
     private EmployeeEntity findEmployeeInTheRepository(UUID employeeId) {
