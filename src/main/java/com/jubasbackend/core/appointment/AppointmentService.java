@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface AppointmentService {
 
-    List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate);
+    List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate, Optional<UUID> specialtyId);
 
     AppointmentResponse findAppointment(UUID appointmentId);
 

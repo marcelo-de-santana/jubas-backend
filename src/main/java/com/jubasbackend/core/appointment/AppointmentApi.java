@@ -31,8 +31,9 @@ public interface AppointmentApi {
     @GetMapping
     ResponseEntity<List<ScheduleResponse>> findAppointments(
             @JsonFormat(pattern = "yyyy-MM-dd")
-            @RequestParam
-            Optional<LocalDate> date);
+            @RequestParam("date") Optional<LocalDate> date,
+            @RequestParam("specialty") Optional<UUID> specialtyId
+    );
 
     @Operation(summary = "Buscar agendamento.", method = "GET")
     @ApiResponses(value = {

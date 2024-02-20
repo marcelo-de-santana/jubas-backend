@@ -29,12 +29,16 @@ public class AppointmentServiceImpl implements AppointmentService{
     private final EmployeeRepository employeeRepository;
 
     @Override
-    public List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate) {
+    public List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate, Optional<UUID> specialtyId) {
         var employees = employeeRepository.findAll();
         if (employees.isEmpty())
             throw new NoSuchElementException("No employees.");
 
         var appointments = findAppointmentsInTheRepository(requestDate);
+
+        //TODO SPECIALTY PARAM TESTS
+        if (specialtyId.isPresent())
+            return getPossibleTimesBySpecialty(specialtyId.get(), employees, appointments);
 
         if (appointments.isEmpty())
             return employees.stream().map(ScheduleResponse::new).toList();
@@ -128,6 +132,25 @@ public class AppointmentServiceImpl implements AppointmentService{
     private void validateAppointment(List<AppointmentEntity> registeredAppointments, AppointmentEntity requestAppointment) {
         if (!registeredAppointments.isEmpty())
             registeredAppointments.forEach(existingAppointment -> existingAppointment.validate(requestAppointment));
+    }
+
+    private List<ScheduleResponse> getPossibleTimesBySpecialty(UUID specialtyId, List<EmployeeEntity> employees, List<AppointmentEntity> appointments) {
+        var filteredEmployees = employees.stream()
+                .filter(employee -> employee.makesSpecialty(specialtyId)).toList();
+
+        if (filteredEmployees.isEmpty())
+            throw new IllegalArgumentException("No employee carries out the specialty.");
+
+        var possibleTimes = filteredEmployees.stream()
+                .map(filteredEmployee -> new ScheduleResponse(
+                        filteredEmployee.getId(),
+                        filteredEmployee.getProfile().getName(),
+                        filteredEmployee.getPossibleTimes(specialtyId, appointments))).toList();
+
+        if (possibleTimes.isEmpty())
+            throw new NoSuchElementException("No available time slots for the service.");
+
+        return possibleTimes;
     }
 
 }

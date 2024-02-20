@@ -21,8 +21,8 @@ public class AppointmentController implements AppointmentApi {
     private final AppointmentService service;
 
     @Override
-    public ResponseEntity<List<ScheduleResponse>> findAppointments(Optional<LocalDate> date) {
-        return ResponseEntity.ok(service.findAppointments(date));
+    public ResponseEntity<List<ScheduleResponse>> findAppointments(Optional<LocalDate> date, Optional<UUID> specialtyId) {
+        return ResponseEntity.ok(service.findAppointments(date, specialtyId));
     }
 
     @Override

@@ -15,4 +15,5 @@ public record ScheduleResponse(UUID employeeId, String employeeName, List<? exte
     public ScheduleResponse(EmployeeEntity employee, List<AppointmentEntity> appointments) {
         this(employee.getId(), employee.getProfile().getName(), employee.getWorkingHour().getAvailableTimes(appointments));
     }
+
 }

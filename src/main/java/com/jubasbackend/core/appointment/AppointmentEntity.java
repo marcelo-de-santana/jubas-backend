@@ -62,6 +62,10 @@ public class AppointmentEntity {
         return (time.equals(startTime()) || (time.isAfter(startTime()) && time.isBefore(endTime())));
     }
 
+    /**
+     * Recebe o novo agendamento e compara com os atuais para aplicar as regras de negócio.
+     * @param newAppointment
+     */
     public void validate(AppointmentEntity newAppointment) {
         if (!getId().equals(newAppointment.getId())) {
             validateSameSpecialty(newAppointment.getSpecialty(), newAppointment.client);

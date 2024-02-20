@@ -1,10 +1,11 @@
 package com.jubasbackend.core.working_hour;
 
 import com.jubasbackend.core.appointment.AppointmentEntity;
+import com.jubasbackend.core.employee.EmployeeEntity;
+import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse.WithId;
 import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse.WithoutId;
-import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.working_hour.dto.WorkingHourRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,6 +14,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
 @Setter
@@ -49,7 +51,6 @@ public class WorkingHourEntity {
         validateEntity();
     }
 
-
     public void update(WorkingHourRequest request) {
         this.startTime = request.startTime();
         this.endTime = request.endTime();
@@ -70,7 +71,11 @@ public class WorkingHourEntity {
 
     }
 
-
+    /**
+     * Retorna todos os horários do funcionário, marcando com true para os disponíveis e false para os indisponíveis.
+     *
+     * @return Lita de Horários com horários e disponibilidade
+     */
     public List<WithoutId> getOpeningHours() {
         var openingHours = new ArrayList<WithoutId>();
         var lastTime = startTime;
@@ -89,6 +94,12 @@ public class WorkingHourEntity {
         return openingHours;
     }
 
+    /**
+     * Retornar a agenda do funcionário
+     *
+     * @param appointments
+     * @return ScheduleTimeResponse
+     */
     public List<? extends ScheduleTimeResponse> getAvailableTimes(List<AppointmentEntity> appointments) {
         var availableTimes = new ArrayList<ScheduleTimeResponse>();
         //MARCA HORÁRIOS AGENDADOS
@@ -107,9 +118,52 @@ public class WorkingHourEntity {
         return availableTimes;
     }
 
-    //MODIFICAR PARA PRIVADO
+    /**
+     * Retorna os horários possíveis para o funcionário atender determinada especialidade.
+     *
+     * @param specialty
+     * @param appointments
+     * @return
+     */
+    public List<WithoutId> getPossibleTimes(SpecialtyEntity specialty, List<AppointmentEntity> appointments) {
+        if (appointments.isEmpty())
+            return filterTimes(specialty, getOpeningHours());
+
+        return filterTimes(specialty, getAvailableTimes(appointments));
+    }
+
+    /**
+     * Filtra os horários possíveis para o funcionário atender a especialidade.
+     *
+     * @param specialty
+     * @return
+     */
+    private List<WithoutId> filterTimes(SpecialtyEntity specialty, List<? extends ScheduleTimeResponse> timesToFilter) {
+        var filteredOpeningHours = new ArrayList<WithoutId>();
+        var timeDuration = specialty.getTimeDuration();
+
+        timesToFilter.forEach(firstLoop -> {
+            if (firstLoop.isAvailable()) {
+                var endOfAttendance = firstLoop.time()
+                        .plusHours(timeDuration.getHour())
+                        .plusMinutes(timeDuration.getMinute());
+
+                AtomicBoolean lastIsAvailable = new AtomicBoolean(false);
+                timesToFilter.forEach(secondLoop -> {
+                    if (endOfAttendance.equals(secondLoop.time()) && (secondLoop.isAvailable() || lastIsAvailable.get()))
+                        filteredOpeningHours.add(new WithoutId(firstLoop.time(), firstLoop.isAvailable()));
+
+                    lastIsAvailable.set(secondLoop.isAvailable());
+                });
+            }
+        });
+
+        return filteredOpeningHours;
+    }
+
+
+    //TODO MODIFICAR PARA PRIVADO
     public boolean isInterval(LocalTime time) {
         return (time.equals(this.startInterval) || (time.isAfter(this.startInterval) && time.isBefore(this.endInterval)));
     }
-
 }

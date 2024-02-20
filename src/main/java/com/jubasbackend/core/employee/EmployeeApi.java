@@ -82,7 +82,7 @@ public interface EmployeeApi {
             @ApiResponse(responseCode = "401", description = "Funcionário não encontrado."),
             @ApiResponse(responseCode = "500", description = "Erro ao atualizar associação.")
     })
-    @PatchMapping("/{employeeId}/working-hour")
+    @PatchMapping("/{employeeId}/working-hours")
     ResponseEntity<Void> updateWorkingHour(
             @PathVariable UUID employeeId,
             @RequestBody @Valid @NotNull UUID workingHourId);
