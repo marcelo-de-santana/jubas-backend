@@ -5,6 +5,7 @@ import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
 import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
+import com.jubasbackend.core.appointment.enums.DayOfWeekPTBR;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +33,7 @@ public interface AppointmentApi {
     ResponseEntity<List<ScheduleResponse>> findAppointments(
             @JsonFormat(pattern = "yyyy-MM-dd")
             @RequestParam("date") Optional<LocalDate> date,
-            @RequestParam("specialty") Optional<UUID> specialtyId
+            @RequestParam Optional<UUID> specialtyId
     );
 
     @Operation(summary = "Buscar agendamento.", method = "GET")
@@ -43,6 +44,15 @@ public interface AppointmentApi {
     })
     @GetMapping("/{appointmentId}")
     ResponseEntity<AppointmentResponse> findAppointment(@PathVariable UUID appointmentId);
+
+    @Operation(summary = "Buscar dias de atendimento.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Nenhum dia encontrado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar dias de atendimento.", content = @Content)
+    })
+    @GetMapping("/daysOfAttendance")
+    ResponseEntity<List<LocalDate>> findDaysOfAttendance();
 
     @Operation(summary = "Cadastrar novo agendamento.", method = "POST")
     @ApiResponses(value = {

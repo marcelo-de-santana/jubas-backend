@@ -5,6 +5,7 @@ import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
 import com.jubasbackend.core.appointment.enums.AppointmentStatus;
+import com.jubasbackend.core.appointment.enums.DayOfWeekPTBR;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
 import com.jubasbackend.core.profile.ProfileEntity;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.jubasbackend.utils.DateTimeUtils.*;
 
@@ -49,6 +47,32 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public AppointmentResponse findAppointment(UUID appointmentId) {
         return new AppointmentResponse(findAppointmentInTheRepository(appointmentId));
+    }
+
+    @Override
+    public List<LocalDate> findDayOfAttendance() {
+        //TODO criar tabela dos dias que não realizará atendimento
+        //TODO verificar os se os dias batem
+        var currentDate = LocalDate.now();
+        var nonServiceDays = List.of(LocalDate.parse("2024-02-26"));
+        var serviceDays = new ArrayList<LocalDate>();
+        int intervalOfDaysToAppointments = 4;
+
+        if (intervalOfDaysToAppointments <= 0) {
+            if (nonServiceDays.stream().noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == currentDate.getDayOfYear())) {
+                serviceDays.add(currentDate);
+            }
+            return serviceDays;
+        }
+
+        for (int i = 0; i < intervalOfDaysToAppointments; i++) {
+            var evaluatedDay = currentDate.plusDays(i);
+            if (nonServiceDays.stream().noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == evaluatedDay.getDayOfYear())) {
+                serviceDays.add(evaluatedDay);
+            }
+        }
+
+        return serviceDays;
     }
 
     @Override
