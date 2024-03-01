@@ -50,17 +50,17 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
-    public List<LocalDate> findDayOfAttendance() {
+    public List<String> findDayOfAttendance() {
         //TODO criar tabela dos dias que não realizará atendimento
         //TODO verificar os se os dias batem
         var currentDate = LocalDate.now();
-        var nonServiceDays = List.of(LocalDate.parse("2024-02-26"));
-        var serviceDays = new ArrayList<LocalDate>();
+        var nonServiceDays = List.of(LocalDate.parse("2024-03-02"));
+        var serviceDays = new ArrayList<String>();
         int intervalOfDaysToAppointments = 4;
 
         if (intervalOfDaysToAppointments <= 0) {
             if (nonServiceDays.stream().noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == currentDate.getDayOfYear())) {
-                serviceDays.add(currentDate);
+                serviceDays.add(currentDate.toString());
             }
             return serviceDays;
         }
@@ -68,7 +68,7 @@ public class AppointmentServiceImpl implements AppointmentService{
         for (int i = 0; i < intervalOfDaysToAppointments; i++) {
             var evaluatedDay = currentDate.plusDays(i);
             if (nonServiceDays.stream().noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == evaluatedDay.getDayOfYear())) {
-                serviceDays.add(evaluatedDay);
+                serviceDays.add(evaluatedDay.toString());
             }
         }
 

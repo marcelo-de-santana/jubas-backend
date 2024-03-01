@@ -4,13 +4,13 @@ import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
 import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
-import com.jubasbackend.core.appointment.enums.DayOfWeekPTBR;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class AppointmentController implements AppointmentApi {
     }
 
     @Override
-    public ResponseEntity<List<LocalDate>> findDaysOfAttendance() {
+    public ResponseEntity<List<String>> findDaysOfAttendance() {
         return ResponseEntity.ok(service.findDayOfAttendance());
     }
 

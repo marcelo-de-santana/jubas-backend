@@ -5,7 +5,6 @@ import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
 import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
-import com.jubasbackend.core.appointment.enums.DayOfWeekPTBR;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -52,7 +51,7 @@ public interface AppointmentApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar dias de atendimento.", content = @Content)
     })
     @GetMapping("/daysOfAttendance")
-    ResponseEntity<List<LocalDate>> findDaysOfAttendance();
+    ResponseEntity<List<String>> findDaysOfAttendance();
 
     @Operation(summary = "Cadastrar novo agendamento.", method = "POST")
     @ApiResponses(value = {

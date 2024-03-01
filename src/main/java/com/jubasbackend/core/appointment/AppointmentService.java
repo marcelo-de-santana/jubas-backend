@@ -17,7 +17,7 @@ public interface AppointmentService {
 
     AppointmentResponse findAppointment(UUID appointmentId);
 
-    List<LocalDate> findDayOfAttendance();
+    List<String> findDayOfAttendance();
 
     AppointmentEntity createAppointment(AppointmentCreateRequest request);
 
