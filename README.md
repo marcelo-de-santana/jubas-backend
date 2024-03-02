@@ -115,6 +115,14 @@ classDiagram
         FINALIZADO
         CANCELADO
     }
+    
+    class NonServiceDay {
+        LocalDate date
+    }
+
+    class DayAvailable {
+        int quantity
+    }
 
     class Payment {
         UUID id

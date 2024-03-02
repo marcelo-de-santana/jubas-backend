@@ -5,8 +5,10 @@ import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
 import com.jubasbackend.core.appointment.enums.AppointmentStatus;
+import com.jubasbackend.core.day_available.DayAvailableRepository;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
+import com.jubasbackend.core.non_service_day.NonServiceDayRepository;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     private final AppointmentRepository appointmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final NonServiceDayRepository nonServiceDayRepository;
+    private final DayAvailableRepository dayAvailableRepository;
 
     @Override
     public List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate, Optional<UUID> specialtyId) {
@@ -50,12 +54,10 @@ public class AppointmentServiceImpl implements AppointmentService{
 
     @Override
     public List<String> findDayOfAttendance() {
-        //TODO criar tabela dos dias que não realizará atendimento
-        //TODO verificar os se os dias batem
         var currentDate = LocalDate.now();
-        var nonServiceDays = List.of(LocalDate.parse("2024-03-02"));
+        var nonServiceDays = nonServiceDayRepository.getDates();
+        var intervalOfDaysToAppointments = dayAvailableRepository.getQuantity();
         var serviceDays = new ArrayList<String>();
-        int intervalOfDaysToAppointments = 4;
 
         if (intervalOfDaysToAppointments <= 0) {
             if (nonServiceDays.stream().noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == currentDate.getDayOfYear())) {
