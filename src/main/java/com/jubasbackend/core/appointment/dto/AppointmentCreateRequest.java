@@ -1,9 +1,7 @@
 package com.jubasbackend.core.appointment.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.jubasbackend.core.appointment.enums.AppointmentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -20,7 +18,7 @@ public record AppointmentCreateRequest(
         UUID specialtyId,
         @NotNull
         @Schema(type = "String", pattern = "yyyy-MM-dd HH:mm")
-        @JsonFormat( pattern = "yyyy-MM-dd HH:mm")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         LocalDateTime dateTime
 ) {
         public LocalTime time() {

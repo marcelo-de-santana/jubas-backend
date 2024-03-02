@@ -2,7 +2,7 @@
 
 O [deploy da aplicação](https://jubas-backend.onrender.com/swagger-ui.html) do Ecossistema Jubas já está disponível. Por favor, note que pode haver uma demora inicial no carregamento do container devido ao serviço gratuito utilizado. Agradeço pela sua compreensão.
 
-![Swagger UI](https://github.com/marcelo-de-santana/jubas-backend/blob/dev/images/swagger-ui-from-jubas-backend-v1.png?raw=true)
+![Swagger UI](https://github.com/marcelo-de-santana/imagioteca/blob/master/jubas-backend/swagger-ui-from-jubas-backend-v1.png?raw=true)
 
 ---
 
@@ -22,71 +22,104 @@ O [deploy da aplicação](https://jubas-backend.onrender.com/swagger-ui.html) do
 ```mermaid
 classDiagram
     direction LR
-    Permission "1" -- "1" User : has
+    PermissionType "1" -- "1" User : has
     
     Profile "n" -- "1" User : associated 
     
     Profile "1" --* "1" Employee : assigned
 
-    Employee "1" -- "1" WorkingHours : assigned
+    Employee "1" -- "1" WorkingHour : assigned
 
     Employee "n" -- "n" Specialty : associated
     
     Specialty "n" -- "1" Category : belongs
 
-    Employee "1" -- "1" Appointments : contains
+    Employee "1" -- "n" Appointment : contains
 
-    Profile "1" -- "1" Appointments : contains
+    Profile "1" -- "n" Appointment : contains
     
-    Specialty "1" -- "1" Appointments : contains
+    Specialty "1" -- "1" Appointment : contains
     
-    Payments "1" -- "1" Appointments : associated
+    Appointment "1" -- "1"  AppointmentStatus: associated
 
-    class Permission {
-        -String type
+    Appointment "n" -- "1"  Payment: associated
+
+    class PermissionType {
+        <<Enumeration>>
+        ADMIN
+        BARBEIRO
+        CLIENTE
     }
 
     class User {
-        -String email
-        -String password
+        UUID id
+        String email
+        String password
+        PermissionType permission
+        List~Profile~ profiles
     }
 
     class Profile {
-        -String name
-        -String cpf
-        -boolean status
+        UUID id
+        String name
+        String cpf
+        boolean status
+        User user
+        List~Appointment~ appointments
     }
 
     class Employee {
+        Profile profile
+        WorkingHour workingHour
+        List~Specialty~ specialties
+        List~Appointment~ attendances
     }
 
-    class WorkingHours {
-        -Time startTime
-        -Time endTime
-        -Time intervalStart
-        -Time intervalEnd
+    class WorkingHour {
+        UUID id
+        Time startTime
+        Time endTime
+        Time intervalStart
+        Time intervalEnd
     }
 
     class Specialty {
-        -String name
-        -Time duration
-        -Float price  
+        UUID id
+        String name
+        Time duration
+        BigDecimal price
+        Category category
+        List~Employee~ employees
     }
 
     class Category {
-        -String name
+        Short id
+        String name
     }
 
-    class Appointments {
-        -DateTime date
-        -DateTime createdAt
-        -DateTime updatedAt
-        -Boolean status
+    class Appointment {
+        UUID id
+        LocalDateTime date
+        Instant createdAt
+        Instant updatedAt
+        Employee employee
+        Profile client
+        Specialty specialty
+        AppointmentStatus appointmentStatus
     }
 
-    class Payments {
-        -String type
-        -Double value
+    class AppointmentStatus {
+        <<Enumeration>>
+        MARCADO
+        EM_ATENDIMENTO
+        FINALIZADO
+        CANCELADO
+    }
+
+    class Payment {
+        UUID id
+        String type
+        BigDecimal value
     }
 ```
 
