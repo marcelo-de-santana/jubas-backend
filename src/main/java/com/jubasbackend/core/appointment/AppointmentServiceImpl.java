@@ -5,7 +5,6 @@ import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
 import com.jubasbackend.core.appointment.enums.AppointmentStatus;
-import com.jubasbackend.core.appointment.enums.DayOfWeekPTBR;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
 import com.jubasbackend.core.profile.ProfileEntity;

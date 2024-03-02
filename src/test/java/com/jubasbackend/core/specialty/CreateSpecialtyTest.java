@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import java.time.LocalTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CreateSpecialtyTest extends SpecialtyServiceBaseTest {
 
-    SpecialtyRequest request = new SpecialtyRequest("Nova especialidade", "00:20", 20.00F, (short) 1);
+    SpecialtyRequest request = new SpecialtyRequest("Nova especialidade", LocalTime.parse("00:20"), 20.00F, (short) 1);
 
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;

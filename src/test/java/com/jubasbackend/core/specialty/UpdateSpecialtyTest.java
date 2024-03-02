@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 
 public class UpdateSpecialtyTest extends SpecialtyServiceBaseTest {
 
-    SpecialtyRequest request = new SpecialtyRequest("Novo nome", "00:20", 20.00F, (short) 1);
+    SpecialtyRequest request = new SpecialtyRequest("Novo nome", LocalTime.parse("00:20"), 20.00F, (short) 1);
     UUID specialtyId = UUID.randomUUID();
 
     @Test

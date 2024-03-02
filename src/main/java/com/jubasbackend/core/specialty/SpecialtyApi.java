@@ -1,7 +1,6 @@
 package com.jubasbackend.core.specialty;
 
 import com.jubasbackend.core.specialty.dto.SpecialtyRequest;
-import com.jubasbackend.core.specialty.dto.SpecialtyCategoryResponse;
 import com.jubasbackend.core.specialty.dto.SpecialtyResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +32,7 @@ public interface SpecialtyApi {
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar especialidade.", content = @Content)
     })
     @PostMapping
-    ResponseEntity<SpecialtyCategoryResponse> createSpecialty(@RequestBody SpecialtyRequest request);
+    ResponseEntity<Void> createSpecialty(@RequestBody SpecialtyRequest request);
 
     @Operation(summary = "Atualizar especialidade.", method = "PATCH")
     @ApiResponses(value = {

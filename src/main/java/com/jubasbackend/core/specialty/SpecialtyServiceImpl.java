@@ -1,7 +1,6 @@
 package com.jubasbackend.core.specialty;
 
 import com.jubasbackend.core.category.CategoryEntity;
-import com.jubasbackend.core.specialty.dto.SpecialtyCategoryResponse;
 import com.jubasbackend.core.specialty.dto.SpecialtyRequest;
 import com.jubasbackend.core.specialty.dto.SpecialtyResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +22,12 @@ public class SpecialtyServiceImpl implements SpecialtyService {
     }
 
     @Override
-    public SpecialtyCategoryResponse createSpecialty(SpecialtyRequest request) {
+    public SpecialtyResponse createSpecialty(SpecialtyRequest request) {
         if (repository.existsByName(request.name())) {
             throw new IllegalArgumentException("Specialty already registered.");
         }
         var newSpecialty = new SpecialtyEntity(request);
-        return new SpecialtyCategoryResponse(repository.save(newSpecialty));
+        return new SpecialtyResponse(repository.save(newSpecialty));
     }
 
     @Override

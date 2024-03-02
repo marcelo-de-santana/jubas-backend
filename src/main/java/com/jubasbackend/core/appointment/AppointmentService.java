@@ -4,7 +4,6 @@ import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
 import com.jubasbackend.core.appointment.dto.AppointmentResponse;
 import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
 import com.jubasbackend.core.appointment.dto.ScheduleResponse;
-import com.jubasbackend.core.appointment.enums.DayOfWeekPTBR;
 
 import java.time.LocalDate;
 import java.util.List;

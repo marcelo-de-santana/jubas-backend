@@ -1,11 +1,9 @@
 package com.jubasbackend.core.specialty;
 
 import com.jubasbackend.core.specialty.dto.SpecialtyRequest;
-import com.jubasbackend.core.specialty.dto.SpecialtyCategoryResponse;
 import com.jubasbackend.core.specialty.dto.SpecialtyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -24,9 +22,9 @@ public class SpecialtyController implements SpecialtyApi {
     }
 
     @Override
-    public ResponseEntity<SpecialtyCategoryResponse> createSpecialty(SpecialtyRequest request) {
+    public ResponseEntity<Void> createSpecialty(SpecialtyRequest request) {
         var specialtyCreated = service.createSpecialty(request);
-        return ResponseEntity.created(URI.create("/specialties/" + specialtyCreated.id())).body(specialtyCreated);
+        return ResponseEntity.created(URI.create("/specialties/" + specialtyCreated.id())).build();
     }
 
     @Override

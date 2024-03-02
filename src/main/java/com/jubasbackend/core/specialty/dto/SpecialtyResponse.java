@@ -12,7 +12,7 @@ public record SpecialtyResponse(
         UUID id,
         String name,
         Float price,
-        @Schema(type = "String", pattern = "HH:mm")
+        @Schema(type = "string", pattern = "HH:mm")
         @JsonFormat(pattern = "HH:mm")
         LocalTime timeDuration
 ) {
