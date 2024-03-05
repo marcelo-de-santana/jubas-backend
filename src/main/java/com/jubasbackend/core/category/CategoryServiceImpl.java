@@ -34,9 +34,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void updateCategory(Short categoryId, String categoryName) {
-        var categoryToUpdate = findCategoryOnRepository(categoryId);
-        categoryToUpdate.setName(categoryName);
+    public void updateCategory(Short id, String name) {
+        var categoryToUpdate = findCategoryOnRepository(id);
+        categoryToUpdate.setName(name);
         repository.save(categoryToUpdate);
     }
 

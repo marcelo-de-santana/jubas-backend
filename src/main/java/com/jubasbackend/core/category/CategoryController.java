@@ -1,10 +1,10 @@
 package com.jubasbackend.core.category;
 
+import com.jubasbackend.core.category.dto.CategoryRequest;
 import com.jubasbackend.core.category.dto.CategoryResponse;
 import com.jubasbackend.core.category.dto.CategorySpecialtyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -26,14 +26,14 @@ public class CategoryController implements CategoryApi {
     }
 
     @Override
-    public ResponseEntity<CategoryResponse> createCategory(String name) {
-        var categoryCreated = service.createCategory(name);
+    public ResponseEntity<CategoryResponse> createCategory(CategoryRequest request) {
+        var categoryCreated = service.createCategory(request.name());
         return ResponseEntity.created(URI.create("/categories/" + categoryCreated.id())).build();
     }
 
     @Override
-    public ResponseEntity<Void> updateCategory(Short categoryId, String name) {
-        service.updateCategory(categoryId, name);
+    public ResponseEntity<Void> updateCategory(Short categoryId, CategoryRequest request) {
+        service.updateCategory(categoryId, request.name());
         return ResponseEntity.noContent().build();
     }
 
