@@ -1,15 +1,15 @@
 package com.jubasbackend.core.employee;
 
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.profile.ProfileEntity;
+import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.working_hour.WorkingHourEntity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,58 +19,52 @@ import static org.mockito.Mockito.*;
 
 class CreateEmployeeTest extends EmployeeServiceBaseTest {
 
-    EmployeeRequest request;
 
-    @Captor
-    ArgumentCaptor<UUID> uuidArgumentCaptor;
+    UUID profileId = UUID.randomUUID();
+    UUID workingHourId = UUID.randomUUID();
+    UUID specialtyId = UUID.randomUUID();
 
-    @Captor
-    ArgumentCaptor<EmployeeEntity> entityArgumentCaptor;
+    ProfileEntity profile = ProfileEntity.builder().id(profileId).name("José Navalha").statusProfile(true).build();
+    SpecialtyEntity specialty = SpecialtyEntity.builder().id(specialtyId).name("Corte de cabelo").build();
+    WorkingHourEntity workingHour = WorkingHourEntity.builder().id(workingHourId).build();
+    EmployeeEntity savedEmployee = EmployeeEntity.builder()
+            .id(profileId)
+            .profile(profile)
+            .workingHour(workingHour)
+            .specialties(List.of(mockCompoundEntity(profile, specialty))).build();
 
-    @BeforeEach
-    void setup() {
-        request = new EmployeeRequest(UUID.randomUUID(), UUID.randomUUID());
-    }
+    EmployeeRequest request = new EmployeeRequest(profileId, workingHourId, List.of(specialtyId));
 
     @Test
     @DisplayName("Deve cadastrar um funcionário com sucesso.")
     void shouldCreateEmployeeWithSuccessfully() {
         //ARRANGE
-        var profile = ProfileEntity.builder().id(request.profileId()).build();
-        var workingHour = WorkingHourEntity.builder().id(request.workingHourId()).build();
-
-        var employee = new EmployeeEntity(request.profileId(), profile, workingHour, new ArrayList<>());
-
-        doReturn(false).when(employeeRepository).existsById(uuidArgumentCaptor.capture());
-        doReturn(Optional.of(profile)).when(profileRepository).findById(uuidArgumentCaptor.capture());
-        doReturn(Optional.of(workingHour)).when(workingHourRepository).findById(uuidArgumentCaptor.capture());
-        doReturn(employee).when(employeeRepository).save(entityArgumentCaptor.capture());
+        doReturn(Optional.of(profile)).when(profileRepository).findById(uuidCaptor.capture());
+        doReturn(Optional.of(workingHour)).when(workingHourRepository).findById(uuidCaptor.capture());
+        doReturn(savedEmployee).when(employeeRepository).save(employeeEntityCaptor.capture());
 
         //ACT
         var response = service.createEmployee(request);
 
         //ASSERT
-        var capturedProfiles = uuidArgumentCaptor.getAllValues();
-        var capturedEntity = entityArgumentCaptor.getValue();
+        var capturedIds = uuidCaptor.getAllValues();
+        var capturedEntity = employeeEntityCaptor.getValue();
 
         assertNotNull(response);
 
-        assertEquals(request.profileId(), capturedProfiles.get(0));
-        assertEquals(request.profileId(), capturedProfiles.get(1));
-        assertEquals(request.workingHourId(), capturedProfiles.get(2));
+        assertEquals(request.profileId(), capturedIds.get(0));
+        assertEquals(request.workingHourId(), capturedIds.get(1));
 
         assertEquals(request.profileId(), capturedEntity.getId());
         assertEquals(request.profileId(), response.id());
         assertEquals(request.workingHourId(), response.workingHour().id());
+        assertEquals(request.specialties().get(0), response.specialties().get(0).id());
 
-        verify(employeeRepository, times(1)).existsById(capturedProfiles.get(0));
-        verify(profileRepository, times(1)).findById(capturedProfiles.get(1));
-        verify(workingHourRepository, times(1)).findById(capturedProfiles.get(2));
+        verify(profileRepository, times(1)).findById(capturedIds.get(0));
+        verify(workingHourRepository, times(1)).findById(capturedIds.get(1));
         verify(employeeRepository, times(1)).save(capturedEntity);
 
-        verifyNoMoreInteractions(profileRepository);
-        verifyNoMoreInteractions(workingHourRepository);
-        verifyNoMoreInteractions(employeeRepository);
+        verifyNoMoreInteractions(profileRepository, workingHourRepository, employeeRepository);
 
     }
 
@@ -78,42 +72,41 @@ class CreateEmployeeTest extends EmployeeServiceBaseTest {
     @DisplayName("Deve ocorrer um erro caso o perfil já esteja associado a um funcionário.")
     void shouldThrowExceptionWhenProfileIsAlreadyAssociatedWithAnEmployee() {
         //ARRANGE
-        doReturn(true).when(employeeRepository).existsById(uuidArgumentCaptor.capture());
+        var profileWithAssociatedEmployee = ProfileEntity.builder()
+                .employee(EmployeeEntity.builder().build()).build();
+        doReturn(Optional.of(profileWithAssociatedEmployee)).when(profileRepository).findById(any());
 
         //ACT & ASSERT
         var exception = assertThrows(IllegalArgumentException.class,
                 () -> service.createEmployee(request));
 
-        var capturedProfileId = uuidArgumentCaptor.getValue();
-
         assertEquals("Profile ID already in use.", exception.getMessage());
 
-        verify(employeeRepository, times(1)).existsById(capturedProfileId);
-        verifyNoMoreInteractions(employeeRepository);
+        verifyNoMoreInteractions(profileRepository);
+        verifyNoInteractions(workingHourRepository, employeeRepository);
     }
 
-    //GERAR NOVOS TESTES PARA OUTROS ERROS.
     @Test
     @DisplayName("Deve ocorrer um erro caso o perfil não exista.")
     void shouldThrowExceptionWhenProfileDoesNotExists() {
         //ARRANGE
-        doReturn(false).when(employeeRepository).existsById(uuidArgumentCaptor.capture());
-        doReturn(Optional.empty()).when(profileRepository).findById(uuidArgumentCaptor.capture());
+        doReturn(Optional.empty()).when(profileRepository).findById(any());
 
         //ACT & ASSERT
         var exception = assertThrows(NoSuchElementException.class,
                 () -> service.createEmployee(request));
 
-        var capturedProfiles = uuidArgumentCaptor.getAllValues();
-
         assertEquals("Profile doesn't exists.", exception.getMessage());
-        assertEquals(request.profileId(), capturedProfiles.get(0));
-        assertEquals(request.profileId(), capturedProfiles.get(1));
 
-        verify(employeeRepository, times(1)).existsById(capturedProfiles.get(0));
-        verify(profileRepository, times(1)).findById(capturedProfiles.get(1));
-
-        verifyNoMoreInteractions(employeeRepository);
         verifyNoMoreInteractions(profileRepository);
+        verifyNoInteractions(workingHourRepository, employeeRepository);
+
     }
+
+    private EmployeeSpecialtyEntity mockCompoundEntity(ProfileEntity profile, SpecialtyEntity specialty) {
+        var compoundId = new EmployeeSpecialtyId(profile.getId(), specialty.getId());
+        var employeeEntity = EmployeeEntity.builder().id(profile.getId()).profile(profile).build();
+        return new EmployeeSpecialtyEntity(compoundId, employeeEntity, specialty);
+    }
+
 }

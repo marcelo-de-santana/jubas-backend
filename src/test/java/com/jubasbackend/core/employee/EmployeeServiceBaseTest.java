@@ -22,6 +22,9 @@ public abstract class EmployeeServiceBaseTest extends TestEntityFactory {
     ArgumentCaptor<UUID> uuidCaptor;
 
     @Captor
+    ArgumentCaptor<EmployeeEntity> employeeEntityCaptor;
+
+    @Captor
     ArgumentCaptor<LocalDateTime> localDateTimeCaptor;
 
     @Mock
