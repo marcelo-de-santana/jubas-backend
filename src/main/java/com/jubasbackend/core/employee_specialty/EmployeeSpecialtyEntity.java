@@ -5,7 +5,7 @@ import com.jubasbackend.core.specialty.SpecialtyEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -28,5 +28,10 @@ public class EmployeeSpecialtyEntity {
     @MapsId("specialtyId")
     @JoinColumn(name = "specialty_id")
     private SpecialtyEntity specialty;
+
+    public static EmployeeSpecialtyEntity create(UUID employeeId, UUID specialtyId) {
+        var compoundId = new EmployeeSpecialtyId(employeeId, specialtyId);
+        return EmployeeSpecialtyEntity.builder().id(compoundId).build();
+    }
 
 }

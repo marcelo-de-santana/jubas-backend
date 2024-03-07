@@ -2,7 +2,6 @@ package com.jubasbackend.core.employee;
 
 import com.jubasbackend.core.appointment.AppointmentEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
-import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.working_hour.WorkingHourEntity;
@@ -37,9 +36,7 @@ public class EmployeeEntity {
     private List<EmployeeSpecialtyEntity> specialties;
 
     public boolean makesSpecialty(UUID specialtyId) {
-        var compoundId = new EmployeeSpecialtyId(getId(), specialtyId);
-        var compoundEntity = EmployeeSpecialtyEntity.builder().id(compoundId).build();
-        return getSpecialties().contains(compoundEntity);
+        return getSpecialties().contains(getCompoundEntity(specialtyId));
     }
 
     public boolean isEqual(UUID employeeId) {
@@ -47,13 +44,23 @@ public class EmployeeEntity {
     }
 
     public SpecialtyEntity getSpecialty(UUID specialtyId) {
-        var compoundId = new EmployeeSpecialtyId(getId(), specialtyId);
-        var compoundEntity = EmployeeSpecialtyEntity.builder().id(compoundId).build();
-        var indexOf = getSpecialties().indexOf(compoundEntity);
+        var indexOf = getSpecialties().indexOf(getCompoundEntity(specialtyId));
         return getSpecialties().get(indexOf).getSpecialty();
     }
 
     public List<WithoutId> getPossibleTimes(UUID specialtyId, List<AppointmentEntity> appointments) {
         return workingHour.getPossibleTimes(getSpecialty(specialtyId), appointments);
+    }
+
+    public void addSpecialty(UUID specialtyId) {
+        getSpecialties().add(getCompoundEntity(specialtyId));
+    }
+
+    public void removeSpecialty(UUID specialtyId) {
+        getSpecialties().remove(getCompoundEntity(specialtyId));
+    }
+
+    private EmployeeSpecialtyEntity getCompoundEntity(UUID specialtyId) {
+        return EmployeeSpecialtyEntity.create(getId(), specialtyId);
     }
 }
