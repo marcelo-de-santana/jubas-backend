@@ -4,13 +4,9 @@ import com.jubasbackend.core.appointment.AppointmentEntity;
 import com.jubasbackend.core.appointment.AppointmentRepository;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeResponse;
-import com.jubasbackend.core.employee.dto.EmployeeWithoutSpecialtiesResponse;
-import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
-import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.profile.ProfileRepository;
-import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.working_hour.WorkingHourEntity;
 import com.jubasbackend.core.working_hour.WorkingHourRepository;
 import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
@@ -59,7 +55,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeWithoutSpecialtiesResponse createEmployee(EmployeeRequest request) {
+    public EmployeeResponse createEmployee(EmployeeRequest request) {
         if (employeeRepository.existsById(request.profileId())) {
             throw new IllegalArgumentException("Profile ID already in use.");
         }
@@ -69,30 +65,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         var newEmployee = new EmployeeEntity(request.profileId(), profile, workingHour, new ArrayList<>());
 
-        return new EmployeeWithoutSpecialtiesResponse(employeeRepository.save(newEmployee));
+        return new EmployeeResponse(employeeRepository.save(newEmployee));
     }
 
     @Override
-    public void addSpecialties(UUID employeeId, List<UUID> newSpecialties) {
-        var currentSpecialties = findEmployeeInTheRepository(employeeId).getSpecialties();
-
-        for (var newSpecialtyId : newSpecialties) {
-            var compoundId = new EmployeeSpecialtyId(employeeId, newSpecialtyId);
-            var entity = EmployeeSpecialtyEntity.builder()
-                    .id(compoundId)
-                    .employee(EmployeeEntity.builder().id(employeeId).build())
-                    .specialty(SpecialtyEntity.builder().id(newSpecialtyId).build()).build();
-
-            if (!currentSpecialties.contains(entity)) {
-                employeeSpecialtyRepository.save(entity);
-            }
-        }
-    }
-
-    @Override
-    public void updateWorkingHour(UUID employeeId, UUID workingHourId) {
+    public void updateEmployee(UUID employeeId, EmployeeRequest request) {
         var employeeToUpdate = findEmployeeInTheRepository(employeeId);
-        employeeToUpdate.setWorkingHour(WorkingHourEntity.builder().id(workingHourId).build());
+
+        if (!request.profileId().toString().isBlank())
+            employeeToUpdate.setId(request.profileId());
+
+        if (!request.workingHourId().toString().isBlank())
+            employeeToUpdate.setWorkingHour(WorkingHourEntity.builder().id(request.workingHourId()).build());
+
+        if (!request.specialties().isEmpty())
+            request.specialties().forEach(specialtyId -> {
+                if (employeeToUpdate.makesSpecialty(specialtyId))
+                    employeeToUpdate.removeSpecialty(specialtyId);
+                else
+                    employeeToUpdate.addSpecialty(specialtyId);
+            });
+
         employeeRepository.save(employeeToUpdate);
     }
 

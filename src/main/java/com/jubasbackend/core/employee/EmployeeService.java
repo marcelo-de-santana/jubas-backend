@@ -1,7 +1,6 @@
 package com.jubasbackend.core.employee;
 
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
-import com.jubasbackend.core.employee.dto.EmployeeWithoutSpecialtiesResponse;
 import com.jubasbackend.core.employee.dto.EmployeeResponse;
 import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 
@@ -18,9 +17,7 @@ public interface EmployeeService {
 
     List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> date);
 
-    EmployeeWithoutSpecialtiesResponse createEmployee(EmployeeRequest request);
+    EmployeeResponse createEmployee(EmployeeRequest request);
 
-    void addSpecialties(UUID employeeId, List<UUID> newSpecialties);
-
-    void updateWorkingHour(UUID employeeId, UUID workingHourId);
+    void updateEmployee(UUID employeeId, EmployeeRequest request);
 }

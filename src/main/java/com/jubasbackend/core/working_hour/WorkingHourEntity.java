@@ -100,7 +100,7 @@ public class WorkingHourEntity {
      * @param appointments
      * @return ScheduleTimeResponse
      */
-    public List<? extends ScheduleTimeResponse> getAvailableTimes(List<AppointmentEntity> appointments) {
+    public List<ScheduleTimeResponse> getAvailableTimes(List<AppointmentEntity> appointments) {
         var availableTimes = new ArrayList<ScheduleTimeResponse>();
         //MARCA HORÁRIOS AGENDADOS
         getOpeningHours().forEach(openingHour -> {

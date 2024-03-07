@@ -41,14 +41,8 @@ public class EmployeeController implements EmployeeApi {
     }
 
     @Override
-    public ResponseEntity<Void> addSpecialties(UUID employeeId, List<UUID> specialties) {
-        service.addSpecialties(employeeId, specialties);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Override
-    public ResponseEntity<Void> updateWorkingHour(UUID employeeId, UUID workingHourId) {
-        service.updateWorkingHour(employeeId, workingHourId);
+    public ResponseEntity<Void> updateEmployee(UUID employeeId, EmployeeRequest request) {
+        service.updateEmployee(employeeId, request);
         return ResponseEntity.noContent().build();
     }
 

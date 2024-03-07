@@ -1,11 +1,13 @@
 package com.jubasbackend.core.employee;
 
+import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.working_hour.WorkingHourEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class UpdateWorkingHourTest extends EmployeeServiceBaseTest {
+class UpdateEmployeeTest extends EmployeeServiceBaseTest {
 
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
@@ -24,7 +26,11 @@ class UpdateWorkingHourTest extends EmployeeServiceBaseTest {
 
     UUID employeeId = UUID.randomUUID();
     UUID workingHourId = UUID.randomUUID();
+    UUID specialtyId = UUID.randomUUID();
 
+    EmployeeRequest request = new EmployeeRequest(employeeId, workingHourId, List.of(specialtyId));
+
+    //TODO: REFAZER TESTES
     @Test
     @DisplayName("Deve atualizar a associação com sucesso.")
     void shouldUpdateAssociationWithSuccessfully() {
@@ -38,7 +44,7 @@ class UpdateWorkingHourTest extends EmployeeServiceBaseTest {
         doReturn(EmployeeEntity.builder().build()).when(employeeRepository).save(entityArgumentCaptor.capture());
 
         //ACT
-        service.updateWorkingHour(employeeId, workingHourId);
+        service.updateEmployee(employeeId, request);
 
         //ASSERT
         var capturedEmployeeId = uuidArgumentCaptor.getValue();
@@ -61,7 +67,7 @@ class UpdateWorkingHourTest extends EmployeeServiceBaseTest {
 
         //ACT & ASSERT
         var exception = assertThrows(NoSuchElementException.class,
-                () -> service.updateWorkingHour(employeeId, workingHourId));
+                () -> service.updateEmployee(employeeId, request));
 
         var capturedId = uuidArgumentCaptor.getValue();
 
