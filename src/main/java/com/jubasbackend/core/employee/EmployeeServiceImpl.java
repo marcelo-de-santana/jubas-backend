@@ -4,6 +4,7 @@ import com.jubasbackend.core.appointment.AppointmentEntity;
 import com.jubasbackend.core.appointment.AppointmentRepository;
 import com.jubasbackend.core.employee.dto.EmployeeRequest;
 import com.jubasbackend.core.employee.dto.EmployeeResponse;
+import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.profile.ProfileRepository;
@@ -56,14 +57,25 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeResponse createEmployee(EmployeeRequest request) {
-        if (employeeRepository.existsById(request.profileId())) {
-            throw new IllegalArgumentException("Profile ID already in use.");
-        }
+        var workingHour = new WorkingHourEntity();
+        var specialties = new ArrayList<EmployeeSpecialtyEntity>();
 
         var profile = findProfileOnRepository(request.profileId());
-        var workingHour = findWorkingHourOnRepository(request.workingHourId());
 
-        var newEmployee = new EmployeeEntity(request.profileId(), profile, workingHour, new ArrayList<>());
+        if (profile.getEmployee() != null)
+            throw new IllegalArgumentException("Profile ID already in use.");
+
+        if (!request.workingHourId().toString().isBlank())
+            workingHour = findWorkingHourOnRepository(request.workingHourId());
+
+        var newEmployee = EmployeeEntity.builder()
+                .id(profile.getId())
+                .profile(profile)
+                .workingHour(workingHour)
+                .specialties(specialties).build();
+
+        if (!request.specialties().isEmpty())
+            request.specialties().forEach(newEmployee::addSpecialty);
 
         return new EmployeeResponse(employeeRepository.save(newEmployee));
     }
@@ -72,8 +84,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void updateEmployee(UUID employeeId, EmployeeRequest request) {
         var employeeToUpdate = findEmployeeInTheRepository(employeeId);
 
-        if (!request.profileId().toString().isBlank())
-            employeeToUpdate.setId(request.profileId());
+        if (!request.profileId().toString().isBlank() && request.profileId() != employeeToUpdate.getId())
+            throw new IllegalArgumentException("It's not allowed to modify the profile.");
 
         if (!request.workingHourId().toString().isBlank())
             employeeToUpdate.setWorkingHour(WorkingHourEntity.builder().id(request.workingHourId()).build());

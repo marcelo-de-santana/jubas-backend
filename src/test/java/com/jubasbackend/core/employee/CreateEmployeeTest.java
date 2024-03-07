@@ -18,23 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CreateEmployeeTest extends EmployeeServiceBaseTest {
-
-
-    UUID profileId = UUID.randomUUID();
-    UUID workingHourId = UUID.randomUUID();
-    UUID specialtyId = UUID.randomUUID();
-
-    ProfileEntity profile = ProfileEntity.builder().id(profileId).name("José Navalha").statusProfile(true).build();
-    SpecialtyEntity specialty = SpecialtyEntity.builder().id(specialtyId).name("Corte de cabelo").build();
-    WorkingHourEntity workingHour = WorkingHourEntity.builder().id(workingHourId).build();
-    EmployeeEntity savedEmployee = EmployeeEntity.builder()
-            .id(profileId)
-            .profile(profile)
-            .workingHour(workingHour)
-            .specialties(List.of(mockCompoundEntity(profile, specialty))).build();
-
-    EmployeeRequest request = new EmployeeRequest(profileId, workingHourId, List.of(specialtyId));
-
     @Test
     @DisplayName("Deve cadastrar um funcionário com sucesso.")
     void shouldCreateEmployeeWithSuccessfully() {
@@ -101,12 +84,6 @@ class CreateEmployeeTest extends EmployeeServiceBaseTest {
         verifyNoMoreInteractions(profileRepository);
         verifyNoInteractions(workingHourRepository, employeeRepository);
 
-    }
-
-    private EmployeeSpecialtyEntity mockCompoundEntity(ProfileEntity profile, SpecialtyEntity specialty) {
-        var compoundId = new EmployeeSpecialtyId(profile.getId(), specialty.getId());
-        var employeeEntity = EmployeeEntity.builder().id(profile.getId()).profile(profile).build();
-        return new EmployeeSpecialtyEntity(compoundId, employeeEntity, specialty);
     }
 
 }
