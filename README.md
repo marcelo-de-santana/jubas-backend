@@ -11,10 +11,11 @@ O [deploy da aplicação](https://jubas-backend.onrender.com/swagger-ui.html) do
 </h3>
 
 <p align="center">
-  <img alt="Language: Java" src="https://img.shields.io/badge/language-java-green">
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-🐳-blue">
-  <img alt="Swagger 3.0" src="https://img.shields.io/badge/Swagger-3.0-orange">
-  <img alt="Version: 1.0" src="https://img.shields.io/badge/version-2.0-yellowgreen">
+  <img alt="MySQL" src="https://img.shields.io/badge/MySQL-00739E?style=for-the-badge&logo=MySQL&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-0D6EFD?style=for-the-badge&logo=Docker&logoColor=white">
+  <img alt="Java" src="https://img.shields.io/badge/Java-white?style=for-the-badge&logo=OpenJDK&logoColor=333333">
+  <img alt="Swagger 3.0" src="https://img.shields.io/badge/Swagger-F0C723?style=for-the-badge&logo=Swagger&logoColor=black">
+  <img alt="Spring" src="https://img.shields.io/badge/Spring-C6423D?style=for-the-badge&logo=Spring&logoColor=white">
 </p>
 
 ## :straight_ruler: Diagrama de Classes
