@@ -1,7 +1,7 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.UserRequest;
 import com.jubasbackend.core.profile.ProfileEntity;
+import com.jubasbackend.core.user.dto.UserRequest;
 import com.jubasbackend.core.user.enums.PermissionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

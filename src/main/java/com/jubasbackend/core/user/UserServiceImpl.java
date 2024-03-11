@@ -1,6 +1,9 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.*;
+import com.jubasbackend.core.user.dto.UserAuthRequest;
+import com.jubasbackend.core.user.dto.UserProfileResponse;
+import com.jubasbackend.core.user.dto.UserRequest;
+import com.jubasbackend.core.user.dto.UserResponse;
 import com.jubasbackend.core.user.enums.PermissionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> findUsers() {
         return repository.findAll().stream().map(UserResponse::new).toList();
+    }
+
+    @Override
+    public List<UserProfileResponse> findUsersAndProfiles() {
+        return repository.findAll().stream().map(UserProfileResponse::new).toList();
     }
 
     @Override

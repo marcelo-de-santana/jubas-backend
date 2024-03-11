@@ -1,6 +1,9 @@
 package com.jubasbackend.core.user;
 
-import com.jubasbackend.core.user.dto.*;
+import com.jubasbackend.core.user.dto.UserAuthRequest;
+import com.jubasbackend.core.user.dto.UserProfileResponse;
+import com.jubasbackend.core.user.dto.UserRequest;
+import com.jubasbackend.core.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,11 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<List<UserResponse>> findUsers() {
         return ResponseEntity.ok(service.findUsers());
+    }
+
+    @Override
+    public ResponseEntity<List<UserProfileResponse>> findUsersAndProfiles() {
+        return ResponseEntity.ok(service.findUsersAndProfiles());
     }
 
     @Override
