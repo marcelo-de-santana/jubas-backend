@@ -79,14 +79,12 @@ public class AppointmentServiceImpl implements AppointmentService{
     @Override
     public AppointmentEntity createAppointment(AppointmentCreateRequest request) {
         var employee = findEmployeeInTheRepository(request.employeeId());
+
         if (!employee.makesSpecialty(request.specialtyId()))
             throw new IllegalArgumentException("Employee doesn't makes specialty.");
 
         var registeredAppointments = findAppointmentsInTheRepository(request.date(), request.employeeId(), request.clientId());
         var newAppointment = new AppointmentEntity(request, employee);
-
-        //VERIFICA SE O FUNCIONÁRIO REALIZA O SERVIÇO
-        newAppointment.validateIfEmployeeMakesSpecialty();
 
         validateAppointment(registeredAppointments, newAppointment);
 
@@ -147,11 +145,13 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     private EmployeeEntity findEmployeeInTheRepository(UUID employeeId) {
-        return employeeRepository.findById(employeeId).orElseThrow(() -> new NoSuchElementException("Employee doesn't registered."));
+        return employeeRepository.findById(employeeId).orElseThrow(
+                () -> new NoSuchElementException("Employee doesn't registered."));
     }
 
     private AppointmentEntity findAppointmentInTheRepository(UUID appointmentId) {
-        return appointmentRepository.findById(appointmentId).orElseThrow(() -> new NoSuchElementException("Appointment not found."));
+        return appointmentRepository.findById(appointmentId).orElseThrow(
+                () -> new NoSuchElementException("Appointment not found."));
     }
 
     private void validateAppointment(List<AppointmentEntity> registeredAppointments, AppointmentEntity requestAppointment) {
@@ -159,7 +159,11 @@ public class AppointmentServiceImpl implements AppointmentService{
             registeredAppointments.forEach(existingAppointment -> existingAppointment.validate(requestAppointment));
     }
 
-    private List<ScheduleResponse> getPossibleTimesBySpecialty(UUID specialtyId, List<EmployeeEntity> employees, List<AppointmentEntity> appointments) {
+    private List<ScheduleResponse> getPossibleTimesBySpecialty(
+            UUID specialtyId,
+            List<EmployeeEntity> employees,
+            List<AppointmentEntity> appointments
+    ) {
         var filteredEmployees = employees.stream()
                 .filter(employee -> employee.makesSpecialty(specialtyId)).toList();
 
