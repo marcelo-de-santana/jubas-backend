@@ -1,16 +1,12 @@
 package com.jubasbackend.core.appointment;
 
-import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
-import com.jubasbackend.core.appointment.dto.AppointmentResponse;
-import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
-import com.jubasbackend.core.appointment.dto.ScheduleResponse;
+import com.jubasbackend.core.appointment.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +36,12 @@ public class AppointmentController implements AppointmentApi {
     public ResponseEntity<Void> createAppointment(AppointmentCreateRequest request) {
         var createdAppointment = service.createAppointment(request);
         return ResponseEntity.created(URI.create("/appointments/" + createdAppointment.getId())).build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateDaysOfAttendance(DaysOfAttendanceRequest request) {
+        service.updateDaysOfAttendance(request);
+        return ResponseEntity.noContent().build();
     }
 
     @Override

@@ -69,5 +69,4 @@ public interface EmployeeApi {
             @PathVariable UUID employeeId,
             @RequestBody @Valid EmployeeRequest request);
 
-
 }

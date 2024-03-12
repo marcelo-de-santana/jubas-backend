@@ -1,11 +1,8 @@
 package com.jubasbackend.core.appointment;
 
-import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
-import com.jubasbackend.core.appointment.dto.AppointmentResponse;
-import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
-import com.jubasbackend.core.appointment.dto.ScheduleResponse;
+import com.jubasbackend.core.appointment.dto.*;
 import com.jubasbackend.core.appointment.enums.AppointmentStatus;
-import com.jubasbackend.core.day_available.DayAvailableRepository;
+import com.jubasbackend.core.day_availability.DayAvailabilityRepository;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
 import com.jubasbackend.core.non_service_day.NonServiceDayRepository;
@@ -27,7 +24,7 @@ public class AppointmentServiceImpl implements AppointmentService{
     private final AppointmentRepository appointmentRepository;
     private final EmployeeRepository employeeRepository;
     private final NonServiceDayRepository nonServiceDayRepository;
-    private final DayAvailableRepository dayAvailableRepository;
+    private final DayAvailabilityRepository dayAvailableRepository;
 
     @Override
     public List<ScheduleResponse> findAppointments(Optional<LocalDate> requestDate, Optional<UUID> specialtyId) {
@@ -37,7 +34,6 @@ public class AppointmentServiceImpl implements AppointmentService{
 
         var appointments = findAppointmentsInTheRepository(requestDate);
 
-        //TODO SPECIALTY PARAM TESTS
         if (specialtyId.isPresent())
             return getPossibleTimesBySpecialty(specialtyId.get(), employees, appointments);
 
@@ -56,21 +52,19 @@ public class AppointmentServiceImpl implements AppointmentService{
     public List<String> findDayOfAttendance() {
         var currentDate = LocalDate.now();
         var nonServiceDays = nonServiceDayRepository.getDates();
-        var intervalOfDaysToAppointments = dayAvailableRepository.getQuantity();
+        var intervalOfDaysToAppointments = dayAvailableRepository.findQuantity();
         var serviceDays = new ArrayList<String>();
 
-        if (intervalOfDaysToAppointments <= 0) {
-            if (nonServiceDays.stream().noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == currentDate.getDayOfYear())) {
-                serviceDays.add(currentDate.toString());
-            }
-            return serviceDays;
-        }
+        if (isServiceAvailableOnDay(nonServiceDays, currentDate))
+            serviceDays.add(currentDate.toString());
 
-        for (int i = 0; i < intervalOfDaysToAppointments; i++) {
+        if (intervalOfDaysToAppointments <= 0)
+            return serviceDays;
+
+        for (int i = 1; i <= intervalOfDaysToAppointments; i++) {
             var evaluatedDay = currentDate.plusDays(i);
-            if (nonServiceDays.stream().noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == evaluatedDay.getDayOfYear())) {
+            if (isServiceAvailableOnDay(nonServiceDays, evaluatedDay))
                 serviceDays.add(evaluatedDay.toString());
-            }
         }
 
         return serviceDays;
@@ -89,6 +83,17 @@ public class AppointmentServiceImpl implements AppointmentService{
         validateAppointment(registeredAppointments, newAppointment);
 
         return appointmentRepository.save(newAppointment);
+    }
+
+    @Override
+    public void updateDaysOfAttendance(DaysOfAttendanceRequest request) {
+        if (request == null || request.intervalOfDays() < 0)
+            throw new IllegalArgumentException("Interval of days must be a positive integer.");
+
+        var currentDayAvailability = dayAvailableRepository.findSingleEntity();
+
+        currentDayAvailability.setQuantity(request.intervalOfDays());
+        dayAvailableRepository.save(currentDayAvailability);
     }
 
     @Override
@@ -164,8 +169,7 @@ public class AppointmentServiceImpl implements AppointmentService{
             List<EmployeeEntity> employees,
             List<AppointmentEntity> appointments
     ) {
-        var filteredEmployees = employees.stream()
-                .filter(employee -> employee.makesSpecialty(specialtyId)).toList();
+        var filteredEmployees = employees.stream().filter(employee -> employee.makesSpecialty(specialtyId)).toList();
 
         if (filteredEmployees.isEmpty())
             throw new IllegalArgumentException("No employee carries out the specialty.");
@@ -182,4 +186,9 @@ public class AppointmentServiceImpl implements AppointmentService{
         return possibleTimes;
     }
 
+    //VERIFICA SE HÁ ATENDIMENTO NO DIA ESPECÍFICO
+    public boolean isServiceAvailableOnDay(List<LocalDate> nonServiceDays, LocalDate evaluatedDay) {
+        return (nonServiceDays.stream()
+                .noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == evaluatedDay.getDayOfYear()));
+    }
 }

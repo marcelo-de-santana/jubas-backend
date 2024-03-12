@@ -1,9 +1,6 @@
 package com.jubasbackend.core.appointment;
 
-import com.jubasbackend.core.appointment.dto.AppointmentCreateRequest;
-import com.jubasbackend.core.appointment.dto.AppointmentResponse;
-import com.jubasbackend.core.appointment.dto.AppointmentUpdateRequest;
-import com.jubasbackend.core.appointment.dto.ScheduleResponse;
+import com.jubasbackend.core.appointment.dto.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +16,8 @@ public interface AppointmentService {
     List<String> findDayOfAttendance();
 
     AppointmentEntity createAppointment(AppointmentCreateRequest request);
+
+    void updateDaysOfAttendance(DaysOfAttendanceRequest request);
 
     void updateAppointment(UUID appointmentId, AppointmentUpdateRequest request);
 
