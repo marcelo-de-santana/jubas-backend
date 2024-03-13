@@ -39,6 +39,12 @@ public class AppointmentController implements AppointmentApi {
     }
 
     @Override
+    public ResponseEntity<Void> registerDaysWithoutAttendance(DaysWithoutAttendanceRequest request) {
+        service.registerDaysWithoutAttendance(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
     public ResponseEntity<Void> updateDaysOfAttendance(DaysOfAttendanceRequest request) {
         service.updateDaysOfAttendance(request);
         return ResponseEntity.noContent().build();
@@ -53,6 +59,12 @@ public class AppointmentController implements AppointmentApi {
     @Override
     public ResponseEntity<Void> cancelAppointment(UUID appointmentId) {
         service.cancelAppointment(appointmentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteDaysWithoutAttendance(DaysWithoutAttendanceRequest request) {
+        service.deleteDaysWithoutAttendance(request);
         return ResponseEntity.noContent().build();
     }
 }

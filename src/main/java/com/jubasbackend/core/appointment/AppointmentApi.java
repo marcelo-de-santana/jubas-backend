@@ -63,6 +63,13 @@ public interface AppointmentApi {
     @PostMapping
     ResponseEntity<Void> createAppointment(@Valid @RequestBody AppointmentCreateRequest request);
 
+    @Operation(summary = "Bloquear dias para da agenda.", responses = {
+            @ApiResponse(responseCode = "201", description = "Dias registrados com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao registrar os dias.")
+    })
+    @PostMapping("/daysWithoutAttendance")
+    ResponseEntity<Void> registerDaysWithoutAttendance(@RequestBody DaysWithoutAttendanceRequest request);
+
     @Operation(summary = "Alterar o intervalo de dias de atendimento disponíveis.",
             description = """
                     Se a quantidade for igual a:
@@ -92,4 +99,11 @@ public interface AppointmentApi {
     })
     @DeleteMapping("/{appointmentId}")
     ResponseEntity<Void> cancelAppointment(@PathVariable UUID appointmentId);
+
+    @Operation(summary = "Desbloquear dias da agenda.", responses = {
+            @ApiResponse(responseCode = "204", description = "Dias liberados com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao liberar os dias.")
+    })
+    @DeleteMapping("/daysWithoutAttendance")
+    ResponseEntity<Void> deleteDaysWithoutAttendance(DaysWithoutAttendanceRequest request);
 }

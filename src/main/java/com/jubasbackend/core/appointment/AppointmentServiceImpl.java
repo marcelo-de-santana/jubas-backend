@@ -5,6 +5,7 @@ import com.jubasbackend.core.appointment.enums.AppointmentStatus;
 import com.jubasbackend.core.day_availability.DayAvailabilityRepository;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee.EmployeeRepository;
+import com.jubasbackend.core.non_service_day.NonServiceDayEntity;
 import com.jubasbackend.core.non_service_day.NonServiceDayRepository;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
@@ -86,6 +87,12 @@ public class AppointmentServiceImpl implements AppointmentService{
     }
 
     @Override
+    public void registerDaysWithoutAttendance(DaysWithoutAttendanceRequest request) {
+        //TODO: Sistema de envio de e-mail, para notificar clientes desmarcados
+        nonServiceDayRepository.saveAll(request.dates().stream().map(NonServiceDayEntity::new).toList());
+    }
+
+    @Override
     public void updateDaysOfAttendance(DaysOfAttendanceRequest request) {
         if (request == null || request.intervalOfDays() < 0)
             throw new IllegalArgumentException("Interval of days must be a positive integer.");
@@ -137,6 +144,11 @@ public class AppointmentServiceImpl implements AppointmentService{
         } else {
             appointmentRepository.delete(appointmentToCancel);
         }
+    }
+
+    @Override
+    public void deleteDaysWithoutAttendance(DaysWithoutAttendanceRequest request) {
+        nonServiceDayRepository.deleteAll(request.dates().stream().map(NonServiceDayEntity::new).toList());
     }
 
     private List<AppointmentEntity> findAppointmentsInTheRepository(Optional<LocalDate> date) {

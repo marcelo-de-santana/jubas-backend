@@ -17,9 +17,13 @@ public interface AppointmentService {
 
     AppointmentEntity createAppointment(AppointmentCreateRequest request);
 
+    void registerDaysWithoutAttendance(DaysWithoutAttendanceRequest request);
+
     void updateDaysOfAttendance(DaysOfAttendanceRequest request);
 
     void updateAppointment(UUID appointmentId, AppointmentUpdateRequest request);
 
     void cancelAppointment(UUID appointmentId);
+
+    void deleteDaysWithoutAttendance(DaysWithoutAttendanceRequest request);
 }
