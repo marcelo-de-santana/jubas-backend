@@ -1,0 +1,35 @@
+[
+  {
+    "id": "1253fc44-45c5-440c-b0d8-1b9a2c5dc919",
+    "name": "Gabriel Navalha",
+    "statusProfile": true,
+    "workingHour": {
+      "id": "31000000-0000-0000-0000-000000000000",
+      "startTime": "09:00",
+      "endTime": "18:00",
+      "startInterval": "13:00",
+      "endInterval": "14:00"
+    },
+    "specialties": [
+      {
+        "id": "78be8b22-9576-42c9-a819-0e217b10fa30",
+        "name": "Corte clássico com tesoura",
+        "price": 15.99,
+        "timeDuration": "00:40"
+      }
+    ]
+  },
+  {
+    "id": "6603391c-5518-48e2-951d-41aa0760ece9",
+    "name": "Gerson de Castro",
+    "statusProfile": false,
+    "workingHour": {
+      "id": "31000000-0000-0000-0000-000000000000",
+      "startTime": "09:00",
+      "endTime": "18:00",
+      "startInterval": "13:00",
+      "endInterval": "14:00"
+    },
+    "specialties": []
+  }
+]

@@ -2,6 +2,7 @@ package com.jubasbackend.core.appointment;
 
 import com.jubasbackend.core.appointment.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,8 +19,8 @@ public class AppointmentController implements AppointmentApi {
     private final AppointmentService service;
 
     @Override
-    public ResponseEntity<List<ScheduleResponse>> findAppointments(Optional<LocalDate> date, Optional<UUID> specialtyId) {
-        return ResponseEntity.ok(service.findAppointments(date, specialtyId));
+    public ResponseEntity<List<ScheduleResponse>> findAppointments(LocalDate date, UUID specialtyId, boolean filtered) {
+        return ResponseEntity.ok(service.findAppointments(date, specialtyId, filtered));
     }
 
     @Override
@@ -28,8 +29,9 @@ public class AppointmentController implements AppointmentApi {
     }
 
     @Override
-    public ResponseEntity<List<String>> findDaysOfAttendance() {
-        return ResponseEntity.ok(service.findDayOfAttendance());
+    public ResponseEntity<List<DaysOfAttendanceResponse>> findDaysOfAttendance(
+            Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+        return ResponseEntity.ok(service.findDaysOfAttendance(startDate, endDate));
     }
 
     @Override
@@ -39,14 +41,14 @@ public class AppointmentController implements AppointmentApi {
     }
 
     @Override
-    public ResponseEntity<Void> registerDaysWithoutAttendance(DaysWithoutAttendanceRequest request) {
-        service.registerDaysWithoutAttendance(request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> registerDaysWithoutAttendance(List<LocalDate> dates) {
+        service.registerDaysWithoutAttendance(dates);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Override
-    public ResponseEntity<Void> updateDaysOfAttendance(DaysOfAttendanceRequest request) {
-        service.updateDaysOfAttendance(request);
+    public ResponseEntity<Void> updateRangeOfAttendanceDays(RangeOfAttendanceRequest request) {
+        service.updateRangeOfAttendanceDays(request);
         return ResponseEntity.noContent().build();
     }
 
@@ -63,8 +65,8 @@ public class AppointmentController implements AppointmentApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteDaysWithoutAttendance(DaysWithoutAttendanceRequest request) {
-        service.deleteDaysWithoutAttendance(request);
+    public ResponseEntity<Void> deleteDaysWithoutAttendance(List<LocalDate> dates) {
+        service.deleteDaysWithoutAttendance(dates);
         return ResponseEntity.noContent().build();
     }
 }

@@ -32,9 +32,9 @@ public interface AppointmentApi {
     })
     @GetMapping
     ResponseEntity<List<ScheduleResponse>> findAppointments(
-            @JsonFormat(pattern = "yyyy-MM-dd")
-            @RequestParam("date") Optional<LocalDate> date,
-            @RequestParam Optional<UUID> specialtyId
+            @RequestParam(required = false) @JsonFormat(pattern = "yyyy-MM-dd") LocalDate date,
+            @RequestParam(required = false) UUID specialtyId,
+            @RequestParam(required = false, defaultValue = "false") boolean filtered
     );
 
     @Operation(summary = "Buscar agendamento.", responses = {
@@ -51,7 +51,8 @@ public interface AppointmentApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar dias de atendimento.", content = @Content)
     })
     @GetMapping("/daysOfAttendance")
-    ResponseEntity<List<String>> findDaysOfAttendance();
+    ResponseEntity<List<DaysOfAttendanceResponse>> findDaysOfAttendance(@RequestParam Optional<LocalDate> startDate,
+                                                                        @RequestParam Optional<LocalDate> endDate);
 
     @Operation(summary = "Cadastrar novo agendamento.", responses = {
             @ApiResponse(responseCode = "201", description = "Agendamento realizado com sucesso."),
@@ -68,9 +69,9 @@ public interface AppointmentApi {
             @ApiResponse(responseCode = "500", description = "Erro ao registrar os dias.")
     })
     @PostMapping("/daysWithoutAttendance")
-    ResponseEntity<Void> registerDaysWithoutAttendance(@RequestBody DaysWithoutAttendanceRequest request);
+    ResponseEntity<Void> registerDaysWithoutAttendance(@RequestBody @JsonFormat(pattern = "yyyy-MM-dd") List<LocalDate> dates);
 
-    @Operation(summary = "Alterar o intervalo de dias de atendimento disponíveis.",
+    @Operation(summary = "Alterar o intervalo de disponibilidade da agenda.",
             description = """
                     Se a quantidade for igual a:
                     - Zero: Retorna um dia (Hoje).
@@ -79,10 +80,10 @@ public interface AppointmentApi {
             responses = {
             @ApiResponse(responseCode = "204", description = "Alteração realizada com sucesso."),
             @ApiResponse(responseCode = "401", description = "Valor incorreto."),
-            @ApiResponse(responseCode = "500", description = "Erro ao alterar o intervalo de atendimentos.")
+                    @ApiResponse(responseCode = "500", description = "Erro ao alterar a disponibilidade da agenda.")
     })
-    @PutMapping("/daysOfAttendance")
-    ResponseEntity<Void> updateDaysOfAttendance(@RequestBody DaysOfAttendanceRequest request);
+    @PutMapping("/rangeOfAttendanceDays")
+    ResponseEntity<Void> updateRangeOfAttendanceDays(@RequestBody RangeOfAttendanceRequest request);
 
     @Operation(summary = "Alterar agendamento.", responses = {
             @ApiResponse(responseCode = "200", description = "Alteração realizada com sucesso."),
@@ -97,7 +98,7 @@ public interface AppointmentApi {
             @ApiResponse(responseCode = "404", description = "Agendamento não encontrado."),
             @ApiResponse(responseCode = "500", description = "Erro ao cancelar agendamento.")
     })
-    @DeleteMapping("/{appointmentId}")
+    @DeleteMapping("/{appointmentId}/cancelAttendance")
     ResponseEntity<Void> cancelAppointment(@PathVariable UUID appointmentId);
 
     @Operation(summary = "Desbloquear dias da agenda.", responses = {
@@ -105,5 +106,5 @@ public interface AppointmentApi {
             @ApiResponse(responseCode = "500", description = "Erro ao liberar os dias.")
     })
     @DeleteMapping("/daysWithoutAttendance")
-    ResponseEntity<Void> deleteDaysWithoutAttendance(DaysWithoutAttendanceRequest request);
+    ResponseEntity<Void> deleteDaysWithoutAttendance(@RequestBody List<LocalDate> dates);
 }

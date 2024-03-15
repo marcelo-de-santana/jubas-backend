@@ -25,7 +25,7 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
 
     UUID employeeId = UUID.randomUUID();
     UUID specialtyId = UUID.randomUUID();
-    Optional<LocalDate> requestDate = Optional.of(LocalDate.now());
+    LocalDate requestDate = LocalDate.now();
 
     ProfileEntity profileOfEmployee = ProfileEntity.builder()
             .id(employeeId).name("José Augusto").cpf("012345678910").statusProfile(true).build();
@@ -79,7 +79,7 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
         assertEquals(employeeId, capturedId.get(0));
         assertEquals(employeeId, capturedId.get(1));
 
-        assertEquals(requestDate.get(), capturedDateTimes.get(0).toLocalDate());
+        assertEquals(requestDate, capturedDateTimes.get(0).toLocalDate());
         assertEquals(18, response.size(), "Eighteen times returned.");
 
         verify(employeeRepository, times(1)).findById(capturedId.get(0));
@@ -91,7 +91,7 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
     @DisplayName("Deve retornar a agenda com o horário do início do agendamento marcado.")
     void shouldReturnScheduleWithScheduledStartTime() {
         //ARRANGE
-        var requestDate = Optional.of(LocalDate.parse("2024-02-03"));
+        var requestDate = LocalDate.parse("2024-02-03");
         var dateOfAppointment = LocalDateTime.parse("2024-02-03T13:10");
         var listOfAppointments = List.of(AppointmentEntity.builder()
                 .id(UUID.randomUUID())
@@ -124,7 +124,7 @@ class FindAppointmentsByEmployeeTest extends EmployeeServiceBaseTest {
     @DisplayName("Deve retornar a agenda com os horários do agendamento marcados.")
     void shouldReturnScheduleWithScheduledPeriodTimes() {
         //ARRANGE
-        var requestDate = Optional.of(LocalDate.parse("2024-02-03"));
+        var requestDate = LocalDate.parse("2024-02-03");
         var dateOfAppointment = LocalDateTime.parse("2024-02-03T13:10");
         var appointment = AppointmentEntity.builder()
                 .id(UUID.randomUUID())

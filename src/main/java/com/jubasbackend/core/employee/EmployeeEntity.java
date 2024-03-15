@@ -5,7 +5,7 @@ import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.working_hour.WorkingHourEntity;
-import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse.WithoutId;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,17 +39,17 @@ public class EmployeeEntity {
         return getSpecialties().contains(getCompoundEntity(specialtyId));
     }
 
-    public boolean isEqual(UUID employeeId) {
+    public boolean hasId(UUID employeeId) {
         return employeeId.equals(this.getId());
     }
 
-    public SpecialtyEntity getSpecialty(UUID specialtyId) {
+    public SpecialtyEntity retrieveSpecialty(UUID specialtyId) {
         var indexOf = getSpecialties().indexOf(getCompoundEntity(specialtyId));
         return getSpecialties().get(indexOf).getSpecialty();
     }
 
-    public List<WithoutId> getPossibleTimes(UUID specialtyId, List<AppointmentEntity> appointments) {
-        return workingHour.getPossibleTimes(getSpecialty(specialtyId), appointments);
+    public List<ScheduleTimeResponse> getPossibleTimes(UUID specialtyId, List<AppointmentEntity> appointments) {
+        return workingHour.getPossibleTimes(retrieveSpecialty(specialtyId), appointments);
     }
 
     public void addSpecialty(UUID specialtyId) {

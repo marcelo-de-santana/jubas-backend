@@ -11,18 +11,18 @@ public interface ScheduleTimeResponse {
 
     boolean isAvailable();
 
-    public record WithId(
+     record WithId(
             @Schema(type = "String", pattern = "HH:mm")
             @JsonFormat(pattern = "HH:mm")
             LocalTime time,
             boolean isAvailable,
             UUID appointmentId) implements ScheduleTimeResponse {
-        public WithId(WithoutId openingHour, UUID appointmentId) {
-            this(openingHour.time(), false, appointmentId);
+        public WithId(ScheduleTimeResponse schedule, UUID appointmentId) {
+            this(schedule.time(), false, appointmentId);
         }
     }
 
-    public record WithoutId(
+    record WithoutId(
             @Schema(type = "String", pattern = "HH:mm")
             @JsonFormat(pattern = "HH:mm")
             LocalTime time,

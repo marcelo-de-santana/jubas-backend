@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Tag(name = "Employees")
@@ -44,7 +43,7 @@ public interface EmployeeApi {
     @GetMapping("/{employeeId}/appointments")
     ResponseEntity<List<? extends ScheduleTimeResponse>> findAppointmentsByEmployee(
             @PathVariable UUID employeeId,
-            @JsonFormat(pattern = "yyyy-MM-dd") @RequestParam Optional<LocalDate> date);
+            @RequestParam(required = false) @JsonFormat(pattern = "yyyy-MM-dd") LocalDate date);
 
     @Operation(summary = "Cadastrar funcionário.", responses = {
             @ApiResponse(responseCode = "201", description = "Funcionário cadastrado com sucesso."),

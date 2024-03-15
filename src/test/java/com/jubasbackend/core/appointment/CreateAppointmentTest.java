@@ -64,14 +64,14 @@ class CreateAppointmentTest extends AppointmentServiceBaseTest {
             //ARRANGE
             doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(uuidCaptor.capture());
             doReturn(List.of()).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(
-                    localDateTimeCaptor.capture(), localDateTimeCaptor.capture(), uuidCaptor.capture(), uuidCaptor.capture());
+                    dateTimeCaptor.capture(), dateTimeCaptor.capture(), uuidCaptor.capture(), uuidCaptor.capture());
             doReturn(newAppointment).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 
             //ACT & ASSERT
             assertNotNull(service.createAppointment(request));
 
             var capturedIds = uuidCaptor.getAllValues();
-            var capturedDateTimes = localDateTimeCaptor.getAllValues();
+            var capturedDateTimes = dateTimeCaptor.getAllValues();
             var capturedEntity = appointmentEntityCaptor.getValue();
 
             assertEquals(request.employeeId(), capturedIds.get(0));

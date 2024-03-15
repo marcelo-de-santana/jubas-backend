@@ -3,6 +3,7 @@ package com.jubasbackend.core.working_hour;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalTime;
 import java.util.UUID;
 
 import static java.time.LocalTime.parse;
@@ -50,10 +51,16 @@ class GetOpeningHoursTest {
 
         //ASSERT
         for (var availableTime : availableTimes) {
-            if (workingHour.isInterval(availableTime.time()))
+
+            if (isInterval(workingHour, availableTime.time()))
+
                 assertFalse(availableTime.isAvailable());
             else
                 assertTrue(availableTime.isAvailable());
         }
+    }
+
+    private boolean isInterval(WorkingHourEntity workingHour, LocalTime time) {
+        return (time.equals(workingHour.getStartInterval()) || (time.isAfter(workingHour.getStartInterval()) && time.isBefore(workingHour.getEndInterval())));
     }
 }

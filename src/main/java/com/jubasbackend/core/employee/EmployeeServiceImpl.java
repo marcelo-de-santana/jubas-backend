@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.jubasbackend.utils.DateTimeUtils.getEndDay;
-import static com.jubasbackend.utils.DateTimeUtils.getSelectedDate;
+import static com.jubasbackend.utils.DateTimeUtils.parseEndOfDay;
+import static com.jubasbackend.utils.DateTimeUtils.obtainDateTimeFromOptionalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> requestDate) {
+    public List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, LocalDate requestDate) {
         //BUSCA HORÁRIOS AGENDADOS COM O FUNCIONÁRIO
         var appointments = findAppointmentsInTheRepository(requestDate, employeeId);
 
@@ -116,9 +116,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
-    private List<AppointmentEntity> findAppointmentsInTheRepository(Optional<LocalDate> date, UUID employeeId) {
-        var selectedDate = getSelectedDate(date);
-        return appointmentRepository.findAllByDateBetweenAndEmployeeId(selectedDate, getEndDay(selectedDate), employeeId);
+    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDate date, UUID employeeId) {
+        var selectedDate = obtainDateTimeFromOptionalDate(date);
+        return appointmentRepository.findAllByDateBetweenAndEmployeeId(selectedDate, parseEndOfDay(selectedDate), employeeId);
     }
 
 }

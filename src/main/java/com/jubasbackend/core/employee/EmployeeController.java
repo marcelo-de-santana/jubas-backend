@@ -30,7 +30,7 @@ public class EmployeeController implements EmployeeApi {
     }
 
     @Override
-    public ResponseEntity<List<? extends ScheduleTimeResponse>> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> date) {
+    public ResponseEntity<List<? extends ScheduleTimeResponse>> findAppointmentsByEmployee(UUID employeeId, LocalDate date) {
         return ResponseEntity.ok(service.findAppointmentsByEmployee(employeeId, date));
     }
 

@@ -1,8 +1,10 @@
 package com.jubasbackend.core.appointment;
 
 import com.jubasbackend.core.TestEntityFactory;
+import com.jubasbackend.core.day_availability.DayAvailabilityRepository;
 import com.jubasbackend.core.employee.EmployeeRepository;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyRepository;
+import com.jubasbackend.core.non_service_day.NonServiceDayRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +29,12 @@ public abstract class AppointmentServiceBaseTest extends TestEntityFactory {
     @Mock
     EmployeeRepository employeeRepository;
 
+    @Mock
+    NonServiceDayRepository nonServiceDayRepository;
+
+    @Mock
+    DayAvailabilityRepository dayAvailabilityRepository;
+
     @InjectMocks
     protected AppointmentServiceImpl service;
 
@@ -34,7 +42,7 @@ public abstract class AppointmentServiceBaseTest extends TestEntityFactory {
     ArgumentCaptor<UUID> uuidCaptor;
 
     @Captor
-    ArgumentCaptor<LocalDateTime> localDateTimeCaptor;
+    ArgumentCaptor<LocalDateTime> dateTimeCaptor;
 
     @Captor
     ArgumentCaptor<AppointmentEntity> appointmentEntityCaptor;

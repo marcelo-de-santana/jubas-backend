@@ -6,7 +6,6 @@ import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface EmployeeService {
@@ -15,7 +14,7 @@ public interface EmployeeService {
 
     EmployeeResponse findEmployee(UUID employeeId);
 
-    List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, Optional<LocalDate> date);
+    List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, LocalDate date);
 
     EmployeeResponse createEmployee(EmployeeRequest request);
 

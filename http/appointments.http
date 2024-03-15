@@ -1,22 +1,19 @@
-###
+### BUSCAR AGENDA POR DIA
+GET http://localhost:8080/appointments?date=2024-03-15
+
+### BUSCAR AGENDA DO DIA FILTADA POR HORA ATUAL
+GET http://localhost:8080/appointments?filtered=true
+
+### BUSCAR AGENDA COM HORÁRIOS POSSÍVEIS PARA DETERMINADA ESPECIALIDADE
+GET http://localhost:8080/appointments?specialtyId=78be8b22-9576-42c9-a819-0e217b10fa30
+
+### BUSCAR AGENDAMENTO POR ID
+GET http://localhost:8080/appointments/be1abe8e-80d2-4443-8fc1-24f4c5a38ce3
+
+### BUSCAR DIAS DE ATENDIMENTO
 GET http://localhost:8080/appointments/daysOfAttendance
 
-###
-PUT http://localhost:8080/appointments/daysOfAttendance
-Content-Type: application/json
-
-{
-  "intervalOfDays": 5
-}
-
-###
-GET http://localhost:8080/appointments?date=2024-03-11
-
-###
-GET http://localhost:8080/appointments/c010ddeb-5332-428a-b8f1-d513e4ae5fa6
-
-
-###
+### CADASTRAR UM ATENDIMENTO
 POST http://localhost:8080/appointments
 Content-Type: application/json
 
@@ -24,5 +21,34 @@ Content-Type: application/json
 "employeeId": "1253fc44-45c5-440c-b0d8-1b9a2c5dc919",
 "clientId": "e8cb8b11-508e-4e09-9dbd-6fadf015e28c",
 "specialtyId": "78be8b22-9576-42c9-a819-0e217b10fa30",
-"dateTime": "2024-03-11 09:20"
+  "dateTime": "2024-03-15 17:20"
 }
+
+### BLOQUEAR DIAS DE ATENDIMENTO
+POST http://localhost:8080/appointments/daysWithoutAttendance
+Content-Type: application/json
+
+[
+  "2024-03-16",
+  "2024-03-17"
+]
+
+### ALTERAR QUANTIDADE DE DIAS PARA ATENDIMENTO
+PUT http://localhost:8080/appointments/rangeOfAttendanceDays
+Content-Type: application/json
+
+{
+  "intervalOfDays": 5
+}
+
+### CANCELAR ATENDIMENTO
+DELETE http://localhost:8080/appointments/be1abe8e-80d2-4443-8fc1-24f4c5a38ce3/cancelAttendance
+
+###
+DELETE http://localhost:8080/appointments/daysWithoutAttendance
+Content-Type: application/json
+
+[
+  "2024-03-16",
+  "2024-03-17"
+]
