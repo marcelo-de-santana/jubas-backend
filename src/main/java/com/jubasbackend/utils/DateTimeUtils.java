@@ -21,4 +21,5 @@ public class DateTimeUtils {
     public static LocalDateTime parseStatOfDay(LocalDateTime dateTime) {
         return dateTime.toLocalDate().atStartOfDay();
     }
+
 }

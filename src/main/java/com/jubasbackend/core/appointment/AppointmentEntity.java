@@ -42,7 +42,7 @@ public class AppointmentEntity {
     public AppointmentEntity(AppointmentCreateRequest request, EmployeeEntity employee) {
         this.client = ProfileEntity.builder().id(request.clientId()).build();
         this.employee = employee;
-        this.specialty = employee.retrieveSpecialty(request.specialtyId());
+        this.specialty = employee.getSpecialty(request.specialtyId());
         this.appointmentStatus = AppointmentStatus.MARCADO;
         this.date = request.dateTime();
         this.createdAt = Instant.now();

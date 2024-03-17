@@ -5,7 +5,6 @@ import com.jubasbackend.core.non_service_day.NonServiceDayRepository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public class DaysOfAttendanceUtils {
 
@@ -18,14 +17,14 @@ public class DaysOfAttendanceUtils {
                 .noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == evaluatedDay.getDayOfYear()));
     }
 
-    public static LocalDate applyEndDateLimits(Optional<LocalDate> optionalStartDate,
-                                               Optional<LocalDate> optionalEndDate,
+    public static LocalDate applyEndDateLimits(LocalDate optionalStartDate,
+                                               LocalDate optionalEndDate,
                                                LocalDate startOfPeriod,
                                                int intervalOfDaysToAppointments) {
-        var endOfPeriod = optionalEndDate.orElse(startOfPeriod.plusDays(intervalOfDaysToAppointments));
+        var endOfPeriod = optionalEndDate != null ? optionalEndDate : startOfPeriod.plusDays(intervalOfDaysToAppointments);
 
         // LIMITE MÍNIMO PARA A DATA DE FIM DO PERÍODO
-        if (endOfPeriod.isBefore(startOfPeriod) || optionalStartDate.isPresent() && optionalEndDate.isEmpty()) {
+        if (endOfPeriod.isBefore(startOfPeriod) || optionalStartDate != null && optionalEndDate == null) {
             endOfPeriod = startOfPeriod;
         }
         // LIMITE MÁXIMO PARA A DATA DE FIM DO PERÍODO
@@ -63,8 +62,8 @@ public class DaysOfAttendanceUtils {
 
     public static void addAvailableServiceDayOrFindNext(List<DaysOfAttendanceResponse> serviceDays,
                                                         List<LocalDate> nonServiceDays,
-                                                        Optional<LocalDate> optionalStartDate,
-                                                        Optional<LocalDate> optionalEndDate,
+                                                        LocalDate optionalStartDate,
+                                                        LocalDate optionalEndDate,
                                                         LocalDate startOfPeriod,
                                                         NonServiceDayRepository nonServiceDayRepository) {
         if (isServiceAvailableOnDay(nonServiceDays, startOfPeriod))
@@ -72,7 +71,7 @@ public class DaysOfAttendanceUtils {
         else {
             serviceDays.add(DaysOfAttendanceResponse.notAvailable(startOfPeriod));
 
-            if (optionalStartDate.isEmpty() && optionalEndDate.isEmpty())
+            if (optionalStartDate == null && optionalEndDate == null)
                 findNextAvailableDay(serviceDays, startOfPeriod, nonServiceDayRepository);
         }
     }

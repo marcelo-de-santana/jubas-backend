@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Tag(name = "Appointments")
@@ -51,8 +50,8 @@ public interface AppointmentApi {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar dias de atendimento.", content = @Content)
     })
     @GetMapping("/daysOfAttendance")
-    ResponseEntity<List<DaysOfAttendanceResponse>> findDaysOfAttendance(@RequestParam Optional<LocalDate> startDate,
-                                                                        @RequestParam Optional<LocalDate> endDate);
+    ResponseEntity<List<DaysOfAttendanceResponse>> findDaysOfAttendance(@RequestParam(required = false) LocalDate startDate,
+                                                                        @RequestParam(required = false) LocalDate endDate);
 
     @Operation(summary = "Cadastrar novo agendamento.", responses = {
             @ApiResponse(responseCode = "201", description = "Agendamento realizado com sucesso."),

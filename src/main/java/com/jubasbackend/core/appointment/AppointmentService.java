@@ -4,7 +4,6 @@ import com.jubasbackend.core.appointment.dto.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface AppointmentService {
@@ -13,7 +12,7 @@ public interface AppointmentService {
 
     AppointmentResponse findAppointment(UUID appointmentId);
 
-    List<DaysOfAttendanceResponse> findDaysOfAttendance(Optional<LocalDate> startDate, Optional<LocalDate> endDate);
+    List<DaysOfAttendanceResponse> findDaysOfAttendance(LocalDate startDate, LocalDate endDate);
 
     AppointmentEntity createAppointment(AppointmentCreateRequest request);
 

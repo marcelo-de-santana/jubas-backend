@@ -43,13 +43,13 @@ public class EmployeeEntity {
         return employeeId.equals(this.getId());
     }
 
-    public SpecialtyEntity retrieveSpecialty(UUID specialtyId) {
+    public SpecialtyEntity getSpecialty(UUID specialtyId) {
         var indexOf = getSpecialties().indexOf(getCompoundEntity(specialtyId));
         return getSpecialties().get(indexOf).getSpecialty();
     }
 
     public List<ScheduleTimeResponse> getPossibleTimes(UUID specialtyId, List<AppointmentEntity> appointments) {
-        return workingHour.getPossibleTimes(retrieveSpecialty(specialtyId), appointments);
+        return workingHour.getPossibleTimes(getSpecialty(specialtyId), appointments);
     }
 
     public void addSpecialty(UUID specialtyId) {

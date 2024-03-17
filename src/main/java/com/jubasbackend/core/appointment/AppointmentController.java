@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class AppointmentController implements AppointmentApi {
 
     @Override
     public ResponseEntity<List<DaysOfAttendanceResponse>> findDaysOfAttendance(
-            Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+            LocalDate startDate, LocalDate endDate) {
         return ResponseEntity.ok(service.findDaysOfAttendance(startDate, endDate));
     }
 
