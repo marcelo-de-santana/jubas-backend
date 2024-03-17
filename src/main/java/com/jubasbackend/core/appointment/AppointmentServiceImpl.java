@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import static com.jubasbackend.core.appointment.utils.AppointmentsUtils.*;
 import static com.jubasbackend.core.appointment.utils.DaysOfAttendanceUtils.*;
@@ -46,17 +49,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<DaysOfAttendanceResponse> findDaysOfAttendance(Optional<LocalDate> startDate, Optional<LocalDate> endDate) {
+    public List<DaysOfAttendanceResponse> findDaysOfAttendance(LocalDate optionalStartDate, LocalDate optionalEndDate) {
         var rangeOfDaysForAppointments = dayAvailabilityRepository.findQuantity();
-        var startOfPeriod = startDate.orElseGet(LocalDate::now);
-        var endOfPeriod = applyEndDateLimits(startDate, endDate, startOfPeriod, rangeOfDaysForAppointments);
+        var startOfPeriod = optionalStartDate != null ? optionalStartDate : LocalDate.now();
+        var endOfPeriod = applyEndDateLimits(optionalStartDate, optionalEndDate, startOfPeriod, rangeOfDaysForAppointments);
 
         var nonServiceDays = nonServiceDayRepository.findDateBetween(startOfPeriod, endOfPeriod);
         var serviceDays = new ArrayList<DaysOfAttendanceResponse>();
 
-        addAvailableServiceDayOrFindNext(serviceDays, nonServiceDays, startDate, endDate, startOfPeriod, nonServiceDayRepository);
+        addAvailableServiceDayOrFindNext(serviceDays, nonServiceDays, optionalStartDate, optionalEndDate, startOfPeriod, nonServiceDayRepository);
 
-        if (startDate.isPresent() || endDate.isPresent()) {
+        if (optionalStartDate != null || optionalEndDate != null) {
             generateDaysForThePeriod(serviceDays, nonServiceDays, startOfPeriod, endOfPeriod);
             return serviceDays;
         }

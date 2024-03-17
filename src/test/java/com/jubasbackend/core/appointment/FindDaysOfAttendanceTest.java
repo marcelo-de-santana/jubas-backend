@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,7 +19,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         mockDayAvailabilityRepositoryFindQuantity(0);
 
         //ACT
-        var response = service.findDaysOfAttendance(Optional.empty(), Optional.empty());
+        var response = service.findDaysOfAttendance(null, null);
 
         //ASSERT
         assertNotNull(response);
@@ -35,7 +34,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         mockDayAvailabilityRepositoryFindQuantity(1);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(Optional.empty(), Optional.empty());
+        var response = service.findDaysOfAttendance(null, null);
         assertEquals(2, response.size());
     }
 
@@ -49,7 +48,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         mockNonServiceDayRepositoryFindDateBetween(List.of(blockedDay));
 
         //ACT
-        var response = service.findDaysOfAttendance(Optional.empty(), Optional.empty());
+        var response = service.findDaysOfAttendance(null, null);
 
         //ASSERT
         assertFalse(response.get(0).isAvailable());
@@ -68,7 +67,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         mockDayAvailabilityRepositoryFindQuantity(10);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(Optional.of(currentDay), Optional.empty());
+        var response = service.findDaysOfAttendance(currentDay, null);
         assertEquals(1, response.size());
         assertEquals(currentDay, response.get(0).date());
     }
@@ -81,7 +80,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         mockDayAvailabilityRepositoryFindQuantity(2);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(Optional.empty(), Optional.of(currentDay));
+        var response = service.findDaysOfAttendance(null, currentDay);
         assertEquals(1, response.size());
         assertEquals(currentDay, response.get(0).date());
     }
@@ -94,7 +93,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         var dayBefore = LocalDate.now().minusDays(1L);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(Optional.empty(), Optional.of(dayBefore));
+        var response = service.findDaysOfAttendance(null, dayBefore);
         assertEquals(1, response.size());
         assertEquals(LocalDate.now(), response.get(0).date());
     }
@@ -108,7 +107,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         var dayPlusOneMonth = today.plusMonths(1L);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(Optional.of(today), Optional.of(dayPlusOneMonth));
+        var response = service.findDaysOfAttendance(today, dayPlusOneMonth);
         assertEquals(LocalDate.now(), response.get(0).date());
         assertEquals(dayPlusOneMonth.minusDays(1L), response.get(response.size() - 1).date());
     }
@@ -122,7 +121,7 @@ class FindDaysOfAttendanceTest extends AppointmentServiceBaseTest {
         var dayPlusTwoYear = today.plusYears(2L);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(Optional.of(today), Optional.of(dayPlusTwoYear));
+        var response = service.findDaysOfAttendance(today, dayPlusTwoYear);
         assertEquals(LocalDate.now(), response.get(0).date());
         assertEquals(dayPlusTwoYear.minusYears(1L).minusDays(1L), response.get(response.size() - 1).date());
     }
