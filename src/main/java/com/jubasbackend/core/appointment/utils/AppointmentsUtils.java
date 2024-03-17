@@ -17,36 +17,29 @@ import static com.jubasbackend.core.appointment.dto.ScheduleResponse.*;
 
 public class AppointmentsUtils {
 
-    public static LocalDateTime getCurrentOrFutureDate(LocalDate date) {
+    public static LocalDateTime getDateTimeForAppointment(LocalDate date) {
         return date.equals(LocalDate.now()) ? LocalDateTime.now() : date.atStartOfDay();
     }
 
-    public static void validateAppointment(List<AppointmentEntity> registeredAppointments, AppointmentEntity requestAppointment) {
+    public static void validateAppointmentOverlap(List<AppointmentEntity> registeredAppointments,
+                                                  AppointmentEntity requestAppointment) {
         registeredAppointments.forEach(existingAppointment -> existingAppointment.validate(requestAppointment));
     }
 
-    public static List<ScheduleResponse> getPossibleTimesBySpecialty(UUID specialtyId,
-                                                                     List<EmployeeEntity> employees,
-                                                                     List<AppointmentEntity> appointments,
-                                                                     LocalTime filterTime) {
-        var possibleTimes = employees.stream()
-                .filter(employee -> employee.makesSpecialty(specialtyId))
-                .map(filteredEmployee -> fromEmployeeWithAppointments(filteredEmployee, appointments, specialtyId, filterTime))
-                .toList();
-
-        if (possibleTimes.isEmpty())
-            throw new NoSuchElementException("No available time slots for the service.");
-
-        return possibleTimes;
-    }
-
-    public static List<ScheduleTimeResponse> filterSchedulesAfterTime(List<ScheduleTimeResponse> schedules, LocalTime cutoffTime) {
+    public static List<ScheduleTimeResponse> filterSchedulesAfterTime(List<ScheduleTimeResponse> schedules,
+                                                                      LocalTime cutoffTime) {
         return schedules.stream()
                 .filter(schedule -> !schedule.time().isBefore(cutoffTime))
                 .toList();
     }
 
-    public static List<EmployeeEntity> getAvailableEmployees(EmployeeRepository employeeRepository) {
+    public static List<ScheduleTimeResponse> filterAvailableTimeSlots(List<ScheduleTimeResponse> schedules) {
+        return schedules.stream()
+                .filter(ScheduleTimeResponse::isAvailable)
+                .toList();
+    }
+
+    public static List<EmployeeEntity> findAvailableEmployees(EmployeeRepository employeeRepository) {
         var availableEmployees = employeeRepository.findAllByActiveProfile(true);
         if (availableEmployees.isEmpty())
             throw new NoSuchElementException("No employees.");
@@ -54,12 +47,58 @@ public class AppointmentsUtils {
         return availableEmployees;
     }
 
-    public static ScheduleResponse toScheduleResponse(EmployeeEntity employee, List<AppointmentEntity> appointments, LocalTime filterTime, boolean toFilter) {
-        if (toFilter) {
-            return appointments.isEmpty() ? fromEmployeeWithFilterTime(employee, filterTime) :
-                    fromEmployeeWithAppointmentsAndFilterTime(employee, appointments, filterTime);
+    public static List<ScheduleResponse> generateScheduleResponses(LocalDate requestDate,
+                                                                   UUID specialtyId,
+                                                                   boolean toFilter,
+                                                                   LocalTime filterTime,
+                                                                   List<EmployeeEntity> availableEmployees,
+                                                                   List<AppointmentEntity> appointments) {
+        if (specialtyId != null) {
+            return getPossibleTimesForTheSpecialty(requestDate, specialtyId, filterTime, availableEmployees, appointments);
         }
-        return appointments.isEmpty() ? fromEmployee(employee) : fromEmployeeWithAppointments(employee, appointments);
 
+        if (requestDate == null) {
+            return availableEmployees.stream()
+                    .map(employee -> getTimesFilteredByTheCurrentTime(employee, appointments, filterTime))
+                    .toList();
+        }
+
+        return availableEmployees.stream()
+                .map(employee -> toScheduleResponse(employee, appointments, toFilter))
+                .toList();
+    }
+
+    private static List<ScheduleResponse> getPossibleTimesForTheSpecialty(LocalDate requestDate,
+                                                                          UUID specialtyId,
+                                                                          LocalTime filterTime,
+                                                                          List<EmployeeEntity> availableEmployees,
+                                                                          List<AppointmentEntity> appointments) {
+        return availableEmployees.stream()
+                .filter(employee -> employee.makesSpecialty(specialtyId))
+                .map(filteredEmployee -> {
+                    if (requestDate == null) {
+                        return constructFromAvailableTimesForSpecificSpecialty(filteredEmployee, appointments, specialtyId, filterTime);
+                    }
+                    return createFromPossibleTimesForSpecialty(filteredEmployee, appointments, specialtyId);
+                })
+                .toList();
+    }
+
+    private static ScheduleResponse getTimesFilteredByTheCurrentTime(EmployeeEntity employee,
+                                                                     List<AppointmentEntity> appointments,
+                                                                     LocalTime filterTime) {
+        return appointments.isEmpty() ? ScheduleResponse.createFromFilteredTimes(employee, filterTime) :
+                constructFromAvailableTimesAfterSpecificTime(employee, appointments, filterTime);
+    }
+
+    private static ScheduleResponse toScheduleResponse(EmployeeEntity employee,
+                                                       List<AppointmentEntity> appointments,
+                                                       boolean filterByDate) {
+        if (filterByDate) {
+            return appointments.isEmpty() ? createFromAvailableTimesWithinBounds(employee) :
+                    constructFromAvailableSchedulesWithinRange(employee, appointments);
+        }
+        return appointments.isEmpty() ? createFromEmployeeEssentials(employee) :
+                constructFromEmployeeWithAvailableTimes(employee, appointments);
     }
 }

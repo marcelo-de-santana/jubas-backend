@@ -1,15 +1,19 @@
 package com.jubasbackend.core.appointment;
 
+import com.jubasbackend.core.appointment.enums.AppointmentStatus;
 import com.jubasbackend.core.employee.EmployeeEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyEntity;
 import com.jubasbackend.core.employee_specialty.EmployeeSpecialtyId;
 import com.jubasbackend.core.profile.ProfileEntity;
 import com.jubasbackend.core.specialty.SpecialtyEntity;
 import com.jubasbackend.core.working_hour.WorkingHourEntity;
+import com.jubasbackend.core.working_hour.dto.ScheduleTimeResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,25 +27,31 @@ class FindAppointmentsTest extends AppointmentServiceBaseTest {
     final static UUID EMPLOYEE_PROFILE_ID = UUID.randomUUID();
     final static UUID WORKING_HOUR_ID = UUID.randomUUID();
     final static UUID SPECIALTY_ID = UUID.randomUUID();
-
-    final static ProfileEntity CLIENT_PROFILE = ProfileEntity.builder()
+    final static UUID APPOINTMENT_ID = UUID.randomUUID();
+    final static String EMPLOYEE_NAME = "Gabriel Navalha";
+    final static LocalTime WORKING_HOUR_START_TIME = LocalTime.parse("08:00");
+    final static LocalTime WORKING_HOUR_START_INTERVAL = LocalTime.parse("12:00");
+    final static LocalTime WORKING_HOUR_END_INTERVAL = LocalTime.parse("13:00");
+    final static LocalTime WORKING_HOUR_END_TIME = LocalTime.parse("16:00");
+    final static LocalDateTime APPOINTMENT_DATE_TIME = LocalDateTime.of(2024, 3, 16, 14, 0);
+    ProfileEntity CLIENT_PROFILE = ProfileEntity.builder()
             .id(CLIENT_PROFILE_ID)
             .name("José Andrade")
             .statusProfile(true)
             .build();
 
-    final static ProfileEntity EMPLOYEE_PROFILE = ProfileEntity.builder()
+    ProfileEntity EMPLOYEE_PROFILE = ProfileEntity.builder()
             .id(EMPLOYEE_PROFILE_ID)
-            .name("Gabriel Navalha")
+            .name(EMPLOYEE_NAME)
             .statusProfile(true)
             .build();
 
     WorkingHourEntity WORKING_HOUR = WorkingHourEntity.builder()
             .id(WORKING_HOUR_ID)
-            .startTime(LocalTime.parse("08:00"))
-            .startInterval(LocalTime.parse("12:00"))
-            .endInterval(LocalTime.parse("13:00"))
-            .endTime(LocalTime.parse("16:00"))
+            .startTime(WORKING_HOUR_START_TIME)
+            .startInterval(WORKING_HOUR_START_INTERVAL)
+            .endInterval(WORKING_HOUR_END_INTERVAL)
+            .endTime(WORKING_HOUR_END_TIME)
             .build();
 
     SpecialtyEntity SPECIALTY = SpecialtyEntity.builder()
@@ -68,20 +78,22 @@ class FindAppointmentsTest extends AppointmentServiceBaseTest {
             .specialties(List.of(COMPOUND_ENTITY))
             .build();
 
+    AppointmentEntity APPOINTMENT = AppointmentEntity.builder()
+            .id(APPOINTMENT_ID)
+            .date(APPOINTMENT_DATE_TIME)
+            .appointmentStatus(AppointmentStatus.MARCADO)
+            .client(CLIENT_PROFILE)
+            .employee(EMPLOYEE)
+            .specialty(SPECIALTY)
+            .createdAt(Instant.parse("2024-03-16T10:00:00Z"))
+            .build();
 
     @Test
     @DisplayName("Deve lançar uma exceção quando nenhum funcionário estiver disponível.")
     void shouldThrowAnExceptionWhenNoEmployeeIsAvailable() {
 
-        doReturn(List.of(EmployeeEntity.builder()
-                .id(EMPLOYEE_PROFILE_ID)
-                .profile(ProfileEntity.builder()
-                        .id(EMPLOYEE_PROFILE_ID)
-                        .name("Gabriel Navalha")
-                        .statusProfile(false)
-                        .build())
-                .build()))
-                .when(employeeRepository).findAll();
+        doReturn(List.of())
+                .when(employeeRepository).findAllByActiveProfile(true);
 
         var exception = assertThrows(
                 NoSuchElementException.class, () ->
@@ -89,57 +101,96 @@ class FindAppointmentsTest extends AppointmentServiceBaseTest {
 
         assertEquals("No employees.", exception.getMessage());
 
-        verify(employeeRepository, times(1)).findAll();
+        verify(employeeRepository, times(1)).findAllByActiveProfile(true);
         verifyNoInteractions(appointmentRepository, nonServiceDayRepository, dayAvailabilityRepository);
     }
 
     @Test
     @DisplayName("Deve buscar a agenda do dia caso nenhum parâmetro seja especificado.")
     void shouldFetchTheDaysAgendaIfNoParametersAreSpecified() {
-        mockReturnEmployeeRepository_FindAll();
+        mockReturnEmployeeRepository_FindAllByActiveProfile();
         doReturn(List.of())
                 .when(appointmentRepository)
                 .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
 
         service.findAppointments(null, null, false);
         var capturedDatesTimes = dateTimeCaptor.getAllValues();
-        var firstDate = capturedDatesTimes.get(0).toLocalDate();
-        var secondDate = capturedDatesTimes.get(1).toLocalDate();
+        var firstDateTime = capturedDatesTimes.get(0);
+        var secondDateTime = capturedDatesTimes.get(1);
         var today = LocalDate.now();
 
-        assertEquals(today, firstDate);
-        assertEquals(today, secondDate);
+        assertEquals(today.atStartOfDay(), firstDateTime);
+        assertEquals(today.atTime(23, 59, 59), secondDateTime);
 
     }
 
     @Test
-    @DisplayName("Deve retornar a agenda do dia caso nenhum parâmetro seja especificado e nenhum atendimento esteja registrado.")
-    void shouldReturnTheDaysAgendaWhenNoParametersArePassedAndNoServiceIsRegistered() {
-        mockReturnEmployeeRepository_FindAll();
-        mockReturnAppointmentRepository_FindAllDateBetween(List.of());
+    @DisplayName("Deve retornar a agenda do dia especificado.")
+    void shouldReturnTheScheduleOnASpecificDay() {
+        var specificDay = LocalDate.parse("2024-03-16");
+        mockReturnEmployeeRepository_FindAllByActiveProfile();
+        doReturn(List.of())
+                .when(appointmentRepository)
+                .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
+
+        var response = service.findAppointments(specificDay, null, false);
+
+        var capturedDatesTimes = dateTimeCaptor.getAllValues();
+        var firstDateTime = capturedDatesTimes.get(0);
+        var secondDateTime = capturedDatesTimes.get(1);
+
+        assertEquals(specificDay.atStartOfDay(), firstDateTime);
+        assertEquals(specificDay.atTime(23, 59, 59), secondDateTime);
+
+    }
+
+    @Test
+    @DisplayName("Deve retornar a agenda com os horários indisponíveis.")
+    void shouldReturnToTheCalendarWithUnavailableTimes() {
+        mockReturnEmployeeRepository_FindAllByActiveProfile();
+        mockReturnAppointmentRepository_FindAllDateBetween(List.of(APPOINTMENT));
 
         var response = service.findAppointments(null, null, false);
 
-        var firstOfSchedule = response.get(0);
-        var firstWorkingHour = firstOfSchedule.workingHours().get(0);
-        var lastWorkingHour = firstOfSchedule.workingHours().get(firstOfSchedule.workingHours().size() - 1);
+        var unavailableHours = response.stream()
+                .flatMap(schedule ->
+                        schedule.workingHours()
+                                .stream()
+                                .filter(wh -> !wh.isAvailable())).toList();
 
-        assertEquals(LocalTime.parse("08:00"), firstWorkingHour.time());
-        assertEquals(LocalTime.parse("15:50"), lastWorkingHour.time());
-        assertTrue(firstWorkingHour.isAvailable());
-        assertTrue(lastWorkingHour.isAvailable());
+        assertEquals(10, unavailableHours.size());
 
     }
 
     @Test
-    void deveRetornarSomenteOsHorariosDisponíveisParaRealizarAEspecialidade(){
-        //A ESPECIALIDADE É PASSADA E SOMENTE OS HORÁRIOS QUE SE ENCAIXAM NA ESPECIALIDADE SERÃO RETORNADOS
+    @DisplayName("Deve retornar a agenda com os horários possíveis para realizar a especialidade.")
+    void shouldReturnTheScheduleWithThePossibleTimesToCarryOutTheSpecialty() {
+        mockReturnEmployeeRepository_FindAllByActiveProfile();
+        mockReturnAppointmentRepository_FindAllDateBetween(List.of(APPOINTMENT));
+
+        var response = service.findAppointments(null, SPECIALTY_ID, false);
+
+        var unavailableHours = response.stream()
+                .flatMap(schedule ->
+                        schedule.workingHours()
+                                .stream()
+                                .filter(wh -> !wh.isAvailable()))
+                .toList();
+
+        var impossibleTimes = response.stream()
+                .flatMap(schedule ->
+                        schedule.workingHours()
+                                .stream()
+                                .filter(this::impossibleSchedules))
+                .toList();
+
+        assertTrue(unavailableHours.isEmpty());
+        assertTrue(impossibleTimes.isEmpty());
     }
 
-
-    private void mockReturnEmployeeRepository_FindAll() {
+    private void mockReturnEmployeeRepository_FindAllByActiveProfile() {
         doReturn(List.of(EMPLOYEE))
-                .when(employeeRepository).findAll();
+                .when(employeeRepository).findAllByActiveProfile(true);
     }
 
     private void mockReturnAppointmentRepository_FindAllDateBetween(List<AppointmentEntity> appointmentsReturn) {
@@ -147,5 +198,13 @@ class FindAppointmentsTest extends AppointmentServiceBaseTest {
                 .when(appointmentRepository)
                 .findAllByDateBetween(any(), any());
 
+    }
+
+    private boolean impossibleSchedules(ScheduleTimeResponse workingHours) {
+        var endOfAttendance = workingHours.time()
+                .plusMinutes(SPECIALTY
+                        .getTimeDuration()
+                        .getMinute());
+        return (endOfAttendance.isAfter(WORKING_HOUR_START_INTERVAL) && endOfAttendance.isBefore(WORKING_HOUR_END_INTERVAL));
     }
 }

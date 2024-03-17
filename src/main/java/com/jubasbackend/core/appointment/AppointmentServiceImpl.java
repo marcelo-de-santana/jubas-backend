@@ -33,14 +33,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     public List<ScheduleResponse> findAppointments(LocalDate requestDate, UUID specialtyId, boolean toFilter) {
         var dateTime = obtainDateTimeFromOptionalDate(requestDate);
         var filterTime = dateTime.toLocalTime();
-        var availableEmployees = getAvailableEmployees(employeeRepository);
+        var availableEmployees = findAvailableEmployees(employeeRepository);
         var appointments = findAppointmentsOfDayInTheRepository(dateTime);
 
-        if (specialtyId != null)
-            return getPossibleTimesBySpecialty(specialtyId, availableEmployees, appointments, filterTime);
+        return generateScheduleResponses(requestDate, specialtyId, toFilter, filterTime, availableEmployees, appointments);
 
-        return availableEmployees.stream()
-                .map(employee -> toScheduleResponse(employee, appointments, filterTime, toFilter)).toList();
     }
 
     @Override
@@ -78,7 +75,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         var registeredAppointments = findAppointmentsInTheRepository(request.date(), request.employeeId(), request.clientId());
         var newAppointment = new AppointmentEntity(request, employee);
 
-        validateAppointment(registeredAppointments, newAppointment);
+        validateAppointmentOverlap(registeredAppointments, newAppointment);
 
         return appointmentRepository.save(newAppointment);
     }
@@ -125,7 +122,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 appointmentToUpdate.getEmployee().getId(),
                 appointmentToUpdate.getClient().getId());
 
-        validateAppointment(registeredAppointments, appointmentToUpdate);
+        validateAppointmentOverlap(registeredAppointments, appointmentToUpdate);
         appointmentRepository.save(appointmentToUpdate);
 
     }
@@ -151,7 +148,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDate requestDate, UUID employeeId, UUID clientId) {
-        var date = getCurrentOrFutureDate(requestDate);
+        var date = getDateTimeForAppointment(requestDate);
         return appointmentRepository.findAllByDateBetweenAndEmployeeIdOrClientId(date, parseEndOfDay(date), employeeId, clientId);
     }
 

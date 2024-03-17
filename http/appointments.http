@@ -44,7 +44,7 @@ Content-Type: application/json
 ### CANCELAR ATENDIMENTO
 DELETE http://localhost:8080/appointments/be1abe8e-80d2-4443-8fc1-24f4c5a38ce3/cancelAttendance
 
-###
+### DESBLOQUAR DIAS DE ATENDIMENTO
 DELETE http://localhost:8080/appointments/daysWithoutAttendance
 Content-Type: application/json
 
