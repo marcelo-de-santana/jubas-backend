@@ -1,6 +1,6 @@
 ## 🍃 Deploy da Aplicação
 
-O [deploy da aplicação](https://jubas-backend.onrender.com/swagger-ui.html) do Ecossistema Jubas já está disponível. Por favor, note que pode haver uma demora inicial no carregamento do container devido ao serviço gratuito utilizado. Agradeço pela sua compreensão.
+O [deploy da aplicação](https://jubas-backend.onrender.com/swagger-ui.html) do Ecossistema Jubas já está disponível. Devido ao plano gratuito utilizado, o serviço pode demorar cerca de 4 minutos para inicializar. Desde já, agradeço pela sua compreensão.
 
 ![Swagger UI](https://github.com/marcelo-de-santana/imagioteca/blob/master/jubas-backend/swagger-ui-from-jubas-backend-v1.png?raw=true)
 
