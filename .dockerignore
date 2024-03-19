@@ -33,9 +33,7 @@ build/
 .vscode/
 
 ### CONTAINER DATA ###
-.docker/*
-!.docker/start.sh
+**.mysql/
 
 ### CONTAINER FILES ###
-Dockerfile*
-docker-compose.yaml
+docker/*
