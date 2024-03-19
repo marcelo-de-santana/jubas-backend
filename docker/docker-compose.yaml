@@ -11,7 +11,7 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ./.docker/data:/var/lib/mysql
+      - .mysql:/var/lib/mysql
   # DEVELOPMENT BACKEND APPLICATION
   app:
     container_name: jubas-backend
@@ -19,16 +19,14 @@ services:
     working_dir: /home/jubas-backend
     tty: true
     volumes:
-      - .:/home/jubas-backend
-      - /home/jubas-backend/.docker/
+      - ../:/home/jubas-backend
+      - /home/jubas-backend/docker
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+      - MYSQL_HOSTNAME=db
     ports:
       - 8080:8080
-    command:
-      - sh
-      - -c
-      - './mvnw clean install && java -jar ./target/jubasbackend-0.0.1-SNAPSHOT.jar'
+    entrypoint: ./commands/dev_start.sh
     depends_on:
       - db
   # PHP MY ADMIN
