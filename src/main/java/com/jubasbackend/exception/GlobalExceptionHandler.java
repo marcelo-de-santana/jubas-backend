@@ -12,24 +12,25 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    private ResponseEntity<StandardResponseError> response(HttpStatus status, String errorMessage, HttpServletRequest request) {
-        return ResponseEntity
-                .status(status)
-                .body(new StandardResponseError(new Date(), status.value(), errorMessage, request.getRequestURI()));
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<ErrorResponse> handleAPIException(APIException exception, HttpServletRequest request) {
+        return response(exception.getStatus(), exception.getMessage(), request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<StandardResponseError> handleWrongArguments(IllegalArgumentException exception, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleWrongArguments(IllegalArgumentException exception, HttpServletRequest request) {
         return response(HttpStatus.UNAUTHORIZED, exception.getMessage(), request);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<StandardResponseError> handleNotFoundException(NoSuchElementException exception, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NoSuchElementException exception, HttpServletRequest request) {
         return response(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<StandardResponseError> handleConflictException(ConflictException exception, HttpServletRequest request) {
-        return response(HttpStatus.CONFLICT, exception.getMessage(), request);
+    private ResponseEntity<ErrorResponse> response(HttpStatus status, String errorMessage, HttpServletRequest request) {
+        return ResponseEntity
+                .status(status)
+                .body(new ErrorResponse(new Date(), status.value(), errorMessage, request.getRequestURI()));
     }
+
 }

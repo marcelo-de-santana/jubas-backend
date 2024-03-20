@@ -29,6 +29,7 @@ services:
     entrypoint: ./commands/dev_start.sh
     depends_on:
       - db
+    stop_signal: SIGINT
   # PHP MY ADMIN
   dbms:
     container_name: phpmyadmin
