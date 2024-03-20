@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOSTNAME}:3306/jubas
+    url: jdbc:mysql://${MYSQL_HOSTNAME:localhost}:3306/jubas
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -23,6 +23,9 @@ spring:
           starttls:
             enabled: true
             required: true
+  security.user:
+    name: dev
+    password: v6x?ByhJ45SA
 
 springdoc:
   api-docs.path: /api-docs
