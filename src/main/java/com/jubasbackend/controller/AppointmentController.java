@@ -1,22 +1,21 @@
 package com.jubasbackend.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.jubasbackend.controller.request.AppointmentCreateRequest;
-import com.jubasbackend.controller.request.AppointmentUpdateRequest;
-import com.jubasbackend.controller.request.RangeOfAttendanceRequest;
+import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
 import com.jubasbackend.controller.response.DaysOfAttendanceResponse;
 import com.jubasbackend.controller.response.ScheduleResponse;
-import com.jubasbackend.exception.APIException;
 import com.jubasbackend.service.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -81,7 +80,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar o agendamento.")
     })
     @PostMapping
-    public ResponseEntity<Void> createAppointment(@Valid @RequestBody AppointmentCreateRequest request) {
+    public ResponseEntity<Void> createAppointment(@NonNull @RequestBody AppointmentRequest request) {
         var createdAppointment = service.createAppointment(request);
         return ResponseEntity.created(URI.create("/appointments/" + createdAppointment.getId())).build();
     }
@@ -107,9 +106,9 @@ public class AppointmentController {
             @ApiResponse(responseCode = "401", description = "Valor incorreto."),
                     @ApiResponse(responseCode = "500", description = "Erro ao alterar a disponibilidade da agenda.")
     })
-    @PutMapping("/rangeOfAttendanceDays")
-    public ResponseEntity<Void> updateRangeOfAttendanceDays(@RequestBody RangeOfAttendanceRequest request) {
-        service.updateRangeOfAttendanceDays(request);
+    @PutMapping("/rangeOfAttendanceDays/{intervalOfDays}")
+    public ResponseEntity<Void> updateRangeOfAttendanceDays(@PathVariable int intervalOfDays) {
+        service.updateRangeOfAttendanceDays(intervalOfDays);
         return ResponseEntity.noContent().build();
     }
 
@@ -120,7 +119,9 @@ public class AppointmentController {
     })
     @PatchMapping("/{appointmentId}")
     public ResponseEntity<Void> updateAppointment(@PathVariable UUID appointmentId,
-                                                  @RequestBody AppointmentUpdateRequest request) {
+                                                  @Schema(hidden = true, name = "cliend_id")
+
+                                                  @RequestBody AppointmentRequest request) {
         service.updateAppointment(appointmentId, request);
         return ResponseEntity.noContent().build();
     }
@@ -130,7 +131,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "404", description = "Agendamento não encontrado."),
             @ApiResponse(responseCode = "500", description = "Erro ao cancelar agendamento.")
     })
-    @DeleteMapping("/{appointmentId}/cancelAttendance")
+    @DeleteMapping("/{appointmentId}")
     public ResponseEntity<Void> cancelAppointment(@PathVariable UUID appointmentId) {
         service.cancelAppointment(appointmentId);
         return ResponseEntity.noContent().build();

@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity(name = "tb_non_service_day")
-public class NonServiceDayEntity {
+public class NonServiceDay {
     @Id
     @Schema(type = "date")
     @JsonFormat(pattern = "yyyy-MM-dd")

@@ -1,10 +1,10 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
-import com.jubasbackend.domain.repository.SpecialtyRepository;
 import com.jubasbackend.controller.request.SpecialtyRequest;
 import com.jubasbackend.controller.response.SpecialtyResponse;
+import com.jubasbackend.domain.entity.Category;
+import com.jubasbackend.domain.entity.Specialty;
+import com.jubasbackend.domain.repository.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +26,23 @@ public class SpecialtyService {
         if (repository.existsByName(request.name())) {
             throw new IllegalArgumentException("Specialty already registered.");
         }
-        var newSpecialty = new SpecialtyEntity(request);
+        var newSpecialty = new Specialty(request);
         return new SpecialtyResponse(repository.save(newSpecialty));
     }
 
     public void updateSpecialty(UUID specialtyId, SpecialtyRequest request) {
         var specialtyToUpdate = findSpecialtyOnRepository(specialtyId);
-        if (!request.name().isBlank())
+        if (request.name() != null)
             specialtyToUpdate.setName(request.name());
 
-        if (!request.price().toString().isBlank())
+        if (request.price() != null)
             specialtyToUpdate.setPrice(request.price());
 
-        if (!request.timeDuration().toString().isBlank())
+        if (request.timeDuration() != null)
             specialtyToUpdate.setTimeDuration(request.timeDuration());
 
-        if (!request.categoryId().toString().isBlank())
-            specialtyToUpdate.setCategory(CategoryEntity.builder()
+        if (request.categoryId() != null)
+            specialtyToUpdate.setCategory(Category.builder()
                     .id(request.categoryId())
                     .build());
 
@@ -53,7 +53,7 @@ public class SpecialtyService {
         repository.deleteById(specialtyId);
     }
 
-    private SpecialtyEntity findSpecialtyOnRepository(UUID specialtyId) {
+    private Specialty findSpecialtyOnRepository(UUID specialtyId) {
         return repository.findById(specialtyId).orElseThrow(
                 () -> new NoSuchElementException("Unregistered Specialty."));
     }

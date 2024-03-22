@@ -1,10 +1,11 @@
 package com.jubasbackend.domain.entity;
 
+import com.jubasbackend.controller.request.WorkingHourRequest;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
 import com.jubasbackend.controller.response.ScheduleTimeResponse.WithId;
 import com.jubasbackend.controller.response.ScheduleTimeResponse.WithoutId;
-import com.jubasbackend.controller.request.WorkingHourRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalTime;
@@ -20,19 +21,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @EqualsAndHashCode(of = {"startTime", "endTime", "startInterval", "endInterval"})
 @Builder
 @Entity(name = "tb_working_hour")
-public class WorkingHourEntity {
+public class WorkingHour {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
+    @NotNull
     private LocalTime startTime;
+
+    @NotNull
     private LocalTime endTime;
+
+    @NotNull
     private LocalTime startInterval;
+
+    @NotNull
     private LocalTime endInterval;
 
     @OneToMany(mappedBy = "workingHour", cascade = CascadeType.ALL)
-    private List<EmployeeEntity> employees;
+    private List<Employee> employees;
 
-    public WorkingHourEntity(WorkingHourRequest workingHour) {
+    public WorkingHour(WorkingHourRequest workingHour) {
         this.startTime = workingHour.startTime();
         this.startInterval = workingHour.startInterval();
         this.endInterval = workingHour.endInterval();
@@ -40,7 +49,7 @@ public class WorkingHourEntity {
         validateEntity();
     }
 
-    public WorkingHourEntity(LocalTime startTime, LocalTime endTime, LocalTime startInterval, LocalTime endInterval) {
+    public WorkingHour(LocalTime startTime, LocalTime endTime, LocalTime startInterval, LocalTime endInterval) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.startInterval = startInterval;
@@ -49,10 +58,18 @@ public class WorkingHourEntity {
     }
 
     public void update(WorkingHourRequest request) {
-        this.startTime = request.startTime();
-        this.endTime = request.endTime();
-        this.startInterval = request.startInterval();
-        this.endInterval = request.endInterval();
+        if (request.startTime() != null)
+            this.startTime = request.startTime();
+
+        if (request.startInterval() != null)
+            this.startInterval = request.startInterval();
+
+        if (request.endInterval() != null)
+            this.endInterval = request.endInterval();
+
+        if (request.endTime() != null)
+            this.endTime = request.endTime();
+
         validateEntity();
     }
 
@@ -82,7 +99,7 @@ public class WorkingHourEntity {
      *
      * @return List<ScheduleTimeResponse>
      */
-    public List<ScheduleTimeResponse> getAvailableTimes(List<AppointmentEntity> appointments) {
+    public List<ScheduleTimeResponse> getAvailableTimes(List<Appointment> appointments) {
         var availableTimes = new ArrayList<ScheduleTimeResponse>();
 
         for (var openingHour : getOpeningHours()) {
@@ -104,7 +121,7 @@ public class WorkingHourEntity {
      *
      * @return List<ScheduleTimeResponse>
      */
-    public List<ScheduleTimeResponse> getPossibleTimes(SpecialtyEntity specialty, List<AppointmentEntity> appointments) {
+    public List<ScheduleTimeResponse> getPossibleTimes(Specialty specialty, List<Appointment> appointments) {
         var timesToFilter = appointments.isEmpty() ? getOpeningHours() : getAvailableTimes(appointments);
         return filterTimes(specialty, timesToFilter);
     }
@@ -130,8 +147,8 @@ public class WorkingHourEntity {
      *
      * @return List<ScheduleTimeResponse>
      */
-    private List<ScheduleTimeResponse> filterTimes(SpecialtyEntity specialty,
-                                        List<? extends ScheduleTimeResponse> timesToFilter) {
+    private List<ScheduleTimeResponse> filterTimes(Specialty specialty,
+                                                   List<? extends ScheduleTimeResponse> timesToFilter) {
         var filteredOpeningHours = new ArrayList<ScheduleTimeResponse>();
         var specialtyTimeDuration = specialty.getTimeDuration();
         var lastIsAvailable = new AtomicBoolean(false);

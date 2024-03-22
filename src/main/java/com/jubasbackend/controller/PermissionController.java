@@ -31,7 +31,7 @@ public class PermissionController {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuários.", content = @Content)
     })
     @GetMapping("/{permission}/users")
-    ResponseEntity<List<UserResponse>> findUsersByPermission(@PathVariable PermissionType permission) {
+    ResponseEntity<List<? extends UserResponse>> findUsersByPermission(@PathVariable PermissionType permission) {
         return ResponseEntity.ok(service.findUsersByPermission(permission));
     }
 

@@ -1,13 +1,14 @@
 package com.jubasbackend.service.specialty;
 
 import com.jubasbackend.controller.request.SpecialtyRequest;
-import com.jubasbackend.domain.entity.CategoryEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
+import com.jubasbackend.domain.entity.Category;
+import com.jubasbackend.domain.entity.Specialty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.*;
 
 public class CreateSpecialtyTest extends AbstractSpecialtyServiceTest {
 
-    SpecialtyRequest request = new SpecialtyRequest("Nova especialidade", LocalTime.parse("00:20"), 20.00F, (short) 1);
+    SpecialtyRequest request = new SpecialtyRequest("Nova especialidade", LocalTime.parse("00:20"), BigDecimal.valueOf(20), (short) 1);
 
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;
@@ -24,11 +25,11 @@ public class CreateSpecialtyTest extends AbstractSpecialtyServiceTest {
     @DisplayName("Deve criar especialidade com sucesso.")
     void shouldCreateSpecialtyWithSuccessfully() {
         //ARRANGE
-        var specialty = SpecialtyEntity.builder()
+        var specialty = Specialty.builder()
                 .name(request.name())
                 .timeDuration(request.timeDuration())
                 .price(request.price())
-                .category(CategoryEntity.builder().id(request.categoryId()).build()).build();
+                .category(Category.builder().id(request.categoryId()).build()).build();
         doReturn(false).when(repository).existsByName(stringArgumentCaptor.capture());
         doReturn(specialty).when(repository).save(specialtyEntityArgumentCaptor.capture());
 
@@ -55,11 +56,11 @@ public class CreateSpecialtyTest extends AbstractSpecialtyServiceTest {
     @DisplayName("Deve ocorrer um erro caso a especialidade já exista.")
     void shouldThrowExceptionWhenSpecialtyAlreadyExists() {
         //ARRANGE
-        var specialty = SpecialtyEntity.builder()
+        var specialty = Specialty.builder()
                 .name(request.name())
                 .timeDuration(request.timeDuration())
                 .price(request.price())
-                .category(CategoryEntity.builder().id(request.categoryId()).build()).build();
+                .category(Category.builder().id(request.categoryId()).build()).build();
         doReturn(true).when(repository).existsByName(stringArgumentCaptor.capture());
 
         //ACT & ASSERT

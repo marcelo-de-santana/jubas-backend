@@ -1,11 +1,11 @@
 package com.jubasbackend.service.employee;
 
-import com.jubasbackend.domain.entity.AppointmentEntity;
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.EmployeeSpecialtyEntity;
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
-import com.jubasbackend.domain.entity.WorkingHourEntity;
+import com.jubasbackend.domain.entity.Appointment;
+import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.EmployeeSpecialty;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.domain.entity.Specialty;
+import com.jubasbackend.domain.entity.WorkingHour;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,21 +28,21 @@ class FindAppointmentsByEmployeeTest extends AbstractEmployeeServiceTest {
     UUID specialtyId = UUID.randomUUID();
     LocalDate requestDate = LocalDate.now();
 
-    ProfileEntity profileOfEmployee = ProfileEntity.builder()
+    Profile profileOfEmployee = Profile.builder()
             .id(employeeId).name("José Augusto").cpf("012345678910").statusProfile(true).build();
 
-    EmployeeEntity employeeEntity = EmployeeEntity.builder().profile(profileOfEmployee).build();
+    Employee employeeEntity = Employee.builder().profile(profileOfEmployee).build();
 
-    SpecialtyEntity specialty = SpecialtyEntity.builder()
+    Specialty specialty = Specialty.builder()
             .id(specialtyId).name("Corte de cabelo").timeDuration(LocalTime.parse("00:30")).build();
 
-    WorkingHourEntity workingHour = super.createWorkingHour("11:00", "14:00", "12:00", "13:00");
+    WorkingHour workingHour = super.createWorkingHour("11:00", "14:00", "12:00", "13:00");
 
-    EmployeeSpecialtyEntity compoundEntity = EmployeeSpecialtyEntity.builder()
+    EmployeeSpecialty compoundEntity = EmployeeSpecialty.builder()
             .employee(employeeEntity)
             .specialty(specialty).build();
 
-    EmployeeEntity employeeOfRepository = EmployeeEntity.builder()
+    Employee employeeOfRepository = Employee.builder()
             .id(employeeId)
             .profile(profileOfEmployee)
             .workingHour(workingHour)
@@ -94,7 +94,7 @@ class FindAppointmentsByEmployeeTest extends AbstractEmployeeServiceTest {
         //ARRANGE
         var requestDate = LocalDate.parse("2024-02-03");
         var dateOfAppointment = LocalDateTime.parse("2024-02-03T13:10");
-        var listOfAppointments = List.of(AppointmentEntity.builder()
+        var listOfAppointments = List.of(Appointment.builder()
                 .id(UUID.randomUUID())
                 .employee(employeeOfRepository)
                 .specialty(specialty)
@@ -127,7 +127,7 @@ class FindAppointmentsByEmployeeTest extends AbstractEmployeeServiceTest {
         //ARRANGE
         var requestDate = LocalDate.parse("2024-02-03");
         var dateOfAppointment = LocalDateTime.parse("2024-02-03T13:10");
-        var appointment = AppointmentEntity.builder()
+        var appointment = Appointment.builder()
                 .id(UUID.randomUUID())
                 .employee(employeeOfRepository)
                 .specialty(specialty)

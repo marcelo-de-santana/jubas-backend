@@ -1,6 +1,6 @@
 package com.jubasbackend.controller.response;
 
-import com.jubasbackend.domain.entity.EmployeeEntity;
+import com.jubasbackend.domain.entity.Employee;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +12,7 @@ public record EmployeeResponse(
         WorkingHourResponse workingHour,
         List<SpecialtyResponse> specialties
 ) {
-    public EmployeeResponse(EmployeeEntity employee) {
+    public EmployeeResponse(Employee employee) {
         this(
                 employee.getId(),
                 employee.getProfile().getName(),

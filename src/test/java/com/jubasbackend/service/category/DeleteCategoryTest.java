@@ -1,6 +1,6 @@
 package com.jubasbackend.service.category;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
+import com.jubasbackend.domain.entity.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class DeleteCategoryTest extends AbstractCategoryServiceTest {
     void shouldDeleteCategorySuccessfully() {
         //ARRANGE
         Short categoryId = 1;
-        var categoryToDelete = CategoryEntity.builder().build();
+        var categoryToDelete = Category.builder().build();
 
         doNothing().when(repository).deleteById(shortArgumentCaptor.capture());
 

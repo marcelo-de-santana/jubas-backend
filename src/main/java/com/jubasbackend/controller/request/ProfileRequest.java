@@ -1,4 +1,6 @@
 package com.jubasbackend.controller.request;
 
-public record ProfileRequest(String name, String cpf, boolean statusProfile) {
+import java.util.UUID;
+
+public record ProfileRequest(String name, String cpf, Boolean statusProfile, UUID userId) {
 }

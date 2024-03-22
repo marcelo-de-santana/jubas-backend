@@ -1,12 +1,12 @@
 package com.jubasbackend.service.appointment;
 
-import com.jubasbackend.controller.request.AppointmentUpdateRequest;
-import com.jubasbackend.domain.entity.AppointmentEntity;
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.EmployeeSpecialtyEntity;
+import com.jubasbackend.controller.request.AppointmentRequest;
+import com.jubasbackend.domain.entity.Appointment;
+import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.EmployeeSpecialty;
 import com.jubasbackend.domain.entity.EmployeeSpecialtyId;
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.domain.entity.Specialty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,16 +29,16 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
     UUID specialtyId = UUID.randomUUID();
     LocalDateTime dateTimeNow = LocalDateTime.now();
 
-    SpecialtyEntity currentSpecialty = SpecialtyEntity.builder().id(specialtyId).build();
+    Specialty currentSpecialty = Specialty.builder().id(specialtyId).build();
 
-    EmployeeEntity currentEmployee = EmployeeEntity.builder().id(employeeId).build();
+    Employee currentEmployee = Employee.builder().id(employeeId).build();
 
     EmployeeSpecialtyId compoundId = new EmployeeSpecialtyId(employeeId, specialtyId);
-    EmployeeSpecialtyEntity compoundEntity = new EmployeeSpecialtyEntity(compoundId, currentEmployee, currentSpecialty);
+    EmployeeSpecialty compoundEntity = new EmployeeSpecialty(compoundId, currentEmployee, currentSpecialty);
 
-    AppointmentEntity appointmentRegistered = AppointmentEntity.builder()
+    Appointment appointmentRegistered = Appointment.builder()
             .employee(currentEmployee)
-            .client(ProfileEntity.builder().id(clientId).build())
+            .client(Profile.builder().id(clientId).build())
             .specialty(currentSpecialty)
             .date(LocalDateTime.parse("2024-02-12T15:20")).build();
 
@@ -46,17 +46,17 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
     @DisplayName("Deve atualizar o agendamento com sucesso.")
     void shouldUpdateAppointmentWithSuccess() {
         //ARRANGE
-        var input = new AppointmentUpdateRequest(employeeId, clientId, specialtyId, dateTimeNow);
+        var input = new AppointmentRequest(employeeId, clientId, specialtyId, dateTimeNow);
         currentEmployee.setSpecialties(List.of(compoundEntity));
-        AppointmentEntity appointmentRegistered = AppointmentEntity.builder()
+        Appointment appointmentRegistered = Appointment.builder()
                 .employee(currentEmployee)
-                .client(ProfileEntity.builder().id(clientId).build())
+                .client(Profile.builder().id(clientId).build())
                 .specialty(currentSpecialty)
                 .date(LocalDateTime.parse("2024-02-12T15:20")).build();
 
         doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(uuidCaptor.capture());
         doReturn(List.of()).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
-        doReturn(new AppointmentEntity()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
+        doReturn(new Appointment()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 
         //ACT & ASSERT
         assertDoesNotThrow(() -> service.updateAppointment(appointmentId, input));
@@ -80,7 +80,7 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionWhenEmployeeDoesNotExist() {
             //ARRANGE
             var otherEmployeeId = UUID.randomUUID();
-            var input = new AppointmentUpdateRequest(otherEmployeeId, null, null, null);
+            var input = new AppointmentRequest(otherEmployeeId, null, null, null);
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
             doReturn(Optional.empty()).when(employeeRepository).findById(uuidCaptor.capture());
 
@@ -101,17 +101,17 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldUpdateEmployeeWithSuccess() {
             //ARRANGE
             var otherEmployeeId = UUID.randomUUID();
-            var otherEmployee = EmployeeEntity.builder().id(otherEmployeeId).build();
+            var otherEmployee = Employee.builder().id(otherEmployeeId).build();
             var compoundId = new EmployeeSpecialtyId(otherEmployeeId, specialtyId);
-            var compoundEntity = new EmployeeSpecialtyEntity(compoundId, otherEmployee, currentSpecialty);
+            var compoundEntity = new EmployeeSpecialty(compoundId, otherEmployee, currentSpecialty);
             otherEmployee.setSpecialties(List.of(compoundEntity));
 
-            var input = new AppointmentUpdateRequest(otherEmployeeId, null, null, null);
+            var input = new AppointmentRequest(otherEmployeeId, null, null, null);
 
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
             doReturn(Optional.of(otherEmployee)).when(employeeRepository).findById(any());
             doReturn(List.of()).when(appointmentRepository).findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
-            doReturn(new AppointmentEntity()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
+            doReturn(new Appointment()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 
             //ACT & ASSERT
             assertDoesNotThrow(() -> service.updateAppointment(appointmentId, input));
@@ -131,7 +131,7 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionWhenEmployeeDoesNotExecuteTheSpecialty() {
             //ARRANGE
             currentEmployee.setSpecialties(List.of());
-            var input = new AppointmentUpdateRequest(null, null, UUID.randomUUID(), null);
+            var input = new AppointmentRequest(null, null, UUID.randomUUID(), null);
 
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
 
@@ -150,17 +150,17 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldUpdateSpecialtyWithSuccess() {
             //ARRANGE
             currentEmployee.setSpecialties(List.of(compoundEntity));
-            var appointmentRegistered = AppointmentEntity.builder()
+            var appointmentRegistered = Appointment.builder()
                     .id(appointmentId)
-                    .client(ProfileEntity.builder().id(clientId).build())
+                    .client(Profile.builder().id(clientId).build())
                     .employee(currentEmployee)
                     .date(LocalDateTime.parse("2024-02-12T15:20")).build();
 
-            var input = new AppointmentUpdateRequest(null, null, specialtyId, null);
+            var input = new AppointmentRequest(null, null, specialtyId, null);
 
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
 
-            doReturn(new AppointmentEntity()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
+            doReturn(new Appointment()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 
             //ACT & ASSERT
             assertDoesNotThrow(() -> service.updateAppointment(appointmentId, input));

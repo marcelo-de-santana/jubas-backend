@@ -12,7 +12,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = {"id"})
 @Builder
 @Entity(name = "tb_employee_associated_specialty")
-public class EmployeeSpecialtyEntity {
+public class EmployeeSpecialty {
 
     @EmbeddedId
     private EmployeeSpecialtyId id;
@@ -20,16 +20,16 @@ public class EmployeeSpecialtyEntity {
     @ManyToOne
     @MapsId("employeeId")
     @JoinColumn(name = "employee_id")
-    private EmployeeEntity employee;
+    private Employee employee;
 
     @ManyToOne
     @MapsId("specialtyId")
     @JoinColumn(name = "specialty_id")
-    private SpecialtyEntity specialty;
+    private Specialty specialty;
 
-    public static EmployeeSpecialtyEntity create(UUID employeeId, UUID specialtyId) {
+    public static EmployeeSpecialty create(UUID employeeId, UUID specialtyId) {
         var compoundId = new EmployeeSpecialtyId(employeeId, specialtyId);
-        return EmployeeSpecialtyEntity.builder().id(compoundId).build();
+        return EmployeeSpecialty.builder().id(compoundId).build();
     }
 
 }

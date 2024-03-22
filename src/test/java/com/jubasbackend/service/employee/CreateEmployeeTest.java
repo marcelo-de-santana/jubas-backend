@@ -1,7 +1,7 @@
 package com.jubasbackend.service.employee;
 
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.ProfileEntity;
+import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.Profile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -49,8 +49,8 @@ class CreateEmployeeTest extends AbstractEmployeeServiceTest {
     @DisplayName("Deve ocorrer um erro caso o perfil já esteja associado a um funcionário.")
     void shouldThrowExceptionWhenProfileIsAlreadyAssociatedWithAnEmployee() {
         //ARRANGE
-        var profileWithAssociatedEmployee = ProfileEntity.builder()
-                .employee(EmployeeEntity.builder().build()).build();
+        var profileWithAssociatedEmployee = Profile.builder()
+                .employee(Employee.builder().build()).build();
         doReturn(Optional.of(profileWithAssociatedEmployee)).when(profileRepository).findById(any());
 
         //ACT & ASSERT

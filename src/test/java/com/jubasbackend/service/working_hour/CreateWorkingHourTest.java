@@ -1,6 +1,6 @@
 package com.jubasbackend.service.working_hour;
 
-import com.jubasbackend.domain.entity.WorkingHourEntity;
+import com.jubasbackend.domain.entity.WorkingHour;
 import com.jubasbackend.exception.APIException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,21 +16,21 @@ import static org.mockito.Mockito.*;
 class CreateWorkingHourTest extends AbstractWorkingHourServiceTest {
 
     @Captor
-    protected ArgumentCaptor<WorkingHourEntity> entityArgumentCaptor;
+    protected ArgumentCaptor<WorkingHour> entityArgumentCaptor;
 
     @Captor
     ArgumentCaptor<LocalTime> timeCaptor;
 
-    WorkingHourEntity workingHour;
+    WorkingHour workingHour;
 
     @Test
     @DisplayName("Deve cadastrar nova jornada de trabalho com sucesso.")
     void shouldSuccessfullyCreateWorkingHour() {
         // ARRANGE
         var request = super.createWorkingHourRequest("09:00", "17:00", "12:00", "13:00");
-        workingHour = new WorkingHourEntity(request);
+        workingHour = new WorkingHour(request);
 
-        when(repository.existsByStartTimeAndEndTimeAndStartIntervalAndEndInterval(
+        when(repository.areTimesExists(
                 workingHour.getStartTime(),
                 workingHour.getEndTime(),
                 workingHour.getStartInterval(),
@@ -99,14 +99,14 @@ class CreateWorkingHourTest extends AbstractWorkingHourServiceTest {
     void ChecksTheOrderOfParametersPassedToTheMethodAndThrowExceptionIfTimeAlreadyRegistered() {
         //ARRANGE
         var request = super.createWorkingHourRequest("09:00", "17:00", "12:00", "13:00");
-        var workingHourOfRepository = WorkingHourEntity.builder()
+        var workingHourOfRepository = WorkingHour.builder()
                 .startTime(request.startTime())
                 .endTime(request.endTime())
                 .startInterval(request.startInterval())
                 .endInterval(request.endInterval()).build();
 
         doReturn(true).when(repository)
-                .existsByStartTimeAndEndTimeAndStartIntervalAndEndInterval(
+                .areTimesExists(
                         timeCaptor.capture(),
                         timeCaptor.capture(),
                         timeCaptor.capture(),
@@ -124,7 +124,7 @@ class CreateWorkingHourTest extends AbstractWorkingHourServiceTest {
         assertEquals(workingHourOfRepository.getStartInterval(), capturedTimes.get(2));
         assertEquals(workingHourOfRepository.getEndInterval(), capturedTimes.get(3));
 
-        verify(repository).existsByStartTimeAndEndTimeAndStartIntervalAndEndInterval(
+        verify(repository).areTimesExists(
                 capturedTimes.get(0),
                 capturedTimes.get(1),
                 capturedTimes.get(2),

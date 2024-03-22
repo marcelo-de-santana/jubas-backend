@@ -8,9 +8,6 @@ import java.util.List;
 
 public class DaysOfAttendanceUtils {
 
-    private DaysOfAttendanceUtils() {
-    }
-
     //VERIFICA SE HÁ ATENDIMENTO NO DIA ESPECÍFICO
     public static boolean isServiceAvailableOnDay(List<LocalDate> nonServiceDays, LocalDate evaluatedDay) {
         return (nonServiceDays.stream()

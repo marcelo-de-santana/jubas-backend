@@ -1,16 +1,16 @@
 package com.jubasbackend.service;
 
 import com.jubasbackend.controller.response.EmployeeResponse;
-import com.jubasbackend.domain.entity.AppointmentEntity;
-import com.jubasbackend.domain.entity.EmployeeEntity;
+import com.jubasbackend.domain.entity.Appointment;
+import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.repository.AppointmentRepository;
 import com.jubasbackend.domain.repository.EmployeeRepository;
 import com.jubasbackend.controller.request.EmployeeRequest;
-import com.jubasbackend.domain.entity.EmployeeSpecialtyEntity;
+import com.jubasbackend.domain.entity.EmployeeSpecialty;
 import com.jubasbackend.domain.repository.EmployeeSpecialtyRepository;
-import com.jubasbackend.domain.entity.ProfileEntity;
+import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.repository.ProfileRepository;
-import com.jubasbackend.domain.entity.WorkingHourEntity;
+import com.jubasbackend.domain.entity.WorkingHour;
 import com.jubasbackend.domain.repository.WorkingHourRepository;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
 import com.jubasbackend.controller.response.ScheduleTimeResponse.WithoutId;
@@ -55,8 +55,8 @@ public class EmployeeService {
     }
 
     public EmployeeResponse createEmployee(EmployeeRequest request) {
-        var workingHour = new WorkingHourEntity();
-        var specialties = new ArrayList<EmployeeSpecialtyEntity>();
+        var workingHour = new WorkingHour();
+        var specialties = new ArrayList<EmployeeSpecialty>();
 
         var profile = findProfileOnRepository(request.profileId());
 
@@ -66,11 +66,12 @@ public class EmployeeService {
         if (!request.workingHourId().toString().isBlank())
             workingHour = findWorkingHourOnRepository(request.workingHourId());
 
-        var newEmployee = EmployeeEntity.builder()
+        var newEmployee = Employee.builder()
                 .id(profile.getId())
                 .profile(profile)
                 .workingHour(workingHour)
-                .specialties(specialties).build();
+                .specialties(specialties)
+                .build();
 
         if (!request.specialties().isEmpty())
             request.specialties().forEach(newEmployee::addSpecialty);
@@ -85,7 +86,7 @@ public class EmployeeService {
             throw new IllegalArgumentException("It's not allowed to modify the profile.");
 
         if (!request.workingHourId().toString().isBlank())
-            employeeToUpdate.setWorkingHour(WorkingHourEntity.builder().id(request.workingHourId()).build());
+            employeeToUpdate.setWorkingHour(WorkingHour.builder().id(request.workingHourId()).build());
 
         if (!request.specialties().isEmpty())
             request.specialties().forEach(specialtyId -> {
@@ -98,22 +99,22 @@ public class EmployeeService {
         employeeRepository.save(employeeToUpdate);
     }
 
-    private EmployeeEntity findEmployeeInTheRepository(UUID employeeId) {
+    private Employee findEmployeeInTheRepository(UUID employeeId) {
         return employeeRepository.findById(employeeId).orElseThrow(
                 () -> new NoSuchElementException("Employee doesn't registered."));
     }
 
-    private ProfileEntity findProfileOnRepository(UUID profileId) {
+    private Profile findProfileOnRepository(UUID profileId) {
         return profileRepository.findById(profileId).orElseThrow(
                 () -> new NoSuchElementException("Profile doesn't exists."));
     }
 
-    private WorkingHourEntity findWorkingHourOnRepository(UUID workingHourId) {
+    private WorkingHour findWorkingHourOnRepository(UUID workingHourId) {
         return workingHourRepository.findById(workingHourId).orElseThrow(
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
-    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDate date, UUID employeeId) {
+    private List<Appointment> findAppointmentsInTheRepository(LocalDate date, UUID employeeId) {
         var selectedDate = obtainDateTimeFromOptionalDate(date);
         return appointmentRepository.findAllByDateBetweenAndEmployeeId(selectedDate, parseEndOfDay(selectedDate), employeeId);
     }

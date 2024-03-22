@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity(name = "tb_category")
-public class CategoryEntity {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
@@ -23,6 +23,6 @@ public class CategoryEntity {
     private String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<SpecialtyEntity> specialties;
+    private List<Specialty> specialties;
 
 }

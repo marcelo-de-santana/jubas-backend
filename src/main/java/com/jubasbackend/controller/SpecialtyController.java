@@ -37,8 +37,8 @@ public class SpecialtyController {
     @Operation(summary = "Cadastrar especialidade.", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Especialidade cadastrada com sucesso."),
-            @ApiResponse(responseCode = "401", description = "Especialidade já cadastrada.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro ao cadastrar especialidade.", content = @Content)
+            @ApiResponse(responseCode = "401", description = "Especialidade já cadastrada."),
+            @ApiResponse(responseCode = "500", description = "Erro ao cadastrar especialidade.")
     })
     @PostMapping
     ResponseEntity<Void> createSpecialty(@RequestBody SpecialtyRequest request) {
@@ -49,8 +49,8 @@ public class SpecialtyController {
     @Operation(summary = "Atualizar especialidade.", method = "PATCH")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Especialidade atualizada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Especialidade não cadastrada.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro ao atualizar especialidade.", content = @Content)
+            @ApiResponse(responseCode = "404", description = "Especialidade não cadastrada."),
+            @ApiResponse(responseCode = "500", description = "Erro ao atualizar especialidade.")
     })
     @PatchMapping("/{specialtyId}")
     ResponseEntity<Void> updateSpecialty(@PathVariable UUID specialtyId, @RequestBody SpecialtyRequest request) {
@@ -61,8 +61,8 @@ public class SpecialtyController {
     @Operation(summary = "Excluir especialidade.", method = "DELETE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Especialidade atualizada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Especialidade não encontrada.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro ao deletar especialidade.", content = @Content)
+            @ApiResponse(responseCode = "404", description = "Especialidade não encontrada."),
+            @ApiResponse(responseCode = "500", description = "Erro ao deletar especialidade.")
     })
     @DeleteMapping("/{specialtyId}")
     ResponseEntity<Void> deleteSpecialty(@PathVariable UUID specialtyId) {

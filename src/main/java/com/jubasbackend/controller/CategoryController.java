@@ -44,11 +44,11 @@ public class CategoryController {
 
     @Operation(summary = "Cadastrar nova categoria.", responses = {
             @ApiResponse(responseCode = "201", description = "Categoria criada com sucesso."),
-            @ApiResponse(responseCode = "401", description = "Categoria já está cadastrada.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro ao cadastrar categoria.", content = @Content)
+            @ApiResponse(responseCode = "401", description = "Categoria já está cadastrada."),
+            @ApiResponse(responseCode = "500", description = "Erro ao cadastrar categoria.")
     })
     @PostMapping
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<Void> createCategory(@RequestBody CategoryRequest request) {
         var categoryCreated = service.createCategory(request.name());
         return ResponseEntity.created(URI.create("/categories/" + categoryCreated.id())).build();
     }

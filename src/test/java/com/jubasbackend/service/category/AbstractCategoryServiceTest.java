@@ -1,6 +1,6 @@
 package com.jubasbackend.service.category;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
+import com.jubasbackend.domain.entity.Category;
 import com.jubasbackend.domain.repository.CategoryRepository;
 import com.jubasbackend.service.CategoryService;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,5 +26,5 @@ public abstract class AbstractCategoryServiceTest {
     protected ArgumentCaptor<String> stringArgumentCaptor;
 
     @Captor
-    protected ArgumentCaptor<CategoryEntity> categoryEntityArgumentCaptor;
+    protected ArgumentCaptor<Category> categoryEntityArgumentCaptor;
 }

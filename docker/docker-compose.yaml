@@ -23,7 +23,7 @@ services:
       - /home/jubas-backend/docker
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - MYSQL_HOSTNAME=db
+      - DB_HOME=db
     ports:
       - 8080:8080
     entrypoint: ./commands/dev_start.sh

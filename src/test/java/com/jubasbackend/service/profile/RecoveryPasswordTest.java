@@ -1,8 +1,8 @@
 package com.jubasbackend.service.profile;
 
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.controller.request.ProfileRecoveryRequest;
-import com.jubasbackend.domain.entity.UserEntity;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.controller.request.RecoveryPasswordRequest;
+import com.jubasbackend.domain.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,20 +19,20 @@ import static org.mockito.Mockito.*;
 
 class RecoveryPasswordTest extends AbstractProfileServiceTest {
 
-    ProfileRecoveryRequest request;
-    ProfileEntity profile;
+    RecoveryPasswordRequest request;
+    Profile profile;
 
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<ProfileEntity> profileEntityArgumentCaptor;
+    ArgumentCaptor<Profile> profileEntityArgumentCaptor;
 
     @BeforeEach
     public void setup() {
-        this.request = new ProfileRecoveryRequest("cliente@gmail.com", "0123456789", "12345678910");
-        var user = UserEntity.builder().email(request.email()).password(request.newPassword()).build();
-        this.profile = ProfileEntity.builder().cpf(request.profileCpf()).user(user).build();
+        this.request = new RecoveryPasswordRequest("cliente@gmail.com", "0123456789", "12345678910");
+        var user = User.builder().email(request.email()).password(request.newPassword()).build();
+        this.profile = Profile.builder().cpf(request.profileCpf()).user(user).build();
     }
 
     @Test

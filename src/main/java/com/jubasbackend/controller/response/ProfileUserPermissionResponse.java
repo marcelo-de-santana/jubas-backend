@@ -1,6 +1,6 @@
 package com.jubasbackend.controller.response;
 
-import com.jubasbackend.domain.entity.ProfileEntity;
+import com.jubasbackend.domain.entity.Profile;
 
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ public record ProfileUserPermissionResponse(
         boolean statusProfile,
         UserResponse user
 ) {
-    public ProfileUserPermissionResponse(ProfileEntity entity) {
+    public ProfileUserPermissionResponse(Profile entity) {
         this(
                 entity.getId(),
                 entity.getName(),

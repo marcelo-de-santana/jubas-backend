@@ -1,6 +1,6 @@
 package com.jubasbackend.service.appointment;
 
-import com.jubasbackend.domain.entity.AppointmentEntity;
+import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,11 +39,11 @@ class CancelAppointmentTest extends AbstractAppointmentServiceTest {
     @DisplayName("Deve marcar como cancelado se o agendamento já estiver passado.")
     void shouldMarkAsCancelledIfAppointmentHasAlreadyPassed() {
         //ARRANGE
-        AppointmentEntity appointmentToCancel = AppointmentEntity.builder()
+        Appointment appointmentToCancel = Appointment.builder()
                 .id(appointmentId)
                 .date(LocalDateTime.parse("2024-02-12T14:00")).build();
         doReturn(Optional.of(appointmentToCancel)).when(appointmentRepository).findById(any());
-        doReturn(new AppointmentEntity()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
+        doReturn(new Appointment()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 
         //ACT & ASSERT
         assertDoesNotThrow(() -> service.cancelAppointment(appointmentId));

@@ -1,9 +1,10 @@
 package com.jubasbackend.domain.entity;
 
-import com.jubasbackend.controller.request.AppointmentCreateRequest;
+import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import com.jubasbackend.exception.APIException;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
@@ -19,31 +20,48 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity(name = "tb_appointment")
-public class AppointmentEntity {
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "employee_id")
-    private EmployeeEntity employee;
+    private Employee employee;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private ProfileEntity client;
+    private Profile client;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "specialty_id")
-    private SpecialtyEntity specialty;
+    private Specialty specialty;
+
+    @NotNull
     private AppointmentStatus appointmentStatus;
+
+    @NotNull
     private LocalDateTime date;
+
+    @NotNull
     private Instant createdAt;
+
     private Instant updatedAt;
 
-    public AppointmentEntity(AppointmentCreateRequest request, EmployeeEntity employee) {
-        this.client = ProfileEntity.builder().id(request.clientId()).build();
-        this.employee = employee;
-        this.specialty = employee.getSpecialty(request.specialtyId());
-        this.appointmentStatus = AppointmentStatus.MARCADO;
-        this.date = request.dateTime();
-        this.createdAt = Instant.now();
+    public static Appointment create(AppointmentRequest request, Employee employee){
+        return Appointment.builder()
+                .employee(employee)
+                .specialty(employee.getSpecialty(request.specialtyId()))
+                .appointmentStatus(AppointmentStatus.MARCADO)
+                .date(request.dateTime())
+                .createdAt(Instant.now())
+                .client(Profile.builder()
+                        .id(request.clientId())
+                        .build())
+                .build();
     }
 
     public LocalTime startTime() {
@@ -64,7 +82,7 @@ public class AppointmentEntity {
      * Recebe o novo agendamento e compara com os atuais para aplicar as regras de negócio.
      * @param newAppointment
      */
-    public void validate(AppointmentEntity newAppointment) {
+    public void validate(Appointment newAppointment) {
         if (!getId().equals(newAppointment.getId())) {
             validateSameSpecialty(newAppointment.getSpecialty(), newAppointment.client);
             validateStartTimeOverlap(newAppointment.startTime());
@@ -82,7 +100,7 @@ public class AppointmentEntity {
     }
 
     //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
-    private void validateSameSpecialty(SpecialtyEntity specialty, ProfileEntity client) {
+    private void validateSameSpecialty(Specialty specialty, Profile client) {
         if (getAppointmentStatus().equals(AppointmentStatus.MARCADO)&& specialty.getId().equals(getSpecialty().getId())
                 && client.getId().equals(getClient().getId())) {
             throw new IllegalArgumentException("The same profile cannot schedule two services for the same day.");
