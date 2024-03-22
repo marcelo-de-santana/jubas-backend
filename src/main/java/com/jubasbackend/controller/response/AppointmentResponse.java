@@ -1,11 +1,11 @@
 package com.jubasbackend.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.jubasbackend.domain.entity.AppointmentEntity;
+import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
+import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.domain.entity.Specialty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
@@ -24,7 +24,7 @@ public record AppointmentResponse(
         Instant updatedAt
 ) {
 
-    public AppointmentResponse(AppointmentEntity entity) {
+    public AppointmentResponse(Appointment entity) {
         this(
                 entity.getId(),
                 new GenericDTO(entity.getEmployee()),
@@ -38,33 +38,33 @@ public record AppointmentResponse(
     }
 
     record GenericDTO(UUID id, String name) {
-        GenericDTO(EmployeeEntity entity) {
+        GenericDTO(Employee entity) {
             this(entity.getId(), entity.getProfile().getName());
         }
 
-        GenericDTO(ProfileEntity entity) {
+        GenericDTO(Profile entity) {
             this(entity.getId(), entity.getName());
         }
 
-        GenericDTO(SpecialtyEntity specialty) {
+        GenericDTO(Specialty specialty) {
             this(specialty.getId(), specialty.getName());
         }
 
     }
 
     record Scheduling(
-            @Schema(type = "String", pattern = "yyyy-MM-dd")
+            @Schema(type = "string", pattern = "yyyy-MM-dd")
             @JsonFormat(pattern = "yyyy-MM-dd")
             LocalDate date,
-            @Schema(type = "String", pattern = "HH:mm")
+            @Schema(type = "string", pattern = "HH:mm")
             @JsonFormat(pattern = "HH:mm")
             LocalTime startTime,
-            @Schema(type = "String", pattern = "HH:mm")
+            @Schema(type = "string", pattern = "HH:mm")
             @JsonFormat(pattern = "HH:mm")
             LocalTime endTime
     ) {
 
-        Scheduling(AppointmentEntity entity) {
+        Scheduling(Appointment entity) {
             this(entity.getDate().toLocalDate(), entity.startTime(), entity.endTime());
         }
     }

@@ -1,6 +1,6 @@
 package com.jubasbackend.service.category;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
+import com.jubasbackend.domain.entity.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ class CreateCategoryTest extends AbstractCategoryServiceTest {
     @Test
     @DisplayName("Deve criar categoria com sucesso.")
     void shouldCreateCategoryWithSuccessfully() {
-        var category = CategoryEntity.builder().id((short) 1).name(categoryName).build();
+        var category = Category.builder().id((short) 1).name(categoryName).build();
 
         //ARRANGE
         doReturn(false).when(repository).existsByName(stringArgumentCaptor.capture());

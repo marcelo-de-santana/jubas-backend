@@ -1,8 +1,6 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.controller.request.AppointmentCreateRequest;
-import com.jubasbackend.controller.request.AppointmentUpdateRequest;
-import com.jubasbackend.controller.request.RangeOfAttendanceRequest;
+import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
 import com.jubasbackend.controller.response.DaysOfAttendanceResponse;
 import com.jubasbackend.controller.response.ScheduleResponse;
@@ -13,9 +11,7 @@ import com.jubasbackend.domain.repository.DayAvailabilityRepository;
 import com.jubasbackend.domain.repository.EmployeeRepository;
 import com.jubasbackend.domain.repository.NonServiceDayRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -70,14 +66,14 @@ public class AppointmentService {
         return serviceDays;
     }
 
-    public AppointmentEntity createAppointment(AppointmentCreateRequest request) {
+    public Appointment createAppointment(AppointmentRequest request) {
         var employee = findEmployeeInTheRepository(request.employeeId());
 
         if (!employee.makesSpecialty(request.specialtyId()))
             throw new IllegalArgumentException("Employee doesn't makes specialty.");
 
         var registeredAppointments = findAppointmentsInTheRepository(request.date(), request.employeeId(), request.clientId());
-        var newAppointment = new AppointmentEntity(request, employee);
+        var newAppointment = Appointment.create(request, employee);
 
         validateAppointmentOverlap(registeredAppointments, newAppointment);
 
@@ -86,20 +82,20 @@ public class AppointmentService {
 
     public void registerDaysWithoutAttendance(List<LocalDate> dates) {
         //TODO: Sistema de envio de e-mail, para notificar clientes desmarcados
-        nonServiceDayRepository.saveAll(dates.stream().map(NonServiceDayEntity::new).toList());
+        nonServiceDayRepository.saveAll(dates.stream().map(NonServiceDay::new).toList());
     }
 
-    public void updateRangeOfAttendanceDays(RangeOfAttendanceRequest request) {
-        if (request == null || request.intervalOfDays() < 0)
+    public void updateRangeOfAttendanceDays(int intervalOfDays) {
+        if (intervalOfDays < 0)
             throw new IllegalArgumentException("Interval of days must be a positive integer.");
 
         var currentDayAvailability = dayAvailabilityRepository.findSingleEntity();
 
-        currentDayAvailability.setQuantity(request.intervalOfDays());
+        currentDayAvailability.setQuantity(intervalOfDays);
         dayAvailabilityRepository.save(currentDayAvailability);
     }
 
-    public void updateAppointment(UUID appointmentId, AppointmentUpdateRequest request) {
+    public void updateAppointment(UUID appointmentId, AppointmentRequest request) {
         var appointmentToUpdate = findAppointmentInTheRepository(appointmentId);
 
         //VERIFICA SE É OUTRO FUNCIONÁRIO
@@ -107,10 +103,10 @@ public class AppointmentService {
             appointmentToUpdate.setEmployee(findEmployeeInTheRepository(request.employeeId()));
 
         if (request.specialtyId() != null)
-            appointmentToUpdate.setSpecialty(SpecialtyEntity.builder().id(request.specialtyId()).build());
+            appointmentToUpdate.setSpecialty(Specialty.builder().id(request.specialtyId()).build());
 
         if (request.clientId() != null)
-            appointmentToUpdate.setClient(ProfileEntity.builder().id(request.clientId()).build());
+            appointmentToUpdate.setClient(Profile.builder().id(request.clientId()).build());
 
         if (request.dateTime() != null)
             appointmentToUpdate.setDate(request.dateTime());
@@ -139,27 +135,26 @@ public class AppointmentService {
     }
 
     public void deleteDaysWithoutAttendance(List<LocalDate> dates) {
-        nonServiceDayRepository.deleteAll(dates.stream().map(NonServiceDayEntity::new).toList());
+        nonServiceDayRepository.deleteAll(dates.stream().map(NonServiceDay::new).toList());
     }
 
-    private List<AppointmentEntity> findAppointmentsOfDayInTheRepository(LocalDateTime date) {
+    private List<Appointment> findAppointmentsOfDayInTheRepository(LocalDateTime date) {
         return appointmentRepository.findAllByDateBetween(parseStatOfDay(date), parseEndOfDay(date));
     }
 
-    private List<AppointmentEntity> findAppointmentsInTheRepository(LocalDate requestDate, UUID employeeId, UUID clientId) {
+    private List<Appointment> findAppointmentsInTheRepository(LocalDate requestDate, UUID employeeId, UUID clientId) {
         var date = getDateTimeForAppointment(requestDate);
         return appointmentRepository.findAllByDateBetweenAndEmployeeIdOrClientId(date, parseEndOfDay(date), employeeId, clientId);
     }
 
-    private EmployeeEntity findEmployeeInTheRepository(UUID employeeId) {
+    private Employee findEmployeeInTheRepository(UUID employeeId) {
         return employeeRepository.findById(employeeId).orElseThrow(
                 () -> new NoSuchElementException("Employee doesn't registered."));
     }
 
-    private AppointmentEntity findAppointmentInTheRepository(UUID appointmentId) {
+    private Appointment findAppointmentInTheRepository(UUID appointmentId) {
         return appointmentRepository.findById(appointmentId).orElseThrow(
-//                () -> new NoSuchElementException("Appointment not found."));
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                () -> new NoSuchElementException("Appointment not found."));
     }
 
 }

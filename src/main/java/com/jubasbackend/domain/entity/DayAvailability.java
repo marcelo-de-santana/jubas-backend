@@ -20,7 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity(name = "tb_day_availability")
-public class DayAvailabilityEntity {
+public class DayAvailability {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id = 1L;

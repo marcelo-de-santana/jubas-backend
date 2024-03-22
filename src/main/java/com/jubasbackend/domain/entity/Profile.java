@@ -1,6 +1,6 @@
 package com.jubasbackend.domain.entity;
 
-import com.jubasbackend.controller.request.ProfileUserRequest;
+import com.jubasbackend.controller.request.ProfileRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,13 +15,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity(name = "tb_profile")
-public class ProfileEntity {
+public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @NotNull
-    @NotBlank
     private String name;
 
     @Column(unique = true)
@@ -32,16 +31,18 @@ public class ProfileEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private UserEntity user;
+    private User user;
 
     @OneToOne(mappedBy = "profile")
-    private EmployeeEntity employee;
+    private Employee employee;
 
-    public ProfileEntity(ProfileUserRequest request) {
+    public Profile(ProfileRequest request) {
         this.name = request.name();
         this.cpf = request.cpf();
         this.statusProfile = request.statusProfile();
-        this.user = UserEntity.builder().id(request.userId()).build();
+        this.user = User.builder()
+                .id(request.userId())
+                .build();
     }
 
 }

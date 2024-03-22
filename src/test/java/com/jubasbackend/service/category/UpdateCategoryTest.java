@@ -1,6 +1,6 @@
 package com.jubasbackend.service.category;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
+import com.jubasbackend.domain.entity.Category;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +18,8 @@ class UpdateCategoryTest extends AbstractCategoryServiceTest {
         //ARRANGE
         Short categoryId = 1;
         var categoryName = "Novo nome";
-        var currentCategory = CategoryEntity.builder().id(categoryId).name("Antigo nome").build();
-        var updatedCategory = CategoryEntity.builder().id(categoryId).name(categoryName).build();
+        var currentCategory = Category.builder().id(categoryId).name("Antigo nome").build();
+        var updatedCategory = Category.builder().id(categoryId).name(categoryName).build();
 
         doReturn(Optional.of(currentCategory)).when(repository).findById(shortArgumentCaptor.capture());
         doReturn(updatedCategory).when(repository).save(categoryEntityArgumentCaptor.capture());

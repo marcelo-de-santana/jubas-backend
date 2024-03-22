@@ -2,7 +2,7 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.controller.response.CategoryResponse;
 import com.jubasbackend.controller.response.CategorySpecialtyResponse;
-import com.jubasbackend.domain.entity.CategoryEntity;
+import com.jubasbackend.domain.entity.Category;
 import com.jubasbackend.domain.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class CategoryService {
         if (repository.existsByName(categoryName))
             throw new IllegalArgumentException("Category already exists.");
 
-        var newCategory = CategoryEntity.builder().name(categoryName).build();
+        var newCategory = Category.builder().name(categoryName).build();
         return new CategoryResponse(repository.save(newCategory));
     }
 
@@ -42,7 +42,7 @@ public class CategoryService {
         repository.deleteById(categoryId);
     }
 
-    private CategoryEntity findCategoryOnRepository(Short id) {
+    private Category findCategoryOnRepository(Short id) {
         return repository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("Category doesn't exists."));
     }

@@ -1,13 +1,9 @@
-# INSERT INTO tb_permission VALUES (1, 'Admin');
-# INSERT INTO tb_permission VALUES (2, 'Barbeiro');
-# INSERT INTO tb_permission VALUES (3, 'Cliente');
-
-INSERT INTO tb_user (id, email, password, permission) VALUES (0x2EBA17A0F7384107BF5A85BE53EC0FE3,'admin@jubas.com','12345678',0);
-INSERT INTO tb_user (id, email, password, permission) VALUES (0xC2FCC2E5D07748BA8604E735D77168EE,'gerente@jubas.com','12345678',1);
-INSERT INTO tb_user (id, email, password, permission) VALUES (0xD526F2C160B047198C5DFDB60CE7E72A,'gabriel.navalha@jubas.com','12345678',1);
-INSERT INTO tb_user (id, email, password, permission) VALUES (0xDEECD1007DEC4DBDAC0F4211650AE528,'gerson.castro@jubas.com','12345678',1);
-INSERT INTO tb_user (id, email, password, permission) VALUES (0xE8488082ACD9436F9AEBC22F9F409133,'oliver.castro@jubas.com','12345678',1);
-INSERT INTO tb_user (id, email, password, permission) VALUES (0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9,'cliente@gmail.com','12345678',2);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0x2EBA17A0F7384107BF5A85BE53EC0FE3,'admin@jubas.com','$2a$10$IDG7gEgIiAwLML0xgUUBUexuJ9nxNitpCZyMJlYn/PjC0XAv3VfMm',0);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xC2FCC2E5D07748BA8604E735D77168EE,'gerente@jubas.com','1$2a$10$IDG7gEgIiAwLML0xgUUBUexuJ9nxNitpCZyMJlYn/PjC0XAv3VfMm',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xD526F2C160B047198C5DFDB60CE7E72A,'gabriel.navalha@jubas.com','1$2a$10$IDG7gEgIiAwLML0xgUUBUexuJ9nxNitpCZyMJlYn/PjC0XAv3VfMm',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xDEECD1007DEC4DBDAC0F4211650AE528,'gerson.castro@jubas.com','1$2a$10$IDG7gEgIiAwLML0xgUUBUexuJ9nxNitpCZyMJlYn/PjC0XAv3VfMm',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xE8488082ACD9436F9AEBC22F9F409133,'oliver.castro@jubas.com','1$2a$10$IDG7gEgIiAwLML0xgUUBUexuJ9nxNitpCZyMJlYn/PjC0XAv3VfMm',1);
+INSERT INTO tb_user (id, email, password, permission) VALUES (0xCBF3717AC2CC4DFD93F8B2E6C67AA7F9,'cliente@gmail.com','$2a$10$qYIiCALEL0ns5gGJzS9ryuRiFQrBInbgO9POMn1Ug9G/213DWDmbS',2);
 
 INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_interval) VALUES (1, '09:00:00', '18:00:00', '13:00:00', '14:00:00');
 INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_interval) VALUES (2, '08:00:00', '19:00:00', '13:00:00', '14:00:00');

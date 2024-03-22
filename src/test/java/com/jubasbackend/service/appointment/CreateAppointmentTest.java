@@ -1,19 +1,15 @@
 package com.jubasbackend.service.appointment;
 
-import com.jubasbackend.controller.request.AppointmentCreateRequest;
-import com.jubasbackend.domain.entity.AppointmentEntity;
+import com.jubasbackend.controller.request.AppointmentRequest;
+import com.jubasbackend.domain.entity.*;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.EmployeeSpecialtyEntity;
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
-import com.jubasbackend.domain.entity.WorkingHourEntity;
 import com.jubasbackend.exception.APIException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,30 +28,30 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
     UUID specialtyId = UUID.randomUUID();
     Instant createdAt = Instant.now();
 
-    ProfileEntity employeeProfile = ProfileEntity.builder().id(employeeId).build();
-    ProfileEntity clientEntity = ProfileEntity.builder().id(clientId).build();
-    SpecialtyEntity specialtyEntity = SpecialtyEntity.builder()
+    Profile employeeProfile = Profile.builder().id(employeeId).build();
+    Profile clientEntity = Profile.builder().id(clientId).build();
+    Specialty specialtyEntity = Specialty.builder()
             .id(specialtyId)
             .name("Corte de cabelo")
             .timeDuration(LocalTime.parse("00:30")).build();
 
-    WorkingHourEntity workingHour = WorkingHourEntity.builder()
+    WorkingHour workingHour = WorkingHour.builder()
             .id(UUID.randomUUID())
             .startTime(LocalTime.parse("09:00"))
             .endTime(LocalTime.parse("17:00"))
             .startInterval(LocalTime.parse("12:00"))
             .endInterval(LocalTime.parse("13:00")).build();
 
-    EmployeeEntity employeeEntity = EmployeeEntity.builder()
+    Employee employeeEntity = Employee.builder()
             .id(employeeId)
             .profile(employeeProfile)
             .specialties(List.of(createCompoundEntity(employeeId, specialtyEntity)))
             .workingHour(workingHour)
             .build();
 
-    AppointmentCreateRequest request = createRequest(LocalDateTime.now());
+    AppointmentRequest request = createRequest(LocalDateTime.now());
 
-    AppointmentEntity newAppointment = new AppointmentEntity(request, employeeEntity);
+    Appointment newAppointment = Appointment.create(request, employeeEntity);
 
     @Nested
     class CreateWithSuccess {
@@ -101,7 +97,7 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionWhenEmployeeDoesNotMakesSpecialty() {
             //ARRANGE
             var otherSpecialtyId = UUID.randomUUID();
-            var request = new AppointmentCreateRequest(employeeId, clientId, otherSpecialtyId, LocalDateTime.now());
+            var request = new AppointmentRequest(employeeId, clientId, otherSpecialtyId, LocalDateTime.now());
 
             mockEmployeeRepositoryFindById();
 
@@ -121,7 +117,7 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionIfTheCustomerHasAPendingAppointmentForTheSameSpecialtyOnTheDay() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:50"));
-            var appointmentRepositoryResponse = AppointmentEntity.builder()
+            var appointmentRepositoryResponse = Appointment.builder()
                     .id(UUID.randomUUID())
                     .client(clientEntity)
                     .employee(employeeEntity)
@@ -145,7 +141,7 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldNotThrowCaseOfDuplicateButCanceledSpecialty() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:50"));
-            var appointmentRepositoryResponse = AppointmentEntity.builder()
+            var appointmentRepositoryResponse = Appointment.builder()
                     .id(UUID.randomUUID())
                     .client(clientEntity)
                     .employee(employeeEntity)
@@ -167,14 +163,14 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldNotThrowExceptionIfAppointmentBelongsToAnotherClient() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:50"));
-            var newAppointment = new AppointmentEntity(request, employeeEntity);
-            var otherClient = ProfileEntity.builder()
+            var newAppointment = Appointment.create(request, employeeEntity);
+            var otherClient = Profile.builder()
                     .id(UUID.randomUUID())
                     .name("Juninho")
                     .cpf("10333333333")
                     .statusProfile(true).build();
 
-            var appointmentRepositoryResponse = AppointmentEntity.builder()
+            var appointmentRepositoryResponse = Appointment.builder()
                     .id(UUID.randomUUID())
                     .client(otherClient)
                     .employee(employeeEntity)
@@ -197,13 +193,13 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
             //ARRANGE
             var sameDateAndTime = LocalDateTime.now();
             var request = createRequest(sameDateAndTime);
-            var otherSpecialty = SpecialtyEntity.builder()
+            var otherSpecialty = Specialty.builder()
                     .id(UUID.randomUUID())
                     .name("Corte de barba")
                     .timeDuration(LocalTime.parse("00:20"))
-                    .price(20F).build();
+                    .price(BigDecimal.valueOf(20F)).build();
 
-            var appointmentRepositoryResponse = AppointmentEntity.builder()
+            var appointmentRepositoryResponse = Appointment.builder()
                     .id(UUID.randomUUID())
                     .client(clientEntity)
                     .employee(employeeEntity)
@@ -229,13 +225,13 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionForEndConflictWithNextStart() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:30"));
-            var scheduledSpecialty = SpecialtyEntity.builder()
+            var scheduledSpecialty = Specialty.builder()
                     .id(UUID.randomUUID())
                     .name("Corte de barba")
                     .timeDuration(LocalTime.parse("00:20"))
-                    .price(20F).build();
+                    .price(BigDecimal.valueOf(20)).build();
 
-            var appointmentRepositoryResponse = AppointmentEntity.builder()
+            var appointmentRepositoryResponse = Appointment.builder()
                     .id(UUID.randomUUID())
                     .client(clientEntity)
                     .employee(employeeEntity)
@@ -258,13 +254,13 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionIfStartOverwritesPreviousEnd() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:30"));
-            var scheduledSpecialty = SpecialtyEntity.builder()
+            var scheduledSpecialty = Specialty.builder()
                     .id(UUID.randomUUID())
                     .name("Corte de barba")
                     .timeDuration(LocalTime.parse("00:20"))
-                    .price(20F).build();
+                    .price(BigDecimal.valueOf(20)).build();
 
-            var appointmentRepositoryResponse = AppointmentEntity.builder()
+            var appointmentRepositoryResponse = Appointment.builder()
                     .id(UUID.randomUUID())
                     .client(clientEntity)
                     .employee(employeeEntity)
@@ -288,13 +284,13 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionIfBookingWithinServicePeriod() {
             //ARRANGE
             var request = createRequest(LocalDateTime.parse("2024-01-30T10:00"));
-            var scheduledSpecialty = SpecialtyEntity.builder()
+            var scheduledSpecialty = Specialty.builder()
                     .id(UUID.randomUUID())
                     .name("Afeitamento de pezinho")
                     .timeDuration(LocalTime.parse("00:10"))
-                    .price(60F).build();
+                    .price(BigDecimal.valueOf(60)).build();
 
-            var appointmentRepositoryResponse = AppointmentEntity.builder()
+            var appointmentRepositoryResponse = Appointment.builder()
                     .id(UUID.randomUUID())
                     .client(clientEntity)
                     .employee(employeeEntity)
@@ -315,12 +311,12 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         }
     }
 
-    AppointmentCreateRequest createRequest(LocalDateTime date) {
-        return new AppointmentCreateRequest(employeeId, clientId, specialtyId, date);
+    AppointmentRequest createRequest(LocalDateTime date) {
+        return new AppointmentRequest(employeeId, clientId, specialtyId, date);
     }
 
-    EmployeeSpecialtyEntity createCompoundEntity(UUID employeeId, SpecialtyEntity specialty) {
-        EmployeeSpecialtyEntity compoundEntity = EmployeeSpecialtyEntity.create(employeeId, specialty.getId());
+    EmployeeSpecialty createCompoundEntity(UUID employeeId, Specialty specialty) {
+        EmployeeSpecialty compoundEntity = EmployeeSpecialty.create(employeeId, specialty.getId());
         compoundEntity.setSpecialty(specialty);
         return compoundEntity;
     }
@@ -329,7 +325,7 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
         doReturn(Optional.of(employeeEntity)).when(employeeRepository).findById(any());
     }
 
-    void mockAppointmentRepositoryFindAllWithDateEmployeeAndClient(List<AppointmentEntity> listOfAppointments) {
+    void mockAppointmentRepositoryFindAllWithDateEmployeeAndClient(List<Appointment> listOfAppointments) {
         doReturn(listOfAppointments).when(appointmentRepository)
                 .findAllByDateBetweenAndEmployeeIdOrClientId(any(), any(), any(), any());
     }

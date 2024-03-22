@@ -26,6 +26,6 @@ else
       -Dmaven.test.skip=true \
       -Dmaven.test.dependency.skip=true
 
-    # Run the application
+    # Run the application.yml
     java -jar ./target/jubasbackend-0.0.1-SNAPSHOT.jar
 fi

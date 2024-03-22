@@ -1,8 +1,8 @@
 package com.jubasbackend.service.employee;
 
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.domain.entity.WorkingHourEntity;
+import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.domain.entity.WorkingHour;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,10 +27,10 @@ class FindEmployeeTest extends AbstractEmployeeServiceTest {
     @DisplayName("Deve buscar o funcionário com sucesso.")
     void shouldFindEmployeeWithSuccessfully() {
         //ARRANGE
-        var employee = EmployeeEntity.builder()
+        var employee = Employee.builder()
                 .id(employeeId)
-                .profile(ProfileEntity.builder().id(UUID.randomUUID()).build())
-                .workingHour(WorkingHourEntity.builder().id(UUID.randomUUID()).build())
+                .profile(Profile.builder().id(UUID.randomUUID()).build())
+                .workingHour(WorkingHour.builder().id(UUID.randomUUID()).build())
                 .specialties(new ArrayList<>()).build();
         doReturn(Optional.of(employee)).when(employeeRepository).findById(uuidArgumentCaptor.capture());
 

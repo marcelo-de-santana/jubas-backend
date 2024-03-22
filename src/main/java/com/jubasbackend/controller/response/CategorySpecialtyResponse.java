@@ -1,11 +1,11 @@
 package com.jubasbackend.controller.response;
 
-import com.jubasbackend.domain.entity.CategoryEntity;
+import com.jubasbackend.domain.entity.Category;
 
 import java.util.List;
 
 public record CategorySpecialtyResponse(Short id, String name, List<SpecialtyResponse> specialties) {
-    public CategorySpecialtyResponse(CategoryEntity category) {
+    public CategorySpecialtyResponse(Category category) {
         this(
                 category.getId(),
                 category.getName(),

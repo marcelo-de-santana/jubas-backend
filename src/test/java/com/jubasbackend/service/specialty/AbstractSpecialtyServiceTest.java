@@ -1,6 +1,6 @@
 package com.jubasbackend.service.specialty;
 
-import com.jubasbackend.domain.entity.SpecialtyEntity;
+import com.jubasbackend.domain.entity.Specialty;
 import com.jubasbackend.domain.repository.SpecialtyRepository;
 import com.jubasbackend.service.SpecialtyService;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,5 +25,5 @@ public abstract class AbstractSpecialtyServiceTest {
     protected ArgumentCaptor<UUID> uuidArgumentCaptor;
 
     @Captor
-    protected ArgumentCaptor<SpecialtyEntity> specialtyEntityArgumentCaptor;
+    protected ArgumentCaptor<Specialty> specialtyEntityArgumentCaptor;
 }

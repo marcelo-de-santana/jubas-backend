@@ -1,6 +1,6 @@
 package com.jubasbackend.service.working_hour;
 
-import com.jubasbackend.domain.entity.WorkingHourEntity;
+import com.jubasbackend.domain.entity.WorkingHour;
 import com.jubasbackend.controller.request.WorkingHourRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class UpdateWorkingHourTest extends AbstractWorkingHourServiceTest {
     UUID workingHourId = UUID.randomUUID();
     WorkingHourRequest request = super.createWorkingHourRequest("09:00", "17:00", "12:00", "13:00");
 
-    WorkingHourEntity existingWorkingHour = WorkingHourEntity.builder().id(workingHourId).build();
+    WorkingHour existingWorkingHour = WorkingHour.builder().id(workingHourId).build();
 
     @Test
     @DisplayName("Deve atualizar jornada de trabalho com sucesso.")

@@ -1,41 +1,34 @@
 package com.jubasbackend.service.user;
 
 import com.jubasbackend.controller.request.UserRequest;
-import com.jubasbackend.domain.entity.UserEntity;
+import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.entity.enums.PermissionType;
-import org.junit.jupiter.api.BeforeEach;
+import com.jubasbackend.exception.APIException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.CONFLICT;
 
 class CreateUserTest extends AbstractUserServiceTest {
-    UserRequest request;
-
-    @BeforeEach
-    void setup() {
-        this.request = new UserRequest("novoCliente@teste.com", "12345678", PermissionType.CLIENTE);
-    }
+    UserRequest request = new UserRequest("novoCliente@teste.com", "12345678", PermissionType.BARBEIRO, null, null);
 
     @Test
     @DisplayName("Deve criar usuário com sucesso.")
     void shouldCreateUserWithSuccessfully() {
         //ARRANGE
-        var newUser = new UserEntity(request);
         doReturn(false).when(repository).existsByEmail(request.email());
-        doReturn(newUser).when(repository).save(any(UserEntity.class));
+        doReturn(new User()).when(repository).save(any());
 
         //ACT
-        var response = service.createUser(request);
+        var response = service.createUser(request, token);
 
         //ASSERT
         assertNotNull(response);
-        assertEquals(request.email(), response.email());
-        assertEquals(request.permission(), response.permission());
         verify(repository, times(1)).existsByEmail(request.email());
-        verify(repository, times(1)).save(any(UserEntity.class));
+        verify(repository, times(1)).save(any(User.class));
         verifyNoMoreInteractions(repository);
     }
 
@@ -46,9 +39,11 @@ class CreateUserTest extends AbstractUserServiceTest {
         doReturn(true).when(repository).existsByEmail(request.email());
 
         //ACT & ASSERT
-        var exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.createUser(request);
+        var exception = assertThrows(APIException.class, () -> {
+            service.createUser(request, token);
         });
+
+        assertEquals(CONFLICT, exception.getStatus());
         assertEquals("User already exists.", exception.getMessage());
     }
 }

@@ -1,0 +1,26 @@
+@url = http://localhost:8080
+
+### GERAR TOKEN DE ACESSO
+POST {{url}}/auth
+Content-Type: application/json
+
+{
+  "email": "admin@jubas.com",
+  "password": "12345678"
+}
+
+> {% client.global.set("access_token_admin", response.body.accessToken); %}
+
+
+### CRIAR NOVO USUÁRIO COMO BARBEIRO
+POST {{url}}/users
+Authorization: Berear {{access_token_admin}}
+Content-Type: application/json
+
+{
+  "email": "hoss@jubas.com",
+  "password": "12345678",
+  "permission": "BARBEIRO"
+}
+
+

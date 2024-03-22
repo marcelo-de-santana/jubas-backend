@@ -1,6 +1,6 @@
 package com.jubasbackend.service.employee;
 
-import com.jubasbackend.domain.entity.EmployeeEntity;
+import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.controller.request.EmployeeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class UpdateEmployeeTest extends AbstractEmployeeServiceTest {
         var request = new EmployeeRequest(profileId, workingHourId, List.of(newSpecialtyId));
 
         doReturn(Optional.of(savedEmployee)).when(employeeRepository).findById(uuidCaptor.capture());
-        doReturn(new EmployeeEntity()).when(employeeRepository).save(employeeEntityCaptor.capture());
+        doReturn(new Employee()).when(employeeRepository).save(employeeEntityCaptor.capture());
 
         //ACT
         service.updateEmployee(employeeId, request);
@@ -48,7 +48,7 @@ class UpdateEmployeeTest extends AbstractEmployeeServiceTest {
         var request = new EmployeeRequest(profileId, workingHourId, List.of(specialtyId));
 
         doReturn(Optional.of(savedEmployee)).when(employeeRepository).findById(any());
-        doReturn(new EmployeeEntity()).when(employeeRepository).save(employeeEntityCaptor.capture());
+        doReturn(new Employee()).when(employeeRepository).save(employeeEntityCaptor.capture());
 
         //ACT
         service.updateEmployee(employeeId, request);
@@ -66,7 +66,7 @@ class UpdateEmployeeTest extends AbstractEmployeeServiceTest {
         var request = new EmployeeRequest(profileId, newWorkingHourId, List.of(specialtyId));
 
         doReturn(Optional.of(savedEmployee)).when(employeeRepository).findById(any());
-        doReturn(new EmployeeEntity()).when(employeeRepository).save(employeeEntityCaptor.capture());
+        doReturn(new Employee()).when(employeeRepository).save(employeeEntityCaptor.capture());
 
         //ACT
         service.updateEmployee(employeeId, request);

@@ -5,12 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public record EmployeeRequest(
-        @NotNull
-        UUID profileId,
-        @NotNull
-        UUID workingHourId,
-        @NotNull
-        List<UUID> specialties) {
+public record EmployeeRequest(UUID profileId, UUID workingHourId, List<UUID> specialties) {
 }
 

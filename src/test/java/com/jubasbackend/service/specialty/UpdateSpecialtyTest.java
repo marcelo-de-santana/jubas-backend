@@ -1,11 +1,12 @@
 package com.jubasbackend.service.specialty;
 
 import com.jubasbackend.controller.request.SpecialtyRequest;
-import com.jubasbackend.domain.entity.CategoryEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
+import com.jubasbackend.domain.entity.Category;
+import com.jubasbackend.domain.entity.Specialty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -17,24 +18,24 @@ import static org.mockito.Mockito.*;
 
 public class UpdateSpecialtyTest extends AbstractSpecialtyServiceTest {
 
-    SpecialtyRequest request = new SpecialtyRequest("Novo nome", LocalTime.parse("00:20"), 20.00F, (short) 1);
+    SpecialtyRequest request = new SpecialtyRequest("Novo nome", LocalTime.parse("00:20"), BigDecimal.valueOf(20.00), (short) 1);
     UUID specialtyId = UUID.randomUUID();
 
     @Test
     @DisplayName("Deve atualizar a especialidade com sucesso.")
     void shouldUpdateSpecialtyWithSuccessfully() {
         //ARRANGE
-        var currentSpecialty = SpecialtyEntity.builder()
+        var currentSpecialty = Specialty.builder()
                 .name("Antigo nome")
                 .timeDuration(LocalTime.parse("00:10"))
-                .price(10.00F)
-                .category(CategoryEntity.builder().id((short) 2).build()).build();
+                .price(BigDecimal.valueOf(10.00))
+                .category(Category.builder().id((short) 2).build()).build();
 
-        var updatedSpecialty = SpecialtyEntity.builder()
+        var updatedSpecialty = Specialty.builder()
                 .name(request.name())
                 .timeDuration(request.timeDuration())
                 .price(request.price())
-                .category(CategoryEntity.builder().id(request.categoryId()).build()).build();
+                .category(Category.builder().id(request.categoryId()).build()).build();
         doReturn(Optional.of(currentSpecialty)).when(repository).findById(uuidArgumentCaptor.capture());
         doReturn(updatedSpecialty).when(repository).save(specialtyEntityArgumentCaptor.capture());
 

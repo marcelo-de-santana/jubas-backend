@@ -1,12 +1,14 @@
 package com.jubasbackend.service.profile;
 
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.controller.request.ProfileUserRequest;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.controller.request.ProfileRequest;
+import com.jubasbackend.exception.APIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -15,11 +17,11 @@ import static org.mockito.Mockito.*;
 
 class CreateProfileTest extends AbstractProfileServiceTest {
 
-    ProfileUserRequest request;
-    ProfileEntity profile;
+    ProfileRequest request;
+    Profile profile;
 
     @Captor
-    ArgumentCaptor<ProfileEntity> profileEntityArgumentCaptor;
+    ArgumentCaptor<Profile> profileEntityArgumentCaptor;
 
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
@@ -27,8 +29,8 @@ class CreateProfileTest extends AbstractProfileServiceTest {
 
     @BeforeEach
     public void setup() {
-        request = new ProfileUserRequest("Juninho Almeida", "12345678910", false, UUID.randomUUID());
-        profile = new ProfileEntity(request);
+        request = new ProfileRequest("Juninho Almeida", "12345678910", false, UUID.randomUUID());
+        profile = new Profile(request);
     }
 
     @Test
@@ -61,9 +63,10 @@ class CreateProfileTest extends AbstractProfileServiceTest {
         doReturn(false).when(repository).existsByUserId(uuidArgumentCaptor.capture());
 
         //ACT & ASSERT
-        var exception = assertThrows(IllegalArgumentException.class,
+        var exception = assertThrows(APIException.class,
                 () -> service.createProfile(request));
 
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("User doesn't exists.", exception.getMessage());
         assertEquals(request.userId(), uuidArgumentCaptor.getValue());
         verify(repository).existsByUserId(uuidArgumentCaptor.getValue());

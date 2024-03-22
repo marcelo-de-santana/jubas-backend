@@ -2,7 +2,7 @@ package com.jubasbackend.service.appointment;
 
 import com.jubasbackend.service.TestEntityFactory;
 import com.jubasbackend.domain.repository.DayAvailabilityRepository;
-import com.jubasbackend.domain.entity.AppointmentEntity;
+import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.repository.AppointmentRepository;
 import com.jubasbackend.service.AppointmentService;
 import com.jubasbackend.domain.repository.EmployeeRepository;
@@ -48,6 +48,6 @@ public abstract class AbstractAppointmentServiceTest extends TestEntityFactory {
     ArgumentCaptor<LocalDateTime> dateTimeCaptor;
 
     @Captor
-    ArgumentCaptor<AppointmentEntity> appointmentEntityCaptor;
+    ArgumentCaptor<Appointment> appointmentEntityCaptor;
 
 }

@@ -1,6 +1,6 @@
 package com.jubasbackend.service.working_hour;
 
-import com.jubasbackend.domain.entity.WorkingHourEntity;
+import com.jubasbackend.domain.entity.WorkingHour;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ class GetOpeningHoursTest {
     @DisplayName("Deve retornar o primeiro horário igual ao horário de início de jornada e o último igual com 10 minutos de antecedência.")
     void shouldReturnFirstScheduleStartingAtShiftStartAndLastScheduleEndingWith10MinutesEarly() {
         //ARRANGE
-        var workingHour = WorkingHourEntity.builder()
+        var workingHour = WorkingHour.builder()
                 .id(UUID.randomUUID())
                 .startTime(parse("07:00"))
                 .endTime(parse("16:00"))
@@ -40,7 +40,7 @@ class GetOpeningHoursTest {
     @DisplayName("Deve marcar como indisponíveis os horários que estiverem dentro do intervalo.")
     void shouldMarkUnavailableForTimesWithinInterval() {
         //ARRANGE
-        var workingHour = WorkingHourEntity.builder()
+        var workingHour = WorkingHour.builder()
                 .id(UUID.randomUUID())
                 .startTime(parse("07:00"))
                 .endTime(parse("16:00"))
@@ -61,7 +61,7 @@ class GetOpeningHoursTest {
         }
     }
 
-    private boolean isInterval(WorkingHourEntity workingHour, LocalTime time) {
+    private boolean isInterval(WorkingHour workingHour, LocalTime time) {
         return (time.equals(workingHour.getStartInterval()) ||
                 (time.isAfter(workingHour.getStartInterval())
                         && time.isBefore(workingHour.getEndInterval())));

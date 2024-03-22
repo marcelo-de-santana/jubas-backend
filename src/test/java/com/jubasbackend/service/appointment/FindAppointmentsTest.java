@@ -1,17 +1,18 @@
 package com.jubasbackend.service.appointment;
 
-import com.jubasbackend.domain.entity.AppointmentEntity;
+import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
-import com.jubasbackend.domain.entity.EmployeeEntity;
-import com.jubasbackend.domain.entity.EmployeeSpecialtyEntity;
+import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.EmployeeSpecialty;
 import com.jubasbackend.domain.entity.EmployeeSpecialtyId;
-import com.jubasbackend.domain.entity.ProfileEntity;
-import com.jubasbackend.domain.entity.SpecialtyEntity;
-import com.jubasbackend.domain.entity.WorkingHourEntity;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.domain.entity.Specialty;
+import com.jubasbackend.domain.entity.WorkingHour;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,19 +36,19 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
     final static LocalTime WORKING_HOUR_END_INTERVAL = LocalTime.parse("13:00");
     final static LocalTime WORKING_HOUR_END_TIME = LocalTime.parse("16:00");
     final static LocalDateTime APPOINTMENT_DATE_TIME = LocalDateTime.of(2024, 3, 16, 14, 0);
-    ProfileEntity CLIENT_PROFILE = ProfileEntity.builder()
+    Profile CLIENT_PROFILE = Profile.builder()
             .id(CLIENT_PROFILE_ID)
             .name("José Andrade")
             .statusProfile(true)
             .build();
 
-    ProfileEntity EMPLOYEE_PROFILE = ProfileEntity.builder()
+    Profile EMPLOYEE_PROFILE = Profile.builder()
             .id(EMPLOYEE_PROFILE_ID)
             .name(EMPLOYEE_NAME)
             .statusProfile(true)
             .build();
 
-    WorkingHourEntity WORKING_HOUR = WorkingHourEntity.builder()
+    WorkingHour WORKING_HOUR = WorkingHour.builder()
             .id(WORKING_HOUR_ID)
             .startTime(WORKING_HOUR_START_TIME)
             .startInterval(WORKING_HOUR_START_INTERVAL)
@@ -55,10 +56,10 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
             .endTime(WORKING_HOUR_END_TIME)
             .build();
 
-    SpecialtyEntity SPECIALTY = SpecialtyEntity.builder()
+    Specialty SPECIALTY = Specialty.builder()
             .id(SPECIALTY_ID)
             .name("Corte clássico com tesoura")
-            .price(49.99F)
+            .price(BigDecimal.valueOf(49.99))
             .timeDuration(LocalTime.parse("00:40"))
             .build();
 
@@ -67,19 +68,19 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
             .specialtyId(SPECIALTY_ID)
             .build();
 
-    EmployeeSpecialtyEntity COMPOUND_ENTITY = EmployeeSpecialtyEntity.builder()
+    EmployeeSpecialty COMPOUND_ENTITY = EmployeeSpecialty.builder()
             .id(COMPOUND_ID)
             .specialty(SPECIALTY)
             .build();
 
-    EmployeeEntity EMPLOYEE = EmployeeEntity.builder()
+    Employee EMPLOYEE = Employee.builder()
             .id(EMPLOYEE_PROFILE_ID)
             .profile(EMPLOYEE_PROFILE)
             .workingHour(WORKING_HOUR)
             .specialties(List.of(COMPOUND_ENTITY))
             .build();
 
-    AppointmentEntity APPOINTMENT = AppointmentEntity.builder()
+    Appointment APPOINTMENT = Appointment.builder()
             .id(APPOINTMENT_ID)
             .date(APPOINTMENT_DATE_TIME)
             .appointmentStatus(AppointmentStatus.MARCADO)
@@ -194,7 +195,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
                 .when(employeeRepository).findAllByActiveProfile(true);
     }
 
-    private void mockReturnAppointmentRepository_FindAllDateBetween(List<AppointmentEntity> appointmentsReturn) {
+    private void mockReturnAppointmentRepository_FindAllDateBetween(List<Appointment> appointmentsReturn) {
         doReturn(appointmentsReturn)
                 .when(appointmentRepository)
                 .findAllByDateBetween(any(), any());

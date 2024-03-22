@@ -1,9 +1,9 @@
 package com.jubasbackend.domain.repository;
 
-import com.jubasbackend.domain.entity.DayAvailabilityEntity;
+import com.jubasbackend.domain.entity.DayAvailability;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DayAvailabilityRepository extends JpaRepository<DayAvailabilityEntity, Long> {
+public interface DayAvailabilityRepository extends JpaRepository<DayAvailability, Long> {
     /**
      * @return Retorna a quantidade de dias em que a agenda ficará disponível.
      */
@@ -11,8 +11,8 @@ public interface DayAvailabilityRepository extends JpaRepository<DayAvailability
         return findSingleEntity().getQuantity();
     }
 
-    default DayAvailabilityEntity findSingleEntity() {
+    default DayAvailability findSingleEntity() {
         var entity = findById(1L);
-        return entity.orElseGet(DayAvailabilityEntity::new);
+        return entity.orElseGet(DayAvailability::new);
     }
 }
