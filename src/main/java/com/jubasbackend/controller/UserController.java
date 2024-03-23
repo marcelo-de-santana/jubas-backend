@@ -16,8 +16,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.security.authorization.AuthorityReactiveAuthorizationManager.hasAuthority;
-
 @Tag(name = "Users")
 @RequiredArgsConstructor
 @RestController

@@ -15,7 +15,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -80,7 +80,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar o agendamento.")
     })
     @PostMapping
-    public ResponseEntity<Void> createAppointment(@NonNull @RequestBody AppointmentRequest request) {
+    public ResponseEntity<Void> createAppointment(@NonNull @RequestBody AppointmentRequest request, JwtAuthenticationToken jwt) {
         var createdAppointment = service.createAppointment(request);
         return ResponseEntity.created(URI.create("/appointments/" + createdAppointment.getId())).build();
     }
@@ -132,8 +132,8 @@ public class AppointmentController {
             @ApiResponse(responseCode = "500", description = "Erro ao cancelar agendamento.")
     })
     @DeleteMapping("/{appointmentId}")
-    public ResponseEntity<Void> cancelAppointment(@PathVariable UUID appointmentId) {
-        service.cancelAppointment(appointmentId);
+    public ResponseEntity<Void> cancelAppointment(@PathVariable UUID appointmentId, JwtAuthenticationToken jwt) {
+        service.cancelAppointment(appointmentId, jwt);
         return ResponseEntity.noContent().build();
     }
 

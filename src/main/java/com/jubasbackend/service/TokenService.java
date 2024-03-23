@@ -8,14 +8,12 @@ import com.jubasbackend.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.ZoneId;
+import static com.jubasbackend.utils.DateTimeUtils.BRAZILIAN_INSTANT;
 
 @AllArgsConstructor
 @Service
@@ -32,7 +30,7 @@ public class TokenService {
         if (!user.isCorrectPassword(request, passwordEncoder))
             throw new BadCredentialsException("Incorrect Email or Password.");
 
-        var currentTime = Instant.now().atZone(ZoneId.of("America/Sao_Paulo")).toInstant();
+        var currentTime = BRAZILIAN_INSTANT;
         var expiresIn = securityConfig.getDuration();
         var permission = user.getPermission().toString();
 
