@@ -3,6 +3,8 @@ package com.jubasbackend.domain.entity;
 import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import com.jubasbackend.exception.APIException;
+import com.jubasbackend.service.MailService;
+import com.jubasbackend.utils.MailMessageUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,6 +15,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
+import static com.jubasbackend.utils.DateTimeUtils.BRAZILIAN_DATETIME;
 
 @Getter
 @Setter
@@ -74,13 +78,28 @@ public class Appointment {
         return startTime.plusHours(duration.getHour()).plusMinutes(duration.getMinute());
     }
 
+    public String getEmployeeName() {
+        return employee.getProfile().getName();
+    }
+
+    public String getEmployeeEmail() {
+        return employee.getProfile().getUser().getEmail();
+    }
+
+    public String getClientName() {
+        return client.getName();
+    }
+
+    public String getClientEmail() {
+        return client.getUser().getEmail();
+    }
+
     public boolean isInThePeriod(LocalTime time) {
         return (time.equals(startTime()) || (time.isAfter(startTime()) && time.isBefore(endTime())));
     }
 
     /**
      * Recebe o novo agendamento e compara com os atuais para aplicar as regras de negócio.
-     * @param newAppointment
      */
     public void validate(Appointment newAppointment) {
         if (!getId().equals(newAppointment.getId())) {
@@ -101,7 +120,8 @@ public class Appointment {
 
     //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
     private void validateSameSpecialty(Specialty specialty, Profile client) {
-        if (getAppointmentStatus().equals(AppointmentStatus.MARCADO)&& specialty.getId().equals(getSpecialty().getId())
+        if (getAppointmentStatus().equals(AppointmentStatus.MARCADO)
+                && specialty.getId().equals(getSpecialty().getId())
                 && client.getId().equals(getClient().getId())) {
             throw new IllegalArgumentException("The same profile cannot schedule two services for the same day.");
         }
@@ -134,4 +154,48 @@ public class Appointment {
             throw new APIException(HttpStatus.CONFLICT,
                     "The start or end of the new schedule conflicts with the booked one.");
     }
+
+    public boolean expiredTime() {
+        return BRAZILIAN_DATETIME.isAfter(getDate());
+    }
+
+    public void sendCancellationNotificationByClientWhenExpiredTime(MailService mailService) {
+        mailService.
+                sendCancellationEmails(
+                        getClientEmail(),
+                        getEmployeeEmail(),
+                        MailMessageUtils.ClientCancellationExpiredTime.messageClient(getClientName(), getEmployeeName(), getDate(), startTime()),
+                        MailMessageUtils.ClientCancellationExpiredTime.messageEmployee(getClientName(), getDate(), startTime()),
+                        MailMessageUtils.ClientCancellationExpiredTime.messageAdmin(getClientName(), getEmployeeName(), getDate(), startTime())
+                );
+    }
+
+    public void sendCancellationNotificationByEmployeeWhenExpiredTime(MailService mailService) {
+        mailService.sendCancellationEmails(
+                getClientEmail(),
+                getEmployeeEmail(),
+                MailMessageUtils.EmployeeCancellationExpiredTime.clientMessage(getClientName(), getEmployeeName(), getDate(), startTime()),
+                MailMessageUtils.EmployeeCancellationExpiredTime.employeeMessage(getClientName(), getDate(), startTime()),
+                MailMessageUtils.EmployeeCancellationExpiredTime.adminMessage(getClientName(), getEmployeeName(), getDate(), startTime()));
+    }
+
+    public void sendCancellationNotificationByClient(MailService mailService) {
+        mailService
+                .sendCancellationEmails(
+                        getClientEmail(),
+                        getEmployeeEmail(),
+                        MailMessageUtils.ClientCancellation.clientMessage(getClientName(), getEmployeeName(), getDate(), startTime()),
+                        MailMessageUtils.ClientCancellation.employeeMessage(getClientName(), getDate(), startTime()),
+                        MailMessageUtils.ClientCancellation.adminMessage(getClientName(), getEmployeeName(), getDate(), startTime()));
+    }
+
+    public void sendCancellationNotificationByEmployee(MailService mailService) {
+        mailService.sendCancellationEmails(
+                getClientEmail(),
+                getEmployeeEmail(),
+                MailMessageUtils.EmployeeCancellation.clientMessage(getClientName(), getEmployeeName(), getDate(), startTime()),
+                MailMessageUtils.EmployeeCancellation.employeeMessage(getClientName(), getDate(), startTime()),
+                MailMessageUtils.EmployeeCancellation.adminMessage(getClientName(), getEmployeeName(), getDate(), startTime()));
+    }
+
 }

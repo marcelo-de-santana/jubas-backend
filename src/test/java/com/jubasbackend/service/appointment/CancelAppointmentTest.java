@@ -25,7 +25,7 @@ class CancelAppointmentTest extends AbstractAppointmentServiceTest {
 
         //ACT & ASSERT
         var exception = assertThrows(NoSuchElementException.class,
-                () -> service.cancelAppointment(appointmentId));
+                () -> service.cancelAppointment(appointmentId, null));
         var capturedId = uuidCaptor.getValue();
 
         assertEquals("Appointment not found.", exception.getMessage());
@@ -46,7 +46,7 @@ class CancelAppointmentTest extends AbstractAppointmentServiceTest {
         doReturn(new Appointment()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 
         //ACT & ASSERT
-        assertDoesNotThrow(() -> service.cancelAppointment(appointmentId));
+        assertDoesNotThrow(() -> service.cancelAppointment(appointmentId, null));
 
         var capturedAppointment = appointmentEntityCaptor.getValue();
 

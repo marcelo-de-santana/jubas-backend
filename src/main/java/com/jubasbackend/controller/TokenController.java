@@ -2,6 +2,7 @@ package com.jubasbackend.controller;
 
 import com.jubasbackend.controller.request.AuthRequest;
 import com.jubasbackend.controller.response.TokenResponse;
+import com.jubasbackend.service.MailService;
 import com.jubasbackend.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TokenController {
 
     final TokenService tokenService;
+    final MailService mailService;
 
     @Operation(summary = "Gerar token de acesso.", responses = {
             @ApiResponse(responseCode = "200", description = "Token gerado com sucesso."),

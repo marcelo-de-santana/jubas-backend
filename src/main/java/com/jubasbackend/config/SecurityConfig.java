@@ -1,5 +1,6 @@
 package com.jubasbackend.config;
 
+import com.jubasbackend.domain.entity.enums.PermissionType;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -8,7 +9,6 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -43,18 +43,13 @@ public class SecurityConfig {
 
     @Getter
     @Value("${jwt.duration}")
-    Long duration;
+    private Long duration;
 
     @Value("${jwt.keys.public}")
-    String publicKeyStr;
+    private String publicKeyStr;
 
     @Value("${jwt.keys.private}")
-    String privateKeyStr;
-
-    static final String[] ALLOWED_URLS = {
-            "/api-docs/**",
-            "/swagger-ui/**",
-    };
+    private String privateKeyStr;
 
     RSAPublicKey publicKey() throws InvalidKeySpecException, NoSuchAlgorithmException {
         var decoded = Base64.decodeBase64(publicKeyStr);
@@ -91,16 +86,31 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(CustomJWT.converter())))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(ALLOWED_URLS).permitAll()
-                        .requestMatchers(POST, "/auth", "/users").permitAll()
+                        .requestMatchers("/api-docs/**", "/swagger-ui/**")
+                        .permitAll()
+
                         .requestMatchers(GET,
-                                "/appointments/daysOfAttendance",
                                 "/appointments",
-                                "/users").permitAll()
-                        .anyRequest().authenticated()
+                                "/appointments/daysOfAttendance",
+                                "/categories")
+                        .permitAll()
+
+                        .requestMatchers(POST,
+                                "/auth",
+                                "/users")
+                        .permitAll()
+
+                        .requestMatchers(GET, "")
+                        .hasRole(PermissionType.ADMIN.toString())
+
+                        .anyRequest()
+                        .authenticated()
                 ).build();
     }
 }

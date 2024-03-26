@@ -11,6 +11,7 @@ import com.jubasbackend.domain.repository.DayAvailabilityRepository;
 import com.jubasbackend.domain.repository.EmployeeRepository;
 import com.jubasbackend.domain.repository.NonServiceDayRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -32,6 +33,7 @@ public class AppointmentService {
     private final EmployeeRepository employeeRepository;
     private final NonServiceDayRepository nonServiceDayRepository;
     private final DayAvailabilityRepository dayAvailabilityRepository;
+    private final MailService mailService;
 
     public List<ScheduleResponse> findAppointments(LocalDate requestDate, UUID specialtyId, boolean toFilter) {
         var dateTime = obtainDateTimeFromOptionalDate(requestDate);
@@ -124,14 +126,33 @@ public class AppointmentService {
 
     }
 
-    public void cancelAppointment(UUID appointmentId) {
-        var appointmentToCancel = findAppointmentInTheRepository(appointmentId);
-        if (LocalDateTime.now().isAfter(appointmentToCancel.getDate())) {
-            appointmentToCancel.setAppointmentStatus(AppointmentStatus.CANCELADO);
-            appointmentRepository.save(appointmentToCancel);
-        } else {
-            appointmentRepository.delete(appointmentToCancel);
+    public void cancelAppointment(UUID appointmentId, JwtAuthenticationToken jwt) {
+        var appointment = findAppointmentInTheRepository(appointmentId);
+        var userIdRequest = jwt.getName();
+
+        var clientRequested = userIdRequest
+                .equals(appointment
+                        .getClient()
+                        .getUser()
+                        .getId()
+                        .toString());
+
+        if (appointment.expiredTime()) {
+            if (clientRequested) {
+                appointment.sendCancellationNotificationByClientWhenExpiredTime(mailService);
+            } else {
+                appointment.sendCancellationNotificationByEmployeeWhenExpiredTime(mailService);
+            }
+            appointment.setAppointmentStatus(AppointmentStatus.CANCELADO);
+            appointmentRepository.save(appointment);
+            return;
         }
+        if (clientRequested) {
+            appointment.sendCancellationNotificationByClient(mailService);
+        }
+        appointment.sendCancellationNotificationByEmployee(mailService);
+
+        appointmentRepository.delete(appointment);
     }
 
     public void deleteDaysWithoutAttendance(List<LocalDate> dates) {

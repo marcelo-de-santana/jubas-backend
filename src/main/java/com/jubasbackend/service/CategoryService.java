@@ -1,7 +1,6 @@
 package com.jubasbackend.service;
 
 import com.jubasbackend.controller.response.CategoryResponse;
-import com.jubasbackend.controller.response.CategorySpecialtyResponse;
 import com.jubasbackend.domain.entity.Category;
 import com.jubasbackend.domain.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,8 @@ public class CategoryService {
         return repository.findAll().stream().map(CategoryResponse::new).toList();
     }
 
-    public List<CategorySpecialtyResponse> findCategoriesAndSpecialties() {
-        return repository.findAll().stream().map(CategorySpecialtyResponse::new).toList();
+    public List<CategoryResponse.WithSpecialty> findCategoriesWithSpecialties() {
+        return repository.findAll().stream().map(CategoryResponse.WithSpecialty::new).toList();
     }
 
     public CategoryResponse createCategory(String categoryName) {

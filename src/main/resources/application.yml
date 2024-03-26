@@ -3,7 +3,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     open-in-view: true
-
   mail:
     host: smtp.gmail.com
     port: 587
@@ -18,10 +17,10 @@ spring:
             enabled: true
             required: true
 
-server:
-  error:
-    include-stacktrace: never
-    include-message: never
+#server:
+#  error:
+#    include-stacktrace: never
+#    include-message: never
 
 springdoc:
   api-docs:
