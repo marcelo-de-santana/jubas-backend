@@ -15,6 +15,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +80,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "409", description = "Conflito de horário."),
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar o agendamento.")
     })
+
     @PostMapping
     public ResponseEntity<Void> createAppointment(@NonNull @RequestBody AppointmentRequest request, JwtAuthenticationToken jwt) {
         var createdAppointment = service.createAppointment(request);

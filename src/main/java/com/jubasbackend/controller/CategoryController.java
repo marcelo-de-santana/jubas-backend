@@ -2,7 +2,6 @@ package com.jubasbackend.controller;
 
 import com.jubasbackend.controller.request.CategoryRequest;
 import com.jubasbackend.controller.response.CategoryResponse;
-import com.jubasbackend.controller.response.CategorySpecialtyResponse;
 import com.jubasbackend.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,17 +28,9 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar categorias.", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> findCategories() {
-        return ResponseEntity.ok(service.findCategories());
-    }
-
-    @Operation(summary = "Buscar todas as categorias e especialidades associadas.", responses = {
-            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
-            @ApiResponse(responseCode = "500", description = "Erro ao buscar categorias.", content = @Content)
-    })
-    @GetMapping("/specialties")
-    public ResponseEntity<List<CategorySpecialtyResponse>> findCategoriesAndSpecialties() {
-        return ResponseEntity.ok(service.findCategoriesAndSpecialties());
+    public ResponseEntity<List<? extends CategoryResponse>> findCategories(
+            @RequestParam(required = false, defaultValue = "false") boolean specialties) {
+        return ResponseEntity.ok(specialties ? service.findCategoriesWithSpecialties() : service.findCategories());
     }
 
     @Operation(summary = "Cadastrar nova categoria.", responses = {
@@ -50,7 +41,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<Void> createCategory(@RequestBody CategoryRequest request) {
         var categoryCreated = service.createCategory(request.name());
-        return ResponseEntity.created(URI.create("/categories/" + categoryCreated.id())).build();
+        return ResponseEntity.created(URI.create("/categories/" + categoryCreated.getId())).build();
     }
 
     @Operation(summary = "Atualizar categoria.", responses = {

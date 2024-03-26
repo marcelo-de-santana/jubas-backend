@@ -17,10 +17,10 @@ spring:
             enabled: true
             required: true
 
-server:
-  error:
-    include-stacktrace: never
-    include-message: never
+#server:
+#  error:
+#    include-stacktrace: never
+#    include-message: never
 
 springdoc:
   api-docs:

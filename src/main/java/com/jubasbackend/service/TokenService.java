@@ -3,6 +3,7 @@ package com.jubasbackend.service;
 import com.jubasbackend.config.SecurityConfig;
 import com.jubasbackend.controller.request.AuthRequest;
 import com.jubasbackend.controller.response.TokenResponse;
+import com.jubasbackend.controller.response.UserResponse;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class TokenService {
 
         var currentTime = BRAZILIAN_INSTANT;
         var expiresIn = securityConfig.getDuration();
-        var permission = user.getPermission().toString();
+        var permission = user.getPermission();
 
         var claims = JwtClaimsSet.builder()
                 .issuer(securityConfig.getIssuer())
@@ -42,10 +43,9 @@ public class TokenService {
                 .expiresAt(currentTime.plusSeconds(expiresIn))
                 .build();
 
+        var jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-
-        return new TokenResponse(token);
+        return new TokenResponse(jwt, expiresIn, new UserResponse(user));
 
     }
 
