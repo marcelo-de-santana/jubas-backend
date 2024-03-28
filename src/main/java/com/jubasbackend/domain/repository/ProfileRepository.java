@@ -14,7 +14,5 @@ public interface ProfileRepository extends JpaRepository<Profile, UUID> {
 
     Optional<Profile> findByCpfAndUserEmail(String cpf, String email);
 
-    boolean existsByUserId(UUID userId);
-
     List<Profile> findAllByUserPermission(PermissionType permission);
 }

@@ -32,7 +32,7 @@ class UpdateUserTest extends AbstractUserServiceTest {
     void shouldUpdateUserSuccessfully() {
         //ARRANGE
         var newPermission = PermissionType.BARBEIRO;
-        var request = new UserRequest("novo@email.com", "12345678", newPermission, null, null);
+        var request = new UserRequest("novo@email.com", "12345678", newPermission);
         var updatedUser = User.builder()
                 .id(userId)
                 .email(request.email())
@@ -61,7 +61,7 @@ class UpdateUserTest extends AbstractUserServiceTest {
     @DisplayName("Deve ocorrer uma exceção caso o e-mail já esteja em uso.")
     void shouldThrowErrorWhenEmailIsInUse() {
         //ARRANGE
-        var request = new UserRequest("existente@gmail.com", "012345678", PermissionType.CLIENTE, null, null);
+        var request = new UserRequest("existente@gmail.com", "012345678", PermissionType.CLIENTE);
         doReturn(Optional.of(currentUser)).when(repository).findById(userId);
         doReturn(true).when(repository).existsByEmail(request.email());
 
@@ -75,7 +75,7 @@ class UpdateUserTest extends AbstractUserServiceTest {
     @DisplayName("Deve ocorrer uma exceção caso o ID não esteja cadastrado.")
     void shouldThrowErrorWhenUserIdIsNotRegistred() {
         //ARRANGE
-        var request = new UserRequest("novo@email.com", "12345678", PermissionType.BARBEIRO, null, null);
+        var request = new UserRequest("novo@email.com", "12345678", PermissionType.BARBEIRO);
         doReturn(Optional.empty()).when(repository).findById(any());
 
         //ACT & ASSERT

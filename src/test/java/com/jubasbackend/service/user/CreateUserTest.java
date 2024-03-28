@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
 class CreateUserTest extends AbstractUserServiceTest {
-    UserRequest request = new UserRequest("novoCliente@teste.com", "12345678", PermissionType.BARBEIRO, null, null);
+    UserRequest request = new UserRequest("novoCliente@teste.com", "12345678", PermissionType.BARBEIRO);
 
     @Test
     @DisplayName("Deve criar usuário com sucesso.")

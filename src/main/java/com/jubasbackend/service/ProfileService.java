@@ -7,6 +7,7 @@ import com.jubasbackend.controller.response.ProfileUserPermissionResponse;
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.repository.ProfileRepository;
+import com.jubasbackend.domain.repository.UserRepository;
 import com.jubasbackend.exception.APIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,15 +21,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProfileService {
 
-    private final ProfileRepository repository;
+    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
 
     public List<ProfileResponse> findProfiles() {
-        var profiles = repository.findAll();
+        var profiles = profileRepository.findAll();
         return profiles.stream().map(ProfileResponse::new).toList();
     }
 
     public List<ProfileUserPermissionResponse> findProfilesAndUser() {
-        var profiles = repository.findAll();
+        var profiles = profileRepository.findAll();
         return profiles.stream().map(ProfileUserPermissionResponse::new).toList();
     }
 
@@ -49,35 +51,35 @@ public class ProfileService {
                     .id(request.userId())
                     .build());
 
-        new ProfileResponse(repository.save(profileToUpdate));
+        new ProfileResponse(profileRepository.save(profileToUpdate));
     }
 
     public ProfileResponse createProfile(ProfileRequest request) {
-        if (!repository.existsByUserId(request.userId()))
+        if (!userRepository.existsById(request.userId()))
             throw new APIException(HttpStatus.NOT_FOUND, "User doesn't exists.");
 
-        return new ProfileResponse(repository.save(new Profile(request)));
+        return new ProfileResponse(profileRepository.save(new Profile(request)));
     }
 
     public void deleteProfile(UUID profileId) {
         var profileToDelete = findProfileInTheRepository(profileId);
-        repository.delete(profileToDelete);
+        profileRepository.delete(profileToDelete);
     }
 
     public ProfileResponse recoveryPassword(RecoveryPasswordRequest request) {
         var profile = findProfileByCpfAndEmailOnRepository(request.profileCpf(), request.email());
         profile.getUser().setPassword(request.newPassword());
 
-        return new ProfileResponse(repository.save(profile));
+        return new ProfileResponse(profileRepository.save(profile));
     }
 
     private Profile findProfileInTheRepository(UUID profileId) {
-        return repository.findById(profileId).orElseThrow(
+        return profileRepository.findById(profileId).orElseThrow(
                 () -> new NoSuchElementException("Profile doesn't exists."));
     }
 
     private Profile findProfileByCpfAndEmailOnRepository(String cpf, String email) {
-        return repository.findByCpfAndUserEmail(cpf, email).orElseThrow(
+        return profileRepository.findByCpfAndUserEmail(cpf, email).orElseThrow(
                 () -> new NoSuchElementException("No profile found for the given email and CPF combination.")
         );
     }

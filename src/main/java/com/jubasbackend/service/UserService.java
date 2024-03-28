@@ -2,6 +2,7 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.controller.request.UserRequest;
 import com.jubasbackend.controller.response.UserResponse;
+import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.entity.enums.PermissionType;
 import com.jubasbackend.domain.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -25,7 +27,6 @@ public class UserService {
     final UserRepository repository;
     final PasswordEncoder passwordEncoder;
 
-
     public List<UserResponse> getUsers() {
         return repository.findAll().stream()
                 .map(UserResponse::new)
@@ -38,7 +39,7 @@ public class UserService {
                 .toList();
     }
 
-    public UserResponse getUser(UUID userId) {
+    public UserResponse.WithProfiles getUser(UUID userId) {
         return new UserResponse.WithProfiles(findUser(userId));
     }
 
@@ -77,9 +78,6 @@ public class UserService {
                 .password(passwordEncoder.encode(request.password()))
                 .permission(permission)
                 .build();
-
-        if (request.name() != null && request.cpf() != null)
-            newUser.addProfile(request.name(), request.cpf());
 
         return new UserResponse(repository.save(newUser));
     }

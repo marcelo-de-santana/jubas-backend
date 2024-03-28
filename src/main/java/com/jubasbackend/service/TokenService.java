@@ -14,7 +14,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
-import static com.jubasbackend.utils.DateTimeUtils.BRAZILIAN_INSTANT;
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @Service
@@ -31,7 +32,7 @@ public class TokenService {
         if (!user.isCorrectPassword(request, passwordEncoder))
             throw new BadCredentialsException("Incorrect Email or Password.");
 
-        var currentTime = BRAZILIAN_INSTANT;
+        var currentTime = Instant.now();
         var expiresIn = securityConfig.getDuration();
         var permission = user.getPermission();
 

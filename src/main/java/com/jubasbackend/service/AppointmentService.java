@@ -10,6 +10,7 @@ import com.jubasbackend.domain.repository.AppointmentRepository;
 import com.jubasbackend.domain.repository.DayAvailabilityRepository;
 import com.jubasbackend.domain.repository.EmployeeRepository;
 import com.jubasbackend.domain.repository.NonServiceDayRepository;
+import com.jubasbackend.exception.APIException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ import java.util.UUID;
 import static com.jubasbackend.utils.AppointmentsUtils.*;
 import static com.jubasbackend.utils.DateTimeUtils.*;
 import static com.jubasbackend.utils.DaysOfAttendanceUtils.*;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +42,7 @@ public class AppointmentService {
         var dateTime = obtainDateTimeFromOptionalDate(requestDate);
         var filterTime = dateTime.toLocalTime();
         var availableEmployees = findAvailableEmployees(employeeRepository);
-        var appointments = findAppointmentsOfDayInTheRepository(dateTime);
+        var appointments = findAppointmentsOfDay(dateTime);
 
         return generateScheduleResponses(requestDate, specialtyId, toFilter, filterTime, availableEmployees, appointments);
 
@@ -57,14 +60,20 @@ public class AppointmentService {
         var nonServiceDays = nonServiceDayRepository.findDateBetween(startOfPeriod, endOfPeriod);
         var serviceDays = new ArrayList<DaysOfAttendanceResponse>();
 
-        addAvailableServiceDayOrFindNext(serviceDays, nonServiceDays, optionalStartDate, optionalEndDate, startOfPeriod, nonServiceDayRepository);
+        addAvailableServiceDayOrFindNext(
+                serviceDays,
+                nonServiceDays,
+                optionalStartDate,
+                optionalEndDate,
+                startOfPeriod,
+                nonServiceDayRepository);
 
         if (optionalStartDate != null || optionalEndDate != null) {
             generateDaysForThePeriod(serviceDays, nonServiceDays, startOfPeriod, endOfPeriod);
             return serviceDays;
         }
 
-        generateDaysAccordingToTheRangeOfDays(serviceDays, nonServiceDays, startOfPeriod, rangeOfDaysForAppointments);
+        generateDaysAccordingToTheRangeOfDays(serviceDays, nonServiceDays, rangeOfDaysForAppointments);
         return serviceDays;
     }
 
@@ -72,7 +81,7 @@ public class AppointmentService {
         var employee = findEmployeeInTheRepository(request.employeeId());
 
         if (!employee.makesSpecialty(request.specialtyId()))
-            throw new IllegalArgumentException("Employee doesn't makes specialty.");
+            throw new APIException(NOT_FOUND, "Employee doesn't makes specialty.");
 
         var registeredAppointments = findAppointmentsInTheRepository(request.date(), request.employeeId(), request.clientId());
         var newAppointment = Appointment.create(request, employee);
@@ -159,7 +168,7 @@ public class AppointmentService {
         nonServiceDayRepository.deleteAll(dates.stream().map(NonServiceDay::new).toList());
     }
 
-    private List<Appointment> findAppointmentsOfDayInTheRepository(LocalDateTime date) {
+    private List<Appointment> findAppointmentsOfDay(LocalDateTime date) {
         return appointmentRepository.findAllByDateBetween(parseStatOfDay(date), parseEndOfDay(date));
     }
 

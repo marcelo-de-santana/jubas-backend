@@ -40,7 +40,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Erro ao buscar usuário.", content = @Content)
     })
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> findUser(@PathVariable UUID userId) {
+    public ResponseEntity<UserResponse.WithProfiles> findUser(@PathVariable UUID userId) {
         return ResponseEntity.ok(service.getUser(userId));
     }
 

@@ -38,14 +38,6 @@ public class User {
     @NotNull
     private PermissionType permission;
 
-    public void addProfile(String name, String cpf) {
-        profiles.add(Profile.builder()
-                        .name(name)
-                        .cpf(cpf)
-                        .statusProfile(true)
-                        .build());
-    }
-
     public boolean isCorrectPassword(AuthRequest request, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(request.password(), password);
     }

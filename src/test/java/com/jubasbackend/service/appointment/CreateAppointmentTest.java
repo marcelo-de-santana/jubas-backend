@@ -102,10 +102,11 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
             mockEmployeeRepositoryFindById();
 
             //ACT & ASSERT
-            var exception = assertThrows(IllegalArgumentException.class,
+            var exception = assertThrows(APIException.class,
                     () -> service.createAppointment(request));
 
             assertEquals("Employee doesn't makes specialty.", exception.getMessage());
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
 
             verify(employeeRepository, times(1)).findById(any());
             verifyNoMoreInteractions(employeeRepository);
@@ -130,7 +131,7 @@ class CreateAppointmentTest extends AbstractAppointmentServiceTest {
             mockAppointmentRepositoryFindAllWithDateEmployeeAndClient(List.of(appointmentRepositoryResponse));
 
             //ACT & ASSERT
-            var exception = assertThrows(IllegalArgumentException.class,
+            var exception = assertThrows(APIException.class,
                     () -> service.createAppointment(request));
 
             assertEquals("The same profile cannot schedule two services for the same day.", exception.getMessage());

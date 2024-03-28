@@ -11,7 +11,6 @@ Content-Type: application/json
 
 > {% client.global.set("access_token_admin", response.body.accessToken); %}
 
-
 ### CRIAR NOVO USUÁRIO COMO BARBEIRO
 POST {{url}}/users
 Authorization: Bearer {{access_token_admin}}
@@ -22,7 +21,6 @@ Content-Type: application/json
   "password": "12345678",
   "permission": "BARBEIRO"
 }
-
 
 ### CADASTRAR UM ATENDIMENTO
 POST {{url}}/appointments
@@ -36,4 +34,7 @@ Content-Type: application/json
   "dateTime": "2024-03-15 17:20"
 }
 
+### VER TODOS OS USUÁRIOS
+GET {{url}}/users
+Authorization: Barear {{access_token_admin}}
 

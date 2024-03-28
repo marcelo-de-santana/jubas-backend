@@ -17,13 +17,17 @@ import static com.jubasbackend.controller.response.ScheduleResponse.*;
 
 public class AppointmentsUtils {
 
+    private AppointmentsUtils() {
+    }
+
     public static LocalDateTime getDateTimeForAppointment(LocalDate date) {
         return date.equals(LocalDate.now()) ? LocalDateTime.now() : date.atStartOfDay();
     }
 
     public static void validateAppointmentOverlap(List<Appointment> registeredAppointments,
                                                   Appointment requestAppointment) {
-        registeredAppointments.forEach(existingAppointment -> existingAppointment.validate(requestAppointment));
+        registeredAppointments.forEach(existingAppointment -> existingAppointment
+                .validate(requestAppointment));
     }
 
     public static List<ScheduleTimeResponse> filterSchedulesAfterTime(List<ScheduleTimeResponse> schedules,
@@ -101,4 +105,5 @@ public class AppointmentsUtils {
         return appointments.isEmpty() ? createFromEmployeeEssentials(employee) :
                 constructFromEmployeeWithAvailableTimes(employee, appointments);
     }
+
 }

@@ -17,8 +17,10 @@ POST {{url}}/users
 Content-Type: application/json
 
 {
-  "email": "joazinho@gmail.com",
-  "password": "12345678"
+  "email": "joazinho3@gmail.com",
+  "password": "12345678",
+  "name": "João Meta",
+  "cpf": "01012000222"
 }
 
 ###

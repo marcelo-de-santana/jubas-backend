@@ -84,10 +84,11 @@ public class DaysOfAttendanceUtils {
 
     public static void generateDaysAccordingToTheRangeOfDays(List<DaysOfAttendanceResponse> serviceDays,
                                                              List<LocalDate> nonServiceDays,
-                                                             LocalDate startOfPeriod,
                                                              int rangeOfDaysForAppointments) {
+        var lastAssignedDay = serviceDays.get(serviceDays.size() - 1).date();
+
         for (int i = 1; rangeOfDaysForAppointments > 0 && i <= rangeOfDaysForAppointments; i++) {
-            var evaluatedDay = startOfPeriod.plusDays(i);
+            var evaluatedDay = lastAssignedDay.plusDays(i);
             if (isServiceAvailableOnDay(nonServiceDays, evaluatedDay))
                 serviceDays.add(DaysOfAttendanceResponse.available(evaluatedDay));
         }

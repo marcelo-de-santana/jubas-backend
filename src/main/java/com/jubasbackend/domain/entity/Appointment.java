@@ -8,7 +8,6 @@ import com.jubasbackend.utils.MailMessageUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -17,6 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static com.jubasbackend.utils.DateTimeUtils.BRAZILIAN_DATETIME;
+import static org.springframework.http.HttpStatus.CONFLICT;
 
 @Getter
 @Setter
@@ -123,35 +123,35 @@ public class Appointment {
         if (getAppointmentStatus().equals(AppointmentStatus.MARCADO)
                 && specialty.getId().equals(getSpecialty().getId())
                 && client.getId().equals(getClient().getId())) {
-            throw new IllegalArgumentException("The same profile cannot schedule two services for the same day.");
+            throw new APIException(CONFLICT, "The same profile cannot schedule two services for the same day.");
         }
     }
 
     //VERIFICA SE O FIM DO ATENDIMENTO NÃO EXCEDE O INÍCIO DO PRÓXIMO
     private void validateEndTimeOverlap(LocalTime endTime) {
         if (endTime.isAfter(getDate().toLocalTime()) && endTime.isBefore(endTime()))
-            throw new APIException(HttpStatus.CONFLICT,
+            throw new APIException(CONFLICT,
                     "The end time of the service must not occur after the start time of another service.");
     }
 
     //VERIFICA SE O INÍCIO DO ATENDIMENTO NÃO SOBRESCREVE O FIM DO ANTERIOR
     private void validateStartTimeOverlap(LocalTime startTime) {
         if (startTime.isAfter(getDate().toLocalTime()) && startTime.isBefore(endTime()))
-            throw new APIException(HttpStatus.CONFLICT,
+            throw new APIException(CONFLICT,
                     "The start time of the service must not occur before the end time of another service.");
     }
 
     //VERIFICA SE NÃO HÁ AGENDAMENTO DENTRO DO PERÍODO
     private void validateWithinTimePeriod(LocalTime startTime, LocalTime endTime) {
         if (startTime.isBefore(getDate().toLocalTime()) && endTime.isAfter(endTime()))
-            throw new APIException(HttpStatus.CONFLICT,
+            throw new APIException(CONFLICT,
                     "There is another appointment scheduled within the specified time period.");
     }
 
     //VERIFICA SE O INÍCIO OU O FIM DO NOVO HORÁRIO COINCIDE COM O AGENDADO
     private void validateStartOrEndConflict(LocalTime startTime, LocalTime endTime) {
         if (startTime.equals(getDate().toLocalTime()) || endTime.equals(endTime()))
-            throw new APIException(HttpStatus.CONFLICT,
+            throw new APIException(CONFLICT,
                     "The start or end of the new schedule conflicts with the booked one.");
     }
 
