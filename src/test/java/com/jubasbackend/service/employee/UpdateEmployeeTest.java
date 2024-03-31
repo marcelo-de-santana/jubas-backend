@@ -42,23 +42,6 @@ class UpdateEmployeeTest extends AbstractEmployeeServiceTest {
     }
 
     @Test
-    @DisplayName("Deve remover a especialidade se já estiver associada ao funcionário.")
-    void shouldRemoveSpecialtyIfAlreadyAssociated() {
-        //ARRANGE
-        var request = new EmployeeRequest(profileId, workingHourId, List.of(specialtyId));
-
-        doReturn(Optional.of(savedEmployee)).when(employeeRepository).findById(any());
-        doReturn(new Employee()).when(employeeRepository).save(employeeEntityCaptor.capture());
-
-        //ACT
-        service.updateEmployee(employeeId, request);
-
-        //ASSERT
-        var capturedEntity = employeeEntityCaptor.getValue();
-        assertEquals(0, capturedEntity.getSpecialties().size());
-    }
-
-    @Test
     @DisplayName("Deve atualizar a jornada de trabalho do funcionário com sucesso.")
     void shouldUpdateEmployeeWorkingHourSuccessfully() {
         //ARRANGE

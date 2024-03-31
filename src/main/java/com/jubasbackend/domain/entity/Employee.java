@@ -1,6 +1,7 @@
 package com.jubasbackend.domain.entity;
 
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
+import com.jubasbackend.domain.repository.EmployeeSpecialtyRepository;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -49,12 +50,21 @@ public class Employee {
         return workingHour.getPossibleTimes(getSpecialty(specialtyId), appointments);
     }
 
-    public void addSpecialty(UUID specialtyId) {
-        getSpecialties().add(getCompoundEntity(specialtyId));
+    public void addSpecialties(List<UUID> specialties, EmployeeSpecialtyRepository employeeSpecialtyRepository) {
+        specialties.forEach(specialtyId -> {
+            if (makesSpecialty(specialtyId))
+                removeSpecialty(specialtyId, employeeSpecialtyRepository);
+            else
+                addSpecialty(specialtyId, employeeSpecialtyRepository);
+        });
     }
 
-    public void removeSpecialty(UUID specialtyId) {
-        getSpecialties().remove(getCompoundEntity(specialtyId));
+    private void addSpecialty(UUID specialtyId, EmployeeSpecialtyRepository employeeSpecialtyRepository) {
+        employeeSpecialtyRepository.save(getCompoundEntity(specialtyId));
+    }
+
+    private void removeSpecialty(UUID specialtyId, EmployeeSpecialtyRepository employeeSpecialtyRepository) {
+        employeeSpecialtyRepository.delete(getCompoundEntity(specialtyId));
     }
 
     private EmployeeSpecialty getCompoundEntity(UUID specialtyId) {

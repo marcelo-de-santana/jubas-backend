@@ -1,13 +1,9 @@
 package com.jubasbackend.service.appointment;
 
-import com.jubasbackend.service.TestEntityFactory;
-import com.jubasbackend.domain.repository.DayAvailabilityRepository;
 import com.jubasbackend.domain.entity.Appointment;
-import com.jubasbackend.domain.repository.AppointmentRepository;
+import com.jubasbackend.domain.repository.*;
 import com.jubasbackend.service.AppointmentService;
-import com.jubasbackend.domain.repository.EmployeeRepository;
-import com.jubasbackend.domain.repository.EmployeeSpecialtyRepository;
-import com.jubasbackend.domain.repository.NonServiceDayRepository;
+import com.jubasbackend.service.TestEntityFactory;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,6 +11,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -38,9 +35,6 @@ public abstract class AbstractAppointmentServiceTest extends TestEntityFactory {
     @Mock
     DayAvailabilityRepository dayAvailabilityRepository;
 
-    @InjectMocks
-    protected AppointmentService service;
-
     @Captor
     ArgumentCaptor<UUID> uuidCaptor;
 
@@ -49,5 +43,8 @@ public abstract class AbstractAppointmentServiceTest extends TestEntityFactory {
 
     @Captor
     ArgumentCaptor<Appointment> appointmentEntityCaptor;
+
+    @InjectMocks
+    protected AppointmentService service;
 
 }

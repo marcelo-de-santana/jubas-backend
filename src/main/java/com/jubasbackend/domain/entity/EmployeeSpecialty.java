@@ -29,7 +29,15 @@ public class EmployeeSpecialty {
 
     public static EmployeeSpecialty create(UUID employeeId, UUID specialtyId) {
         var compoundId = new EmployeeSpecialtyId(employeeId, specialtyId);
-        return EmployeeSpecialty.builder().id(compoundId).build();
+        return EmployeeSpecialty.builder()
+                .id(compoundId)
+                .employee(Employee.builder()
+                        .id(employeeId)
+                        .build())
+                .specialty(Specialty.builder()
+                        .id(specialtyId)
+                        .build())
+                .build();
     }
 
 }

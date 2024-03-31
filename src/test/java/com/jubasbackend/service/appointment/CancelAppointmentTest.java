@@ -4,6 +4,8 @@ import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -42,6 +44,7 @@ class CancelAppointmentTest extends AbstractAppointmentServiceTest {
         Appointment appointmentToCancel = Appointment.builder()
                 .id(appointmentId)
                 .date(LocalDateTime.parse("2024-02-12T14:00")).build();
+
         doReturn(Optional.of(appointmentToCancel)).when(appointmentRepository).findById(any());
         doReturn(new Appointment()).when(appointmentRepository).save(appointmentEntityCaptor.capture());
 

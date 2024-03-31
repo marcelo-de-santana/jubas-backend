@@ -20,7 +20,7 @@ class RecoveryPasswordTest extends AbstractProfileServiceTest {
     final static String PROFILE_CPF = "0123456789";
     final static String NEW_PASSWORD = "12345678910";
 
-    RecoveryPasswordRequest request = new RecoveryPasswordRequest(USER_EMAIL, PROFILE_CPF, NEW_PASSWORD);
+    RecoveryPasswordRequest request = new RecoveryPasswordRequest(USER_EMAIL, NEW_PASSWORD, PROFILE_CPF);
 
     User user = User.builder()
             .email(USER_EMAIL)

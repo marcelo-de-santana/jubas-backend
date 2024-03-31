@@ -1,27 +1,22 @@
 package com.jubasbackend.service;
 
-import com.jubasbackend.controller.response.EmployeeResponse;
-import com.jubasbackend.domain.entity.Appointment;
-import com.jubasbackend.domain.entity.Employee;
-import com.jubasbackend.domain.repository.AppointmentRepository;
-import com.jubasbackend.domain.repository.EmployeeRepository;
 import com.jubasbackend.controller.request.EmployeeRequest;
-import com.jubasbackend.domain.entity.EmployeeSpecialty;
-import com.jubasbackend.domain.repository.EmployeeSpecialtyRepository;
-import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.domain.repository.ProfileRepository;
-import com.jubasbackend.domain.entity.WorkingHour;
-import com.jubasbackend.domain.repository.WorkingHourRepository;
+import com.jubasbackend.controller.response.EmployeeResponse;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
 import com.jubasbackend.controller.response.ScheduleTimeResponse.WithoutId;
+import com.jubasbackend.domain.entity.*;
+import com.jubasbackend.domain.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
-import static com.jubasbackend.utils.DateTimeUtils.parseEndOfDay;
 import static com.jubasbackend.utils.DateTimeUtils.obtainDateTimeFromOptionalDate;
+import static com.jubasbackend.utils.DateTimeUtils.parseEndOfDay;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +33,7 @@ public class EmployeeService {
     }
 
     public EmployeeResponse findEmployee(UUID employeeId) {
-        return new EmployeeResponse(findEmployeeInTheRepository(employeeId));
+        return new EmployeeResponse(getEmployee(employeeId));
     }
 
     public List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, LocalDate requestDate) {
@@ -46,7 +41,7 @@ public class EmployeeService {
         var appointments = findAppointmentsInTheRepository(requestDate, employeeId);
 
         //GERA OS HORÁRIOS
-        var workingHours = findEmployeeInTheRepository(employeeId).getWorkingHour();
+        var workingHours = getEmployee(employeeId).getWorkingHour();
         if (appointments.isEmpty()) {
             return workingHours.getOpeningHours().stream().map(WithoutId::new).toList();
         }
@@ -74,32 +69,27 @@ public class EmployeeService {
                 .build();
 
         if (!request.specialties().isEmpty())
-            request.specialties().forEach(newEmployee::addSpecialty);
+            newEmployee.addSpecialties(request.specialties(), employeeSpecialtyRepository);
 
         return new EmployeeResponse(employeeRepository.save(newEmployee));
     }
 
     public void updateEmployee(UUID employeeId, EmployeeRequest request) {
-        var employeeToUpdate = findEmployeeInTheRepository(employeeId);
-
-        if (!request.profileId().toString().isBlank() && request.profileId() != employeeToUpdate.getId())
-            throw new IllegalArgumentException("It's not allowed to modify the profile.");
-
-        if (!request.workingHourId().toString().isBlank())
-            employeeToUpdate.setWorkingHour(WorkingHour.builder().id(request.workingHourId()).build());
+        var employeeToUpdate = getEmployee(employeeId);
 
         if (!request.specialties().isEmpty())
-            request.specialties().forEach(specialtyId -> {
-                if (employeeToUpdate.makesSpecialty(specialtyId))
-                    employeeToUpdate.removeSpecialty(specialtyId);
-                else
-                    employeeToUpdate.addSpecialty(specialtyId);
-            });
+            employeeToUpdate.addSpecialties(request.specialties(), employeeSpecialtyRepository);
 
-        employeeRepository.save(employeeToUpdate);
+        if (request.workingHourId() != null) {
+            employeeToUpdate.setWorkingHour(WorkingHour.builder()
+                    .id(request.workingHourId())
+                    .build());
+            employeeRepository.save(employeeToUpdate);
+        }
+
     }
 
-    private Employee findEmployeeInTheRepository(UUID employeeId) {
+    private Employee getEmployee(UUID employeeId) {
         return employeeRepository.findById(employeeId).orElseThrow(
                 () -> new NoSuchElementException("Employee doesn't registered."));
     }
