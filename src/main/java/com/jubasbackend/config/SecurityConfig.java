@@ -97,7 +97,7 @@ public class SecurityConfig {
 
                         .requestMatchers(GET,
                                 "/appointments",
-                                "/appointments/daysOfAttendance",
+                                "/appointments/days-of-attendance",
                                 "/categories")
                         .permitAll()
 
@@ -106,7 +106,7 @@ public class SecurityConfig {
                                 "/users")
                         .permitAll()
 
-                        .requestMatchers(GET, "")
+                        .requestMatchers(GET, "/users")
                         .hasRole(PermissionType.ADMIN.toString())
 
                         .anyRequest()

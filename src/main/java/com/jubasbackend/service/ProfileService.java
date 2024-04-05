@@ -3,7 +3,6 @@ package com.jubasbackend.service;
 import com.jubasbackend.controller.request.ProfileRequest;
 import com.jubasbackend.controller.request.RecoveryPasswordRequest;
 import com.jubasbackend.controller.response.ProfileResponse;
-import com.jubasbackend.controller.response.ProfileUserPermissionResponse;
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.User;
 import com.jubasbackend.domain.repository.ProfileRepository;
@@ -29,9 +28,10 @@ public class ProfileService {
         return profiles.stream().map(ProfileResponse::new).toList();
     }
 
-    public List<ProfileUserPermissionResponse> findProfilesAndUser() {
-        var profiles = profileRepository.findAll();
-        return profiles.stream().map(ProfileUserPermissionResponse::new).toList();
+    public List<ProfileResponse.WithUser> findProfilesWithUser() {
+        return profileRepository.findAll().stream()
+                .map(ProfileResponse.WithUser::new)
+                .toList();
     }
 
     public void updateProfile(UUID profileId, ProfileRequest request) {

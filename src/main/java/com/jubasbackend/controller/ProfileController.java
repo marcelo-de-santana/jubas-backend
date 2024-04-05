@@ -3,7 +3,6 @@ package com.jubasbackend.controller;
 import com.jubasbackend.controller.request.ProfileRequest;
 import com.jubasbackend.controller.request.RecoveryPasswordRequest;
 import com.jubasbackend.controller.response.ProfileResponse;
-import com.jubasbackend.controller.response.ProfileUserPermissionResponse;
 import com.jubasbackend.service.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,22 +26,13 @@ public class ProfileController {
 
     @Operation(summary = "Buscar todos os perfis.", responses = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Nenhum perfil encontrado."),
-            @ApiResponse(responseCode = "500", description = "Erro ao buscar perfis.")
+            @ApiResponse(responseCode = "404", description = "Nenhum perfil encontrado.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar perfis.", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<ProfileResponse>> findProfiles() {
-        return ResponseEntity.ok(service.findProfiles());
-    }
-
-    @Operation(summary = "Buscar perfis e usuário", responses = {
-            @ApiResponse(responseCode = "200", description = "Sucesso na recuperação dos perfis com usuários e permissões."),
-            @ApiResponse(responseCode = "404", description = "Nenhum perfil encontrado.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Erro ao buscar os perfis.", content = @Content)
-    })
-    @GetMapping("/user/permission")
-    public ResponseEntity<List<ProfileUserPermissionResponse>> findProfilesAndUser() {
-        return ResponseEntity.ok(service.findProfilesAndUser());
+    public ResponseEntity<List<? extends ProfileResponse>> findProfiles(
+            @RequestParam(required = false, defaultValue = "false") boolean user) {
+        return ResponseEntity.ok(user ? service.findProfilesWithUser() : service.findProfiles());
     }
 
     @Operation(summary = "Cadastrar novo perfil de usuário.", responses = {
@@ -53,7 +43,7 @@ public class ProfileController {
     @PostMapping
     public ResponseEntity<Void> createProfile(@NonNull @RequestBody ProfileRequest request) {
         var profileCreated = service.createProfile(request);
-        return ResponseEntity.created(URI.create("/profiles/" + profileCreated.id())).build();
+        return ResponseEntity.created(URI.create("/profiles/" + profileCreated.getId())).build();
     }
 
     @Operation(summary = "Redefinir senha.", responses = {

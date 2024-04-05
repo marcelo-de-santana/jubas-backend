@@ -44,11 +44,7 @@ public class AppointmentsUtils {
     }
 
     public static List<Employee> findAvailableEmployees(EmployeeRepository employeeRepository) {
-        var availableEmployees = employeeRepository.findAllByActiveProfile(true);
-        if (availableEmployees.isEmpty())
-            throw new NoSuchElementException("No employees.");
-
-        return availableEmployees;
+        return employeeRepository.findAllByActiveProfile(true);
     }
 
     public static List<ScheduleResponse> generateScheduleResponses(LocalDate requestDate,

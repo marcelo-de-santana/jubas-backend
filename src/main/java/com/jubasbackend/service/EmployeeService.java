@@ -62,7 +62,6 @@ public class EmployeeService {
             workingHour = findWorkingHourOnRepository(request.workingHourId());
 
         var newEmployee = Employee.builder()
-                .id(profile.getId())
                 .profile(profile)
                 .workingHour(workingHour)
                 .specialties(specialties)

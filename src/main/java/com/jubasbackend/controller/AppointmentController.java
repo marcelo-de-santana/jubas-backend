@@ -67,7 +67,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
             @ApiResponse(responseCode = "500", description = "Erro ao buscar dias de atendimento.", content = @Content)
     })
-    @GetMapping("/daysOfAttendance")
+    @GetMapping("/days-of-attendance")
     public ResponseEntity<List<DaysOfAttendanceResponse>> findDaysOfAttendance(@RequestParam(required = false) LocalDate startDate,
                                                                                @RequestParam(required = false) LocalDate endDate) {
         return ResponseEntity.ok(service.findDaysOfAttendance(startDate, endDate));
@@ -91,7 +91,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "201", description = "Dias registrados com sucesso."),
             @ApiResponse(responseCode = "500", description = "Erro ao registrar os dias.")
     })
-    @PostMapping("/daysWithoutAttendance")
+    @PostMapping("/days-without-attendance")
     public ResponseEntity<Void> registerDaysWithoutAttendance(@RequestBody @JsonFormat(pattern = "yyyy-MM-dd") List<LocalDate> dates) {
         service.registerDaysWithoutAttendance(dates);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -108,7 +108,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "401", description = "Valor incorreto."),
                     @ApiResponse(responseCode = "500", description = "Erro ao alterar a disponibilidade da agenda.")
     })
-    @PutMapping("/rangeOfAttendanceDays/{intervalOfDays}")
+    @PutMapping("/range-of-attendance-days/{intervalOfDays}")
     public ResponseEntity<Void> updateRangeOfAttendanceDays(@PathVariable int intervalOfDays) {
         service.updateRangeOfAttendanceDays(intervalOfDays);
         return ResponseEntity.noContent().build();
@@ -143,7 +143,7 @@ public class AppointmentController {
             @ApiResponse(responseCode = "204", description = "Dias liberados com sucesso."),
             @ApiResponse(responseCode = "500", description = "Erro ao liberar os dias.")
     })
-    @DeleteMapping("/daysWithoutAttendance")
+    @DeleteMapping("/days-without-attendance")
     public ResponseEntity<Void> deleteDaysWithoutAttendance(@RequestBody List<LocalDate> dates) {
         service.deleteDaysWithoutAttendance(dates);
         return ResponseEntity.noContent().build();
