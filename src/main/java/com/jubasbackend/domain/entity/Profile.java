@@ -29,6 +29,7 @@ public class Profile {
 
     private boolean statusProfile;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

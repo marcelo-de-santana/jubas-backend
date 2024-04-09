@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,21 +51,28 @@ public class Employee {
         return workingHour.getPossibleTimes(getSpecialty(specialtyId), appointments);
     }
 
-    public void addSpecialties(List<UUID> specialties, EmployeeSpecialtyRepository employeeSpecialtyRepository) {
+    public void manageSpecialties(List<UUID> specialties,
+                                  EmployeeSpecialtyRepository employeeSpecialtyRepository) {
+
+        var specialtiesToAdd = new ArrayList<EmployeeSpecialty>();
+        var specialtiesToRemove = new ArrayList<EmployeeSpecialty>();
+
         specialties.forEach(specialtyId -> {
+            var compoundEntity = getCompoundEntity(specialtyId);
+
             if (makesSpecialty(specialtyId))
-                removeSpecialty(specialtyId, employeeSpecialtyRepository);
+                specialtiesToRemove.add(compoundEntity);
             else
-                addSpecialty(specialtyId, employeeSpecialtyRepository);
+                specialtiesToAdd.add(compoundEntity);
+
         });
-    }
 
-    private void addSpecialty(UUID specialtyId, EmployeeSpecialtyRepository employeeSpecialtyRepository) {
-        employeeSpecialtyRepository.save(getCompoundEntity(specialtyId));
-    }
+        if (!specialtiesToAdd.isEmpty())
+            employeeSpecialtyRepository.deleteAll(specialtiesToAdd);
 
-    private void removeSpecialty(UUID specialtyId, EmployeeSpecialtyRepository employeeSpecialtyRepository) {
-        employeeSpecialtyRepository.delete(getCompoundEntity(specialtyId));
+        if (!specialtiesToRemove.isEmpty())
+            employeeSpecialtyRepository.saveAll(specialtiesToAdd);
+
     }
 
     private EmployeeSpecialty getCompoundEntity(UUID specialtyId) {

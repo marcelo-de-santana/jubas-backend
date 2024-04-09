@@ -16,7 +16,6 @@ spring:
           starttls:
             enabled: true
             required: true
-
 #server:
 #  error:
 #    include-stacktrace: never

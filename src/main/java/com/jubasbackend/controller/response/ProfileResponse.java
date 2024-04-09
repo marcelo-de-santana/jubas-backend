@@ -25,7 +25,9 @@ public class ProfileResponse {
 
         public WithUser(Profile entity) {
             super(entity.getId(), entity.getName(), entity.getCpf(), entity.isStatusProfile());
-            user = new UserResponse(entity.getUser());
+            if (entity.getUser() != null) {
+                user = new UserResponse(entity.getUser());
+            }
         }
     }
 

@@ -31,7 +31,8 @@ public class ProfileController {
     })
     @GetMapping
     public ResponseEntity<List<? extends ProfileResponse>> findProfiles(
-            @RequestParam(required = false, defaultValue = "false") boolean user) {
+            @RequestParam(required = false, defaultValue = "false") boolean user
+    ) {
         return ResponseEntity.ok(user ? service.findProfilesWithUser() : service.findProfiles());
     }
 

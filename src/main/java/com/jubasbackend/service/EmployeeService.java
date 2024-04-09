@@ -4,7 +4,11 @@ import com.jubasbackend.controller.request.EmployeeRequest;
 import com.jubasbackend.controller.response.EmployeeResponse;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
 import com.jubasbackend.controller.response.ScheduleTimeResponse.WithoutId;
-import com.jubasbackend.domain.entity.*;
+import com.jubasbackend.domain.entity.Appointment;
+import com.jubasbackend.domain.entity.Employee;
+import com.jubasbackend.domain.entity.Profile;
+import com.jubasbackend.domain.entity.WorkingHour;
+import com.jubasbackend.domain.entity.enums.PermissionType;
 import com.jubasbackend.domain.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,8 +32,18 @@ public class EmployeeService {
     private final EmployeeSpecialtyRepository employeeSpecialtyRepository;
     private final AppointmentRepository appointmentRepository;
 
-    public List<EmployeeResponse> findEmployees() {
+    public List<EmployeeResponse> findAllEmployees() {
         return employeeRepository.findAll().stream().map(EmployeeResponse::new).toList();
+    }
+
+    public List<EmployeeResponse> findAvailableEmployees() {
+        return employeeRepository.findAll().stream()
+                .filter(employee ->
+                        employee
+                                .getProfile()
+                                .getUser()
+                                .getPermission() == PermissionType.BARBEIRO)
+                .map(EmployeeResponse::new).toList();
     }
 
     public EmployeeResponse findEmployee(UUID employeeId) {
@@ -50,25 +64,26 @@ public class EmployeeService {
     }
 
     public EmployeeResponse createEmployee(EmployeeRequest request) {
-        var workingHour = new WorkingHour();
-        var specialties = new ArrayList<EmployeeSpecialty>();
-
         var profile = findProfileOnRepository(request.profileId());
 
         if (profile.getEmployee() != null)
             throw new IllegalArgumentException("Profile ID already in use.");
 
-        if (!request.workingHourId().toString().isBlank())
+        var workingHour = new WorkingHour();
+
+        if (request.workingHourId() != null)
             workingHour = findWorkingHourOnRepository(request.workingHourId());
 
         var newEmployee = Employee.builder()
+                .id(profile.getId())
                 .profile(profile)
                 .workingHour(workingHour)
-                .specialties(specialties)
+                .specialties(new ArrayList<>())
                 .build();
 
-        if (!request.specialties().isEmpty())
-            newEmployee.addSpecialties(request.specialties(), employeeSpecialtyRepository);
+        if (request.specialties() != null)
+            newEmployee.manageSpecialties(request.specialties(), employeeSpecialtyRepository);
+
 
         return new EmployeeResponse(employeeRepository.save(newEmployee));
     }
@@ -76,16 +91,15 @@ public class EmployeeService {
     public void updateEmployee(UUID employeeId, EmployeeRequest request) {
         var employeeToUpdate = getEmployee(employeeId);
 
-        if (!request.specialties().isEmpty())
-            employeeToUpdate.addSpecialties(request.specialties(), employeeSpecialtyRepository);
-
-        if (request.workingHourId() != null) {
+        if (request.workingHourId() != null)
             employeeToUpdate.setWorkingHour(WorkingHour.builder()
                     .id(request.workingHourId())
                     .build());
-            employeeRepository.save(employeeToUpdate);
-        }
 
+        if (request.specialties() != null)
+            employeeToUpdate.manageSpecialties(request.specialties(), employeeSpecialtyRepository);
+
+        employeeRepository.save(employeeToUpdate);
     }
 
     private Employee getEmployee(UUID employeeId) {
