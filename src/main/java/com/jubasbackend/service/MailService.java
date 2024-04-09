@@ -1,6 +1,6 @@
 package com.jubasbackend.service;
 
-import jakarta.validation.constraints.Email;
+import com.jubasbackend.controller.request.MailRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,11 +12,11 @@ public class MailService {
 
     private final MailSender mailSender;
 
-    public void sendEmail(@Email String to, String subject, String message) {
+    public void sendEmail(MailRequest request) {
         var mail = new SimpleMailMessage();
-        mail.setTo(to);
-        mail.setSubject(subject);
-        mail.setText(message);
+        mail.setTo(request.to());
+        mail.setSubject(request.subject());
+        mail.setText(request.message());
         mailSender.send(mail);
     }
 
@@ -35,8 +35,8 @@ public class MailService {
             String employeeMessage,
             String adminMessage) {
         final var SUBJECT = "Cancelamento de atendimento";
-        sendEmail(clientEmail, SUBJECT, clientMessage);
-        sendEmail(employeeEmail, SUBJECT, employeeMessage);
+        sendEmail(new MailRequest(clientEmail, SUBJECT, clientMessage));
+        sendEmail(new MailRequest(employeeEmail, SUBJECT, employeeMessage));
         sendEmailToAdmin(SUBJECT, adminMessage);
     }
 
