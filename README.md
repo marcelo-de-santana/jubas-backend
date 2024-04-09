@@ -139,7 +139,14 @@ classDiagram
 * JUnit
 * Mockito
 * MySQL
-* Spring Boot
+* Spring
 * Swagger
+
+## :pushpin: Principais funcionalidades
+
+* Agendamento de atendimento
+* Gerenciamento de negócios
+* Notificação de usuários
+* Sistema de pagamentos
 
 Desenvolvido por Marcelo Santana
