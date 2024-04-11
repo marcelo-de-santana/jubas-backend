@@ -67,10 +67,10 @@ public class Employee {
 
         });
 
-        if (!specialtiesToAdd.isEmpty())
-            employeeSpecialtyRepository.deleteAll(specialtiesToAdd);
-
         if (!specialtiesToRemove.isEmpty())
+            employeeSpecialtyRepository.deleteAll(specialtiesToRemove);
+
+        if (!specialtiesToAdd.isEmpty())
             employeeSpecialtyRepository.saveAll(specialtiesToAdd);
 
     }

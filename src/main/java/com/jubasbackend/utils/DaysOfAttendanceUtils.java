@@ -1,6 +1,6 @@
 package com.jubasbackend.utils;
 
-import com.jubasbackend.controller.response.DaysOfAttendanceResponse;
+import com.jubasbackend.controller.response.ScheduleResponse;
 import com.jubasbackend.domain.repository.NonServiceDayRepository;
 
 import java.time.LocalDate;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DaysOfAttendanceUtils {
 
-    //VERIFICA SE HÁ ATENDIMENTO NO DIA ESPECÍFICO
+    //VERIFICA SE HÁ ATENDIMENTO NO DIA
     public static boolean isServiceAvailableOnDay(List<LocalDate> nonServiceDays, LocalDate evaluatedDay) {
         return (nonServiceDays.stream()
                 .noneMatch(dayWithoutService -> dayWithoutService.getDayOfYear() == evaluatedDay.getDayOfYear()));
@@ -31,7 +31,7 @@ public class DaysOfAttendanceUtils {
         return endOfPeriod;
     }
 
-    public static void findNextAvailableDay(List<DaysOfAttendanceResponse> serviceDays,
+    public static void findNextAvailableDay(List<ScheduleResponse> serviceDays,
                                             LocalDate startOfPeriod,
                                             NonServiceDayRepository nonServiceDayRepository) {
         var periodPlusOneMonth = startOfPeriod.plusMonths(1L);
@@ -40,40 +40,40 @@ public class DaysOfAttendanceUtils {
             var evaluatedDay = startOfPeriod.plusDays(i);
 
             if (isServiceAvailableOnDay(unavailableDaysOfTheMonth, evaluatedDay)) {
-                serviceDays.add(DaysOfAttendanceResponse.available(evaluatedDay));
+                serviceDays.add(ScheduleResponse.available(evaluatedDay));
                 break;
             } else {
-                serviceDays.add(DaysOfAttendanceResponse.notAvailable(evaluatedDay));
+                serviceDays.add(ScheduleResponse.notAvailable(evaluatedDay));
             }
         }
     }
 
-    public static void addServiceDays(List<DaysOfAttendanceResponse> serviceDays,
+    public static void addServiceDays(List<ScheduleResponse> serviceDays,
                                       List<LocalDate> nonServiceDays,
                                       LocalDate evaluatedDay) {
         if (isServiceAvailableOnDay(nonServiceDays, evaluatedDay))
-            serviceDays.add(DaysOfAttendanceResponse.available(evaluatedDay));
+            serviceDays.add(ScheduleResponse.available(evaluatedDay));
         else
-            serviceDays.add(DaysOfAttendanceResponse.notAvailable(evaluatedDay));
+            serviceDays.add(ScheduleResponse.notAvailable(evaluatedDay));
     }
 
-    public static void addAvailableServiceDayOrFindNext(List<DaysOfAttendanceResponse> serviceDays,
+    public static void addAvailableServiceDayOrFindNext(List<ScheduleResponse> serviceDays,
                                                         List<LocalDate> nonServiceDays,
                                                         LocalDate optionalStartDate,
                                                         LocalDate optionalEndDate,
                                                         LocalDate startOfPeriod,
                                                         NonServiceDayRepository nonServiceDayRepository) {
         if (isServiceAvailableOnDay(nonServiceDays, startOfPeriod))
-            serviceDays.add(DaysOfAttendanceResponse.available(startOfPeriod));
+            serviceDays.add(ScheduleResponse.available(startOfPeriod));
         else {
-            serviceDays.add(DaysOfAttendanceResponse.notAvailable(startOfPeriod));
+            serviceDays.add(ScheduleResponse.notAvailable(startOfPeriod));
 
             if (optionalStartDate == null && optionalEndDate == null)
                 findNextAvailableDay(serviceDays, startOfPeriod, nonServiceDayRepository);
         }
     }
 
-    public static void generateDaysForThePeriod(List<DaysOfAttendanceResponse> serviceDays,
+    public static void generateDaysForThePeriod(List<ScheduleResponse> serviceDays,
                                                 List<LocalDate> nonServiceDays,
                                                 LocalDate startOfPeriod,
                                                 LocalDate endOfPeriod) {
@@ -82,15 +82,15 @@ public class DaysOfAttendanceUtils {
         }
     }
 
-    public static void generateDaysAccordingToTheRangeOfDays(List<DaysOfAttendanceResponse> serviceDays,
+    public static void generateDaysAccordingToTheRangeOfDays(List<ScheduleResponse> serviceDays,
                                                              List<LocalDate> nonServiceDays,
                                                              int rangeOfDaysForAppointments) {
-        var lastAssignedDay = serviceDays.get(serviceDays.size() - 1).date();
+        var lastAssignedDay = serviceDays.get(serviceDays.size() - 1).getDate();
 
         for (int i = 1; rangeOfDaysForAppointments > 0 && i <= rangeOfDaysForAppointments; i++) {
             var evaluatedDay = lastAssignedDay.plusDays(i);
             if (isServiceAvailableOnDay(nonServiceDays, evaluatedDay))
-                serviceDays.add(DaysOfAttendanceResponse.available(evaluatedDay));
+                serviceDays.add(ScheduleResponse.available(evaluatedDay));
         }
     }
 

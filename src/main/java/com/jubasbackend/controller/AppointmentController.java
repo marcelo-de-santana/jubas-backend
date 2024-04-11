@@ -3,8 +3,9 @@ package com.jubasbackend.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
-import com.jubasbackend.controller.response.DaysOfAttendanceResponse;
+import com.jubasbackend.controller.response.EmployeeScheduleResponse;
 import com.jubasbackend.controller.response.ScheduleResponse;
+import com.jubasbackend.domain.entity.DayAvailability;
 import com.jubasbackend.service.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,7 +16,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,23 +33,16 @@ public class AppointmentController {
     private final AppointmentService service;
 
     @Operation(summary = "Buscar agendamentos.",
-            description = """
-                    Se a requisição for:
-                    - Sem parâmetro ou apenas data, será retornado:
-                        - Todos dos horários e funcionários disponíveis
-                    - Com especialidade:
-                        - Apenas os horários e funcionários disponíveis para a especialidade.""",
+            description = "Retorna os agendamentos do dia, os marcados contém os Ids de referência.",
             responses = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
             @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamentos.", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<ScheduleResponse>> findAppointments(
-            @RequestParam(required = false) @JsonFormat(pattern = "yyyy-MM-dd") LocalDate date,
-            @RequestParam(required = false) UUID specialtyId,
-            @RequestParam(required = false, defaultValue = "false") boolean filtered) {
+    public ResponseEntity<List<EmployeeScheduleResponse>> findAppointments(
+            @RequestParam @JsonFormat(pattern = "yyyy-MM-dd") LocalDate date) {
 
-        return ResponseEntity.ok(service.findAppointments(date, specialtyId, filtered));
+        return ResponseEntity.ok(service.findAppointments(date));
     }
 
     @Operation(summary = "Buscar agendamento.", responses = {
@@ -62,16 +55,41 @@ public class AppointmentController {
         return ResponseEntity.ok(service.findAppointment(appointmentId));
     }
 
+    @Operation(summary = "Buscar agenda.", responses = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar agenda", content = @Content)
+    })
+    @GetMapping("/schedule")
+    public ResponseEntity<List<ScheduleResponse>> findSchedule(@RequestParam(required = false) UUID specialtyId) {
+        return ResponseEntity.ok(service.findSchedules(specialtyId));
+    }
+
     @Operation(summary = "Buscar dias de atendimento.",
             responses = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
             @ApiResponse(responseCode = "500", description = "Erro ao buscar dias de atendimento.", content = @Content)
     })
     @GetMapping("/days-of-attendance")
-    public ResponseEntity<List<DaysOfAttendanceResponse>> findDaysOfAttendance(@RequestParam(required = false) LocalDate startDate,
-                                                                               @RequestParam(required = false) LocalDate endDate) {
+    public ResponseEntity<List<ScheduleResponse>> findDaysOfAttendance(@RequestParam(required = false) LocalDate startDate,
+                                                                       @RequestParam(required = false) LocalDate endDate) {
         return ResponseEntity.ok(service.findDaysOfAttendance(startDate, endDate));
     }
+
+    @Operation(summary = "Busca a quantidade de dias disponíveis para agendamento.",
+            description = """
+                    Se a quantidade for igual a:
+                    - Zero: A agenda está disponível em um dia (Hoje).
+                    - Um: A agenda está disponível em dois dias dois dias (Hoje e amanhã).
+                    - E assim sucessivamente.""",
+            responses = {
+                    @ApiResponse(responseCode = "500", description = "Erro ao buscar a disponibilidade da agenda.")
+            })
+    @GetMapping("/range-of-attendance-days")
+    public ResponseEntity<DayAvailability> getRangeOfAttendanceDays() {
+        return ResponseEntity.ok(service.getRangeOfAttendanceDays());
+    }
+
+
 
     @Operation(summary = "Cadastrar novo agendamento.", responses = {
             @ApiResponse(responseCode = "201", description = "Agendamento realizado com sucesso."),
@@ -120,10 +138,9 @@ public class AppointmentController {
             @ApiResponse(responseCode = "500", description = "Erro ao alterar o agendamento.")
     })
     @PatchMapping("/{appointmentId}")
-    public ResponseEntity<Void> updateAppointment(@PathVariable UUID appointmentId,
-                                                  @Schema(hidden = true, name = "cliend_id")
-
-                                                  @RequestBody AppointmentRequest request) {
+    public ResponseEntity<Void> updateAppointment(
+            @PathVariable UUID appointmentId,
+            @Schema(hidden = true, name = "cliend_id") @RequestBody AppointmentRequest request) {
         service.updateAppointment(appointmentId, request);
         return ResponseEntity.noContent().build();
     }

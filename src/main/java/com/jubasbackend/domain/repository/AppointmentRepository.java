@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static com.jubasbackend.utils.DateTimeUtils.parseEndOfDay;
+import static com.jubasbackend.utils.DateTimeUtils.parseStatOfDay;
+
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 

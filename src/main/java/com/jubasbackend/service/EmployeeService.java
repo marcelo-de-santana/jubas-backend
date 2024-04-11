@@ -33,7 +33,9 @@ public class EmployeeService {
     private final AppointmentRepository appointmentRepository;
 
     public List<EmployeeResponse> findAllEmployees() {
-        return employeeRepository.findAll().stream().map(EmployeeResponse::new).toList();
+        return employeeRepository.findAll().stream()
+                .map(EmployeeResponse::new)
+                .toList();
     }
 
     public List<EmployeeResponse> findAvailableEmployees() {
@@ -81,25 +83,28 @@ public class EmployeeService {
                 .specialties(new ArrayList<>())
                 .build();
 
+        var savedEmployee = employeeRepository.save(newEmployee);
+
         if (request.specialties() != null)
-            newEmployee.manageSpecialties(request.specialties(), employeeSpecialtyRepository);
+            savedEmployee.manageSpecialties(request.specialties(), employeeSpecialtyRepository);
 
-
-        return new EmployeeResponse(employeeRepository.save(newEmployee));
+        return new EmployeeResponse(getEmployee(savedEmployee.getId()));
     }
 
     public void updateEmployee(UUID employeeId, EmployeeRequest request) {
         var employeeToUpdate = getEmployee(employeeId);
 
-        if (request.workingHourId() != null)
+        if (request.workingHourId() != null) {
             employeeToUpdate.setWorkingHour(WorkingHour.builder()
                     .id(request.workingHourId())
                     .build());
 
+            employeeRepository.save(employeeToUpdate);
+        }
+
         if (request.specialties() != null)
             employeeToUpdate.manageSpecialties(request.specialties(), employeeSpecialtyRepository);
 
-        employeeRepository.save(employeeToUpdate);
     }
 
     private Employee getEmployee(UUID employeeId) {

@@ -16,7 +16,7 @@ public class DateTimeUtils {
             .atOffset(BRAZILIAN_ZONE).toLocalTime();
 
     public static LocalDateTime obtainDateTimeFromOptionalDate(LocalDate optionalDate) {
-        var date = optionalDate != null ? optionalDate : LocalDate.now() ;
+        var date = optionalDate != null ? optionalDate : LocalDate.now();
 
         if (date.equals(LocalDate.now()))
             return LocalDateTime.now();

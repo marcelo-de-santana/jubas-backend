@@ -1,14 +1,8 @@
 package com.jubasbackend.service.appointment;
 
-import com.jubasbackend.domain.entity.Appointment;
-import com.jubasbackend.domain.entity.enums.AppointmentStatus;
-import com.jubasbackend.domain.entity.Employee;
-import com.jubasbackend.domain.entity.EmployeeSpecialty;
-import com.jubasbackend.domain.entity.EmployeeSpecialtyId;
-import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.domain.entity.Specialty;
-import com.jubasbackend.domain.entity.WorkingHour;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
+import com.jubasbackend.domain.entity.*;
+import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -95,15 +89,15 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
     void shouldThrowAnExceptionWhenNoEmployeeIsAvailable() {
 
         doReturn(List.of())
-                .when(employeeRepository).findAllByActiveProfile(true);
+                .when(employeeRepository).findAllByActiveProfile();
 
         var exception = assertThrows(
                 NoSuchElementException.class, () ->
-                        service.findAppointments(null, null, false));
+                        service.findAppointments(null));
 
         assertEquals("No employees.", exception.getMessage());
 
-        verify(employeeRepository, times(1)).findAllByActiveProfile(true);
+        verify(employeeRepository, times(1)).findAllByActiveProfile();
         verifyNoInteractions(appointmentRepository, nonServiceDayRepository, dayAvailabilityRepository);
     }
 
@@ -115,7 +109,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
                 .when(appointmentRepository)
                 .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
 
-        service.findAppointments(null, null, false);
+        service.findAppointments(null);
         var capturedDatesTimes = dateTimeCaptor.getAllValues();
         var firstDateTime = capturedDatesTimes.get(0);
         var secondDateTime = capturedDatesTimes.get(1);
@@ -135,7 +129,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
                 .when(appointmentRepository)
                 .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
 
-        var response = service.findAppointments(specificDay, null, false);
+        var response = service.findAppointments(specificDay);
 
         var capturedDatesTimes = dateTimeCaptor.getAllValues();
         var firstDateTime = capturedDatesTimes.get(0);
@@ -170,7 +164,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
         mockReturnEmployeeRepository_FindAllByActiveProfile();
         mockReturnAppointmentRepository_FindAllDateBetween(List.of(APPOINTMENT));
 
-        var response = service.findAppointments(null, SPECIALTY_ID, false);
+        var response = service.findAppointments(null);
 
         var unavailableHours = response.stream()
                 .flatMap(schedule ->
@@ -192,7 +186,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
 
     private void mockReturnEmployeeRepository_FindAllByActiveProfile() {
         doReturn(List.of(EMPLOYEE))
-                .when(employeeRepository).findAllByActiveProfile(true);
+                .when(employeeRepository).findAllByActiveProfile();
     }
 
     private void mockReturnAppointmentRepository_FindAllDateBetween(List<Appointment> appointmentsReturn) {

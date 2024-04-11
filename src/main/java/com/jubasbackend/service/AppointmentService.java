@@ -2,7 +2,7 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
-import com.jubasbackend.controller.response.DaysOfAttendanceResponse;
+import com.jubasbackend.controller.response.EmployeeScheduleResponse;
 import com.jubasbackend.controller.response.ScheduleResponse;
 import com.jubasbackend.domain.entity.*;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import static com.jubasbackend.controller.response.EmployeeScheduleResponse.createWithAvailableTimes;
 import static com.jubasbackend.utils.AppointmentsUtils.*;
+import static com.jubasbackend.utils.AppointmentsUtils.getAvailableEmployeesFilteredByTimes;
 import static com.jubasbackend.utils.DateTimeUtils.*;
 import static com.jubasbackend.utils.DaysOfAttendanceUtils.*;
-import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -38,13 +39,15 @@ public class AppointmentService {
     private final DayAvailabilityRepository dayAvailabilityRepository;
     private final MailService mailService;
 
-    public List<ScheduleResponse> findAppointments(LocalDate requestDate, UUID specialtyId, boolean toFilter) {
-        var dateTime = obtainDateTimeFromOptionalDate(requestDate);
-        var filterTime = dateTime.toLocalTime();
-        var availableEmployees = findAvailableEmployees(employeeRepository);
-        var appointments = findAppointmentsOfDay(dateTime);
+    public List<EmployeeScheduleResponse> findAppointments(LocalDate requestDate) {
+        var date = getDateTimeForAppointment(requestDate);
 
-        return generateScheduleResponses(requestDate, specialtyId, toFilter, filterTime, availableEmployees, appointments);
+        var appointmentsOfDay = findAppointmentsOfDay(date);
+        var availableEmployees = employeeRepository.findAllByActiveProfile();
+
+        return availableEmployees.stream()
+                .map(employee -> createWithAvailableTimes(employee, appointmentsOfDay))
+                .toList();
 
     }
 
@@ -52,13 +55,13 @@ public class AppointmentService {
         return new AppointmentResponse(findAppointmentInTheRepository(appointmentId));
     }
 
-    public List<DaysOfAttendanceResponse> findDaysOfAttendance(LocalDate optionalStartDate, LocalDate optionalEndDate) {
+    public List<ScheduleResponse> findDaysOfAttendance(LocalDate optionalStartDate, LocalDate optionalEndDate) {
         var rangeOfDaysForAppointments = dayAvailabilityRepository.findQuantity();
         var startOfPeriod = optionalStartDate != null ? optionalStartDate : LocalDate.now();
         var endOfPeriod = applyEndDateLimits(optionalStartDate, optionalEndDate, startOfPeriod, rangeOfDaysForAppointments);
 
         var nonServiceDays = nonServiceDayRepository.findDateBetween(startOfPeriod, endOfPeriod);
-        var serviceDays = new ArrayList<DaysOfAttendanceResponse>();
+        var serviceDays = new ArrayList<ScheduleResponse>();
 
         addAvailableServiceDayOrFindNext(
                 serviceDays,
@@ -77,6 +80,52 @@ public class AppointmentService {
         return serviceDays;
     }
 
+    public List<ScheduleResponse> findSchedules(UUID specialtyId) {
+        var today = BRAZILIAN_DATETIME;
+        var daysAvailableQuantity = dayAvailabilityRepository.findQuantity();
+        var lastDay = today.plusDays(daysAvailableQuantity);
+
+        var nonServiceDays = nonServiceDayRepository.findDateBetween(today.toLocalDate(), lastDay.toLocalDate());
+        var appointmentsOfPeriod = appointmentRepository.findAllByDateBetween(parseStatOfDay(today), parseEndOfDay(lastDay));
+        var availableEmployees = employeeRepository.findAllByActiveProfile();
+
+        var schedule = new ArrayList<ScheduleResponse>();
+
+        // ITERANDO SOBRE CADA DIA DISPONÍVEL PARA AGENDAMENTO
+        for (int i = 0; i < daysAvailableQuantity; i++) {
+
+            // CALCULANDO A DATA A SER AVALIADA
+            var evaluatedDate = today.plusDays(i).toLocalDate();
+
+            if (!isServiceAvailableOnDay(nonServiceDays, evaluatedDate)) {
+                schedule.add(ScheduleResponse.notAvailable(evaluatedDate));
+                break;
+            }
+
+            // FILTRANDO OS COMPROMISSOS DO DIA AVALIADO
+            var appointmentsOfDay = appointmentsOfPeriod.stream()
+                    .filter(appointment ->
+                            appointment.getDate().toLocalDate().equals(evaluatedDate))
+                    .toList();
+
+            // SE NÃO HOUVER HORÁRIOS DISPONÍVEIS, O DIA É MARCADO COMO NÃO DISPONÍVEL; CASO CONTRÁRIO, ADICIONAMOS OS HORÁRIOS DISPONÍVEIS.
+            var employeeSchedules = specialtyId != null ?
+                    getEmployeesWithPossibleTimesForSpecialty(availableEmployees, specialtyId, appointmentsOfDay, evaluatedDate, today) :
+                    getAvailableEmployeesFilteredByTimes(availableEmployees, appointmentsOfDay, evaluatedDate, today);
+
+            //SE NÃO HOUVER HORÁRIOS DISPONÍVEIS O DIA FICA COMO INDISPONÍVEL
+            schedule.add(employeeSchedules.isEmpty() ?
+                    ScheduleResponse.notAvailable(evaluatedDate) :
+                    new ScheduleResponse.WithEmployees(evaluatedDate, employeeSchedules));
+        }
+        return schedule;
+    }
+
+    public DayAvailability getRangeOfAttendanceDays() {
+        return dayAvailabilityRepository.findSingleEntity();
+    }
+
+
     public Appointment createAppointment(AppointmentRequest request) {
         var employee = findEmployeeInTheRepository(request.employeeId());
 
@@ -92,7 +141,6 @@ public class AppointmentService {
     }
 
     public void registerDaysWithoutAttendance(List<LocalDate> dates) {
-        //TODO: Sistema de envio de e-mail, para notificar clientes desmarcados
         nonServiceDayRepository.saveAll(dates.stream().map(NonServiceDay::new).toList());
     }
 
@@ -169,7 +217,7 @@ public class AppointmentService {
     }
 
     private List<Appointment> findAppointmentsOfDay(LocalDateTime date) {
-        return appointmentRepository.findAllByDateBetween(parseStatOfDay(date), parseEndOfDay(date));
+        return appointmentRepository.findAllByDateBetween(date, parseEndOfDay(date));
     }
 
     private List<Appointment> findAppointmentsInTheRepository(LocalDate requestDate, UUID employeeId, UUID clientId) {
