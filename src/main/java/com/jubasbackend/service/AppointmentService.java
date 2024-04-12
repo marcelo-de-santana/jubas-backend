@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,7 +24,6 @@ import java.util.UUID;
 
 import static com.jubasbackend.controller.response.EmployeeScheduleResponse.createWithAvailableTimes;
 import static com.jubasbackend.utils.AppointmentsUtils.*;
-import static com.jubasbackend.utils.AppointmentsUtils.getAvailableEmployeesFilteredByTimes;
 import static com.jubasbackend.utils.DateTimeUtils.*;
 import static com.jubasbackend.utils.DaysOfAttendanceUtils.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -39,48 +38,42 @@ public class AppointmentService {
     private final DayAvailabilityRepository dayAvailabilityRepository;
     private final MailService mailService;
 
-    public List<EmployeeScheduleResponse> findAppointments(LocalDate requestDate) {
-        var date = getDateTimeForAppointment(requestDate);
-
-        var appointmentsOfDay = findAppointmentsOfDay(date);
+    public List<EmployeeScheduleResponse> getAppointments(LocalDate date) {
         var availableEmployees = employeeRepository.findAllByActiveProfile();
+        var appointmentsOfDay = findAppointmentsOfDay(date);
 
         return availableEmployees.stream()
                 .map(employee -> createWithAvailableTimes(employee, appointmentsOfDay))
                 .toList();
-
     }
 
-    public AppointmentResponse findAppointment(UUID appointmentId) {
-        return new AppointmentResponse(findAppointmentInTheRepository(appointmentId));
+    public AppointmentResponse getAppointment(UUID appointmentId) {
+        return new AppointmentResponse(findAppointment(appointmentId));
     }
 
-    public List<ScheduleResponse> findDaysOfAttendance(LocalDate optionalStartDate, LocalDate optionalEndDate) {
-        var rangeOfDaysForAppointments = dayAvailabilityRepository.findQuantity();
-        var startOfPeriod = optionalStartDate != null ? optionalStartDate : LocalDate.now();
-        var endOfPeriod = applyEndDateLimits(optionalStartDate, optionalEndDate, startOfPeriod, rangeOfDaysForAppointments);
+    public List<ScheduleResponse> getDaysOfAttendance(LocalDate startDate, LocalDate endDate) {
+        var daysForAppointments = dayAvailabilityRepository.findQuantity();
 
-        var nonServiceDays = nonServiceDayRepository.findDateBetween(startOfPeriod, endOfPeriod);
-        var serviceDays = new ArrayList<ScheduleResponse>();
-
-        addAvailableServiceDayOrFindNext(
-                serviceDays,
-                nonServiceDays,
-                optionalStartDate,
-                optionalEndDate,
-                startOfPeriod,
-                nonServiceDayRepository);
-
-        if (optionalStartDate != null || optionalEndDate != null) {
-            generateDaysForThePeriod(serviceDays, nonServiceDays, startOfPeriod, endOfPeriod);
-            return serviceDays;
+        // ATRIBUI O DIA ATUAL SE UM DAS DATAS NÃO FOREM PASSADAS
+        if (startDate == null || endDate == null) {
+            startDate = LocalDate.now();
+            endDate = startDate.plusDays(daysForAppointments);
         }
 
-        generateDaysAccordingToTheRangeOfDays(serviceDays, nonServiceDays, rangeOfDaysForAppointments);
+        // SE A ORDEM ESTIVER ERRADA ATRIBUI O DIA ATUAL
+        endDate = endDate.isBefore(startDate) ? startDate : endDate;
+
+        var nonServiceDays = nonServiceDayRepository.findDateBetween(startDate, endDate);
+        var serviceDays = new ArrayList<ScheduleResponse>();
+
+        addAvailableDayOrFindNext(serviceDays, nonServiceDays, startDate, nonServiceDayRepository);
+        generateDaysForThePeriod(serviceDays, nonServiceDays, startDate, endDate);
+
         return serviceDays;
+
     }
 
-    public List<ScheduleResponse> findSchedules(UUID specialtyId) {
+    public List<ScheduleResponse> getSchedules(UUID specialtyId) {
         var today = BRAZILIAN_DATETIME;
         var daysAvailableQuantity = dayAvailabilityRepository.findQuantity();
         var lastDay = today.plusDays(daysAvailableQuantity);
@@ -125,14 +118,13 @@ public class AppointmentService {
         return dayAvailabilityRepository.findSingleEntity();
     }
 
-
     public Appointment createAppointment(AppointmentRequest request) {
-        var employee = findEmployeeInTheRepository(request.employeeId());
+        var employee = findEmployee(request.employeeId());
 
         if (!employee.makesSpecialty(request.specialtyId()))
             throw new APIException(NOT_FOUND, "Employee doesn't makes specialty.");
 
-        var registeredAppointments = findAppointmentsInTheRepository(request.date(), request.employeeId(), request.clientId());
+        var registeredAppointments = findAppointments(request.date(), request.employeeId(), request.clientId());
         var newAppointment = Appointment.create(request, employee);
 
         validateAppointmentOverlap(registeredAppointments, newAppointment);
@@ -155,25 +147,34 @@ public class AppointmentService {
     }
 
     public void updateAppointment(UUID appointmentId, AppointmentRequest request) {
-        var appointmentToUpdate = findAppointmentInTheRepository(appointmentId);
+        var appointmentToUpdate = findAppointment(appointmentId);
 
         //VERIFICA SE É OUTRO FUNCIONÁRIO
         if (request.employeeId() != null && (!appointmentToUpdate.getEmployee().hasId(request.employeeId())))
-            appointmentToUpdate.setEmployee(findEmployeeInTheRepository(request.employeeId()));
+            appointmentToUpdate.setEmployee(findEmployee(request.employeeId()));
 
         if (request.specialtyId() != null)
-            appointmentToUpdate.setSpecialty(Specialty.builder().id(request.specialtyId()).build());
+            appointmentToUpdate.setSpecialty(Specialty.builder()
+                    .id(request.specialtyId())
+                    .build());
 
         if (request.clientId() != null)
-            appointmentToUpdate.setClient(Profile.builder().id(request.clientId()).build());
+            appointmentToUpdate.setClient(Profile.builder()
+                    .id(request.clientId())
+                    .build());
 
         if (request.dateTime() != null)
             appointmentToUpdate.setDate(request.dateTime());
 
+        if (request.appointmentStatus() != null)
+            appointmentToUpdate.setAppointmentStatus(request.appointmentStatus());
+
+        appointmentToUpdate.setUpdatedAt(Instant.now());
+
         //VERIFICA SE O FUNCIONÁRIO REALIZA O SERVIÇO
         appointmentToUpdate.validateIfEmployeeMakesSpecialty();
 
-        var registeredAppointments = findAppointmentsInTheRepository(
+        var registeredAppointments = findAppointments(
                 appointmentToUpdate.getDate().toLocalDate(),
                 appointmentToUpdate.getEmployee().getId(),
                 appointmentToUpdate.getClient().getId());
@@ -184,7 +185,7 @@ public class AppointmentService {
     }
 
     public void cancelAppointment(UUID appointmentId, JwtAuthenticationToken jwt) {
-        var appointment = findAppointmentInTheRepository(appointmentId);
+        var appointment = findAppointment(appointmentId);
         var userIdRequest = jwt.getName();
 
         var clientRequested = userIdRequest
@@ -216,21 +217,21 @@ public class AppointmentService {
         nonServiceDayRepository.deleteAll(dates.stream().map(NonServiceDay::new).toList());
     }
 
-    private List<Appointment> findAppointmentsOfDay(LocalDateTime date) {
-        return appointmentRepository.findAllByDateBetween(date, parseEndOfDay(date));
+    private List<Appointment> findAppointmentsOfDay(LocalDate date) {
+        return appointmentRepository.findAllByDateBetween(parseStatOfDay(date), parseEndOfDay(date));
     }
 
-    private List<Appointment> findAppointmentsInTheRepository(LocalDate requestDate, UUID employeeId, UUID clientId) {
+    private List<Appointment> findAppointments(LocalDate requestDate, UUID employeeId, UUID clientId) {
         var date = getDateTimeForAppointment(requestDate);
         return appointmentRepository.findAllByDateBetweenAndEmployeeIdOrClientId(date, parseEndOfDay(date), employeeId, clientId);
     }
 
-    private Employee findEmployeeInTheRepository(UUID employeeId) {
+    private Employee findEmployee(UUID employeeId) {
         return employeeRepository.findById(employeeId).orElseThrow(
                 () -> new NoSuchElementException("Employee doesn't registered."));
     }
 
-    private Appointment findAppointmentInTheRepository(UUID appointmentId) {
+    private Appointment findAppointment(UUID appointmentId) {
         return appointmentRepository.findById(appointmentId).orElseThrow(
                 () -> new NoSuchElementException("Appointment not found."));
     }

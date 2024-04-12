@@ -2,10 +2,10 @@ package com.jubasbackend.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.domain.entity.Appointment;
-import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.Specialty;
+import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
@@ -17,7 +17,7 @@ public record AppointmentResponse(
         UUID id,
         GenericDTO employee,
         GenericDTO client,
-        GenericDTO specialty,
+        SpecialtyResponse specialty,
         AppointmentStatus status,
         Scheduling scheduling,
         Instant createdAt,
@@ -29,7 +29,7 @@ public record AppointmentResponse(
                 entity.getId(),
                 new GenericDTO(entity.getEmployee()),
                 new GenericDTO(entity.getClient()),
-                new GenericDTO(entity.getSpecialty()),
+                new SpecialtyResponse(entity.getSpecialty()),
                 entity.getAppointmentStatus(),
                 new Scheduling(entity),
                 entity.getCreatedAt(),

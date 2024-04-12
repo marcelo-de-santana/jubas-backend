@@ -10,11 +10,12 @@ import java.util.UUID;
 
 public record EmployeeScheduleResponse(UUID id, String name, List<ScheduleTimeResponse> workingHours) {
 
-    public static EmployeeScheduleResponse createWithAvailableTimes(Employee employee, List<Appointment> appointments) {
+    public static EmployeeScheduleResponse createWithAvailableTimes(Employee employee,
+                                                                    List<Appointment> appointmentsOfDay) {
         return new EmployeeScheduleResponse(
                 employee.getId(),
                 employee.getProfile().getName(),
-                employee.getWorkingHour().getAvailableTimes(appointments));
+                employee.getAvailableTimes(appointmentsOfDay));
     }
 
     public static EmployeeScheduleResponse createWithFilteredAvailableTimes(Employee employee,
@@ -24,14 +25,13 @@ public record EmployeeScheduleResponse(UUID id, String name, List<ScheduleTimeRe
         return new EmployeeScheduleResponse(
                 employee.getId(),
                 employee.getProfile().getName(),
-                filterAvailableTimes(employee.getWorkingHour().getAvailableTimes(appointmentsOfDay), evaluatedDate, today)
+                filterAvailableTimes(employee.getAvailableTimes(appointmentsOfDay), evaluatedDate, today)
         );
 
     }
 
     public static EmployeeScheduleResponse createWithFilteredPossibleTimesForSpecialty(Employee employee,
                                                                                        List<Appointment> appointmentsOfDay,
-
                                                                                        UUID specialtyId,
                                                                                        LocalDate evaluatedDate,
                                                                                        LocalDateTime today) {

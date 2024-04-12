@@ -23,8 +23,16 @@ public class DateTimeUtils {
         return date.atStartOfDay();
     }
 
+    public static LocalDateTime parseEndOfDay(LocalDate dateTime) {
+        return dateTime.atTime(23, 59, 59);
+    }
+
     public static LocalDateTime parseEndOfDay(LocalDateTime dateTime) {
         return dateTime.toLocalDate().atTime(23, 59, 59);
+    }
+
+    public static LocalDateTime parseStatOfDay(LocalDate dateTime) {
+        return dateTime.atStartOfDay();
     }
 
     public static LocalDateTime parseStatOfDay(LocalDateTime dateTime) {

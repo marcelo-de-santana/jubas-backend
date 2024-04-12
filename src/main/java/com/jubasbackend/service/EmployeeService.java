@@ -51,7 +51,7 @@ public class EmployeeService {
     public EmployeeResponse findEmployee(UUID employeeId) {
         return new EmployeeResponse(getEmployee(employeeId));
     }
-
+//TODO => VERIFICAR SE SATISFAZ A INTENÇÃO DE MOSTRAR OS HORÁRIOS LIVRES DO FUNCIONÁRIO
     public List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, LocalDate requestDate) {
         //BUSCA HORÁRIOS AGENDADOS COM O FUNCIONÁRIO
         var appointments = findAppointmentsInTheRepository(requestDate, employeeId);

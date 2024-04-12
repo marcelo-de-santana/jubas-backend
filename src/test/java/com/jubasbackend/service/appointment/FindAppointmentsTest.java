@@ -93,7 +93,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
 
         var exception = assertThrows(
                 NoSuchElementException.class, () ->
-                        service.findAppointments(null));
+                        service.getAppointments(null));
 
         assertEquals("No employees.", exception.getMessage());
 
@@ -109,7 +109,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
                 .when(appointmentRepository)
                 .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
 
-        service.findAppointments(null);
+        service.getAppointments(null);
         var capturedDatesTimes = dateTimeCaptor.getAllValues();
         var firstDateTime = capturedDatesTimes.get(0);
         var secondDateTime = capturedDatesTimes.get(1);
@@ -129,7 +129,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
                 .when(appointmentRepository)
                 .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
 
-        var response = service.findAppointments(specificDay);
+        var response = service.getAppointments(specificDay);
 
         var capturedDatesTimes = dateTimeCaptor.getAllValues();
         var firstDateTime = capturedDatesTimes.get(0);
@@ -146,7 +146,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
 //        mockReturnEmployeeRepository_FindAllByActiveProfile();
 //        mockReturnAppointmentRepository_FindAllDateBetween(List.of(APPOINTMENT));
 //
-//        var response = service.findAppointments(null, null, false);
+//        var response = service.getAppointments(null, null, false);
 //
 //        var unavailableHours = response.stream()
 //                .flatMap(schedule ->
@@ -164,7 +164,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
         mockReturnEmployeeRepository_FindAllByActiveProfile();
         mockReturnAppointmentRepository_FindAllDateBetween(List.of(APPOINTMENT));
 
-        var response = service.findAppointments(null);
+        var response = service.getAppointments(null);
 
         var unavailableHours = response.stream()
                 .flatMap(schedule ->

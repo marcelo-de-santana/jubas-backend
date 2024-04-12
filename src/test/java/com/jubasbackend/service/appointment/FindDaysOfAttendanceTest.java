@@ -19,7 +19,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         mockDayAvailabilityRepositoryFindQuantity(0);
 
         //ACT
-        var response = service.findDaysOfAttendance(null, null);
+        var response = service.getDaysOfAttendance(null, null);
 
         //ASSERT
         assertNotNull(response);
@@ -34,7 +34,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         mockDayAvailabilityRepositoryFindQuantity(1);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(null, null);
+        var response = service.getDaysOfAttendance(null, null);
         assertEquals(2, response.size());
     }
 
@@ -48,7 +48,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         mockNonServiceDayRepositoryFindDateBetween(List.of(blockedDay));
 
         //ACT
-        var response = service.findDaysOfAttendance(null, null);
+        var response = service.getDaysOfAttendance(null, null);
 
         //ASSERT
         assertFalse(response.get(0).isAvailable());
@@ -67,7 +67,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         mockDayAvailabilityRepositoryFindQuantity(10);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(currentDay, null);
+        var response = service.getDaysOfAttendance(currentDay, null);
         assertEquals(1, response.size());
         assertEquals(currentDay, response.get(0).getDate());
     }
@@ -80,7 +80,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         mockDayAvailabilityRepositoryFindQuantity(2);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(null, currentDay);
+        var response = service.getDaysOfAttendance(null, currentDay);
         assertEquals(1, response.size());
         assertEquals(currentDay, response.get(0).getDate());
     }
@@ -93,7 +93,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         var dayBefore = LocalDate.now().minusDays(1L);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(null, dayBefore);
+        var response = service.getDaysOfAttendance(null, dayBefore);
         assertEquals(1, response.size());
         assertEquals(LocalDate.now(), response.get(0).getDate());
     }
@@ -107,7 +107,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         var dayPlusOneMonth = today.plusMonths(1L);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(today, dayPlusOneMonth);
+        var response = service.getDaysOfAttendance(today, dayPlusOneMonth);
         assertEquals(LocalDate.now(), response.get(0).getDate());
         assertEquals(dayPlusOneMonth.minusDays(1L), response.get(response.size() - 1).getDate());
     }
@@ -121,7 +121,7 @@ class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
         var dayPlusTwoYear = today.plusYears(2L);
 
         //ACT & ASSERT
-        var response = service.findDaysOfAttendance(today, dayPlusTwoYear);
+        var response = service.getDaysOfAttendance(today, dayPlusTwoYear);
         assertEquals(LocalDate.now(), response.get(0).getDate());
         assertEquals(dayPlusTwoYear.minusYears(1L).minusDays(1L), response.get(response.size() - 1).getDate());
     }

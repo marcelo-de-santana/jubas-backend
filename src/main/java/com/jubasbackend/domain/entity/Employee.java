@@ -47,8 +47,18 @@ public class Employee {
         return getSpecialties().get(indexOf).getSpecialty();
     }
 
+    public List<ScheduleTimeResponse> getAvailableTimes( List<Appointment> appointments) {
+        return workingHour.getAvailableTimes(getAppointmentsOfEmployee(appointments));
+    }
+
     public List<ScheduleTimeResponse> getPossibleTimes(UUID specialtyId, List<Appointment> appointments) {
-        return workingHour.getPossibleTimes(getSpecialty(specialtyId), appointments);
+        return workingHour.getPossibleTimes(getSpecialty(specialtyId), getAppointmentsOfEmployee(appointments));
+    }
+
+    private List<Appointment> getAppointmentsOfEmployee(List<Appointment> appointments){
+        return appointments.stream()
+                .filter(appointment -> appointment.getEmployee().getId().equals(id))
+                .toList();
     }
 
     public void manageSpecialties(List<UUID> specialties,
