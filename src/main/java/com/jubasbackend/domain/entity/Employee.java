@@ -1,11 +1,14 @@
 package com.jubasbackend.domain.entity;
 
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
+import com.jubasbackend.controller.response.SpecialtyResponse;
+import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import com.jubasbackend.domain.repository.EmployeeSpecialtyRepository;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -47,17 +50,35 @@ public class Employee {
         return getSpecialties().get(indexOf).getSpecialty();
     }
 
-    public List<ScheduleTimeResponse> getAvailableTimes( List<Appointment> appointments) {
-        return workingHour.getAvailableTimes(getAppointmentsOfEmployee(appointments));
+    /*
+     * Busca as especialidades que podem ser atendidas no horário fornecido.
+     */
+    public List<SpecialtyResponse> getAvailableSpecialties(LocalTime startTime, List<Appointment> appointmentsOfDay){
+        var scheduleOfEmployee = getAvailableTimes(appointmentsOfDay);
+
+        return getSpecialties().stream()
+                .filter(compoundEntity-> compoundEntity.isAvailableForAttendance(startTime, scheduleOfEmployee))
+                .map(EmployeeSpecialty::getSpecialty)
+                .map(SpecialtyResponse::new)
+                .toList();
+
     }
 
-    public List<ScheduleTimeResponse> getPossibleTimes(UUID specialtyId, List<Appointment> appointments) {
-        return workingHour.getPossibleTimes(getSpecialty(specialtyId), getAppointmentsOfEmployee(appointments));
+    public List<ScheduleTimeResponse> getAvailableTimes(List<Appointment> appointmentsOfDay) {
+        return workingHour.getAvailableTimes(getAppointmentsOfEmployee(appointmentsOfDay));
     }
 
+    public List<ScheduleTimeResponse> getPossibleTimes(UUID specialtyId, List<Appointment> appointmentsOfDay) {
+        return workingHour.getPossibleTimes(getSpecialty(specialtyId), getAppointmentsOfEmployee(appointmentsOfDay));
+    }
+
+    /*
+     * Separa os atendimentos do funcionário e ignora os que estão cancelados.
+     */
     private List<Appointment> getAppointmentsOfEmployee(List<Appointment> appointments){
         return appointments.stream()
-                .filter(appointment -> appointment.getEmployee().getId().equals(id))
+                .filter(appointment -> appointment.getEmployee().getId().equals(id)
+                        && appointment.getAppointmentStatus() != AppointmentStatus.CANCELADO)
                 .toList();
     }
 

@@ -3,7 +3,7 @@ package com.jubasbackend.service;
 import com.jubasbackend.controller.request.EmployeeRequest;
 import com.jubasbackend.controller.response.EmployeeResponse;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
-import com.jubasbackend.controller.response.ScheduleTimeResponse.WithoutId;
+import com.jubasbackend.controller.response.SpecialtyResponse;
 import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.Profile;
@@ -14,13 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import static com.jubasbackend.utils.DateTimeUtils.obtainDateTimeFromOptionalDate;
 import static com.jubasbackend.utils.DateTimeUtils.parseEndOfDay;
+import static com.jubasbackend.utils.DateTimeUtils.parseStatOfDay;
 
 @Service
 @RequiredArgsConstructor
@@ -51,18 +52,17 @@ public class EmployeeService {
     public EmployeeResponse findEmployee(UUID employeeId) {
         return new EmployeeResponse(getEmployee(employeeId));
     }
-//TODO => VERIFICAR SE SATISFAZ A INTENÇÃO DE MOSTRAR OS HORÁRIOS LIVRES DO FUNCIONÁRIO
-    public List<? extends ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, LocalDate requestDate) {
-        //BUSCA HORÁRIOS AGENDADOS COM O FUNCIONÁRIO
-        var appointments = findAppointmentsInTheRepository(requestDate, employeeId);
 
-        //GERA OS HORÁRIOS
-        var workingHours = getEmployee(employeeId).getWorkingHour();
-        if (appointments.isEmpty()) {
-            return workingHours.getOpeningHours().stream().map(WithoutId::new).toList();
-        }
+    public List<ScheduleTimeResponse> findAppointmentsByEmployee(UUID employeeId, LocalDate date) {
+        var appointmentsOfDay = findAppointments(date, employeeId);
 
-        return workingHours.getAvailableTimes(appointments);
+        return getEmployee(employeeId).getAvailableTimes(appointmentsOfDay);
+    }
+
+    public List<SpecialtyResponse> getAvailableSpecialties(UUID employeeId, LocalDateTime dateTime) {
+        var appointmentsOfDay = findAppointments(dateTime.toLocalDate(), employeeId);
+
+        return getEmployee(employeeId).getAvailableSpecialties(dateTime.toLocalTime(),appointmentsOfDay);
     }
 
     public EmployeeResponse createEmployee(EmployeeRequest request) {
@@ -122,9 +122,10 @@ public class EmployeeService {
                 () -> new NoSuchElementException("Unregistered working hours."));
     }
 
-    private List<Appointment> findAppointmentsInTheRepository(LocalDate date, UUID employeeId) {
-        var selectedDate = obtainDateTimeFromOptionalDate(date);
-        return appointmentRepository.findAllByDateBetweenAndEmployeeId(selectedDate, parseEndOfDay(selectedDate), employeeId);
+    private List<Appointment> findAppointments(LocalDate date, UUID employeeId) {
+        return appointmentRepository.findAllByDateBetweenAndEmployeeId(parseStatOfDay(date),
+                parseEndOfDay(date),
+                employeeId);
     }
 
 }
