@@ -1,6 +1,6 @@
 package com.jubasbackend.utils;
 
-import com.jubasbackend.controller.response.EmployeeScheduleResponse;
+import com.jubasbackend.controller.response.EmployeeScheduleTimeResponse;
 import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.Employee;
 
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.jubasbackend.controller.response.EmployeeScheduleResponse.*;
+import static com.jubasbackend.controller.response.EmployeeScheduleTimeResponse.*;
 
 public class AppointmentsUtils {
 
@@ -26,10 +26,10 @@ public class AppointmentsUtils {
                 .validate(requestAppointment));
     }
 
-    public static List<EmployeeScheduleResponse> getAvailableEmployeesFilteredByTimes(List<Employee> availableEmployees,
-                                                                                      List<Appointment> appointmentsOfDay,
-                                                                                      LocalDate evaluatedDate,
-                                                                                      LocalDateTime today
+    public static List<EmployeeScheduleTimeResponse> getAvailableEmployeesFilteredByTimes(List<Employee> availableEmployees,
+                                                                                          List<Appointment> appointmentsOfDay,
+                                                                                          LocalDate evaluatedDate,
+                                                                                          LocalDateTime today
     ) {
         return availableEmployees.stream()
                 .map(filteredEmployee ->
@@ -39,16 +39,16 @@ public class AppointmentsUtils {
     }
 
 
-    public static List<EmployeeScheduleResponse> getEmployeesWithPossibleTimesForSpecialty(List<Employee> availableEmployees,
-                                                                                           UUID specialtyId,
-                                                                                           List<Appointment> appointmentsOfDay,
-                                                                                           LocalDate evaluatedDate,
-                                                                                           LocalDateTime today
+    public static List<EmployeeScheduleTimeResponse> getEmployeesWithPossibleTimesForSpecialty(List<Employee> availableEmployees,
+                                                                                               UUID specialtyId,
+                                                                                               List<Appointment> appointmentsOfDay,
+                                                                                               LocalDate evaluatedDate,
+                                                                                               LocalDateTime today
     ) {
         return availableEmployees.stream()
                 .filter(employee -> employee.makesSpecialty(specialtyId))
-                .map(filteredEmployee ->
-                        createWithFilteredPossibleTimesForSpecialty(filteredEmployee, appointmentsOfDay, specialtyId, evaluatedDate, today)
+                .map(filteredEmployees ->
+                        createWithFilteredPossibleTimesForSpecialty(filteredEmployees, appointmentsOfDay, specialtyId, evaluatedDate, today)
                 )
                 .toList();
     }

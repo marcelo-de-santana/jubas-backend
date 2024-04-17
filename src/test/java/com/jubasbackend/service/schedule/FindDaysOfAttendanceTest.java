@@ -1,5 +1,6 @@
-package com.jubasbackend.service.appointment;
+package com.jubasbackend.service.schedule;
 
+import com.jubasbackend.service.appointment.AbstractAppointmentServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
-class FindDaysOfAttendanceTest extends AbstractAppointmentServiceTest {
+class FindDaysOfAttendanceTest extends AbstractScheduleServiceTest {
 
     @Test
     @DisplayName("Retornar um dia se o intervalo Zero.")

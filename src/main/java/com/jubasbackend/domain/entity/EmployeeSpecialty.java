@@ -60,10 +60,10 @@ public class EmployeeSpecialty {
 
         // ITERA SOBRE OS HORÁRIOS DISPONÍVEIS PARA ENCONTRAR O PERÍODO
         for (int i = 0; i < scheduleOfEmployee.size(); i++) {
-            if (scheduleOfEmployee.get(i).time().equals(startTime)) {
+            if (scheduleOfEmployee.get(i).getTime().equals(startTime)) {
                 scheduleStartTimeIndex = i;
             }
-            if (scheduleOfEmployee.get(i).time().isAfter(endTime)) {
+            if (scheduleOfEmployee.get(i).getTime().isAfter(endTime)) {
                 scheduleEndTimeIndex = i;
                 break;
             }

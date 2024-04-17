@@ -24,9 +24,7 @@ public class CategoryResponse {
 
         public WithSpecialty(Category category) {
             super(category.getId(), category.getName());
-
             this.specialties = mapSpecialties(category.getSpecialties());
-
         }
 
         List<SpecialtyResponse> mapSpecialties(List<Specialty> specialties) {

@@ -2,8 +2,7 @@ package com.jubasbackend.domain.entity;
 
 import com.jubasbackend.controller.request.WorkingHourRequest;
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
-import com.jubasbackend.controller.response.ScheduleTimeResponse.WithId;
-import com.jubasbackend.controller.response.ScheduleTimeResponse.WithoutId;
+import com.jubasbackend.controller.response.ScheduleTimeResponse.WithAppointmentId;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -12,7 +11,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Getter
 @Setter
@@ -83,12 +81,12 @@ public class WorkingHour {
         var openingHours = new ArrayList<ScheduleTimeResponse>();
         var evaluetedTime = startTime;
 
-        openingHours.add(new WithoutId(startTime, true));
+        openingHours.add(new ScheduleTimeResponse(startTime, true));
 
         while (evaluetedTime.isBefore(endTime.minusMinutes(TIME_INTERVAL))) {
             var nextTime = evaluetedTime.plusMinutes(TIME_INTERVAL);
             var isAvailable = !isInterval(nextTime);
-            openingHours.add(new WithoutId(nextTime, isAvailable));
+            openingHours.add(new ScheduleTimeResponse(nextTime, isAvailable));
             evaluetedTime = nextTime;
         }
         return openingHours;
@@ -104,13 +102,13 @@ public class WorkingHour {
 
         for (var openingHour : getOpeningHours()) {
             var appointmentFound = appointments.stream()
-                    .filter(appointment -> appointment.isInThePeriod(openingHour.time()))
+                    .filter(appointment -> appointment.isInThePeriod(openingHour.getTime()))
                     .findFirst();
 
             if (appointmentFound.isPresent())
-                availableTimes.add(new WithId(openingHour, appointmentFound.get().getId()));
+                availableTimes.add(new WithAppointmentId(openingHour, appointmentFound.get().getId()));
             else
-                availableTimes.add(new WithoutId(openingHour));
+                availableTimes.add(new ScheduleTimeResponse(openingHour));
         }
 
         return availableTimes;
@@ -148,26 +146,31 @@ public class WorkingHour {
      * @return List<ScheduleTimeResponse>
      */
     private List<ScheduleTimeResponse> filterTimes(Specialty specialty,
-                                                   List<? extends ScheduleTimeResponse> timesToFilter) {
-        var filteredOpeningHours = new ArrayList<ScheduleTimeResponse>();
-        var specialtyTimeDuration = specialty.getTimeDuration();
-        var lastIsAvailable = new AtomicBoolean(false);
+                                                   List<ScheduleTimeResponse> timesToFilter) {
+        var filteredTimes = new ArrayList<ScheduleTimeResponse>();
+        var timeDuration = specialty.getTimeDuration();
 
-        timesToFilter.forEach(firstLoop -> {
-            if (firstLoop.isAvailable()) {
-                var endOfAttendance = firstLoop.time()
-                        .plusHours(specialtyTimeDuration.getHour())
-                        .plusMinutes(specialtyTimeDuration.getMinute());
+        var differenceOfMinutes = timeDuration.getMinute() % 10;
 
-                timesToFilter.forEach(secondLoop -> {
-                    if (endOfAttendance.equals(secondLoop.time()) && (secondLoop.isAvailable() || lastIsAvailable.get()))
-                        filteredOpeningHours.add(new WithoutId(firstLoop.time(), firstLoop.isAvailable()));
+        var updatedTimeDuration = timeDuration.plusMinutes(differenceOfMinutes == 0 ? 0 : 10 - differenceOfMinutes);
 
-                    lastIsAvailable.set(secondLoop.isAvailable());
-                });
+        timesToFilter.forEach(currentTime -> {
+            if (currentTime.isAvailable()) {
+                var endOfAttendance = currentTime.getTime()
+                        .plusHours(updatedTimeDuration.getHour())
+                        .plusMinutes(updatedTimeDuration.getMinute());
+
+                var lastIsAvailable = false;
+
+                for (ScheduleTimeResponse nextTime : timesToFilter) {
+                    if (endOfAttendance.equals(nextTime.getTime()) && lastIsAvailable) {
+                        filteredTimes.add(new ScheduleTimeResponse(currentTime.getTime(), true));
+                        break;
+                    }
+                    lastIsAvailable = nextTime.isAvailable();
+                }
             }
         });
-
-        return filteredOpeningHours;
+        return filteredTimes;
     }
 }

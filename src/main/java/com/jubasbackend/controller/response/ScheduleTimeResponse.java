@@ -2,34 +2,33 @@ package com.jubasbackend.controller.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.time.LocalTime;
 import java.util.UUID;
 
-public interface ScheduleTimeResponse {
-    LocalTime time();
+@Getter
+@AllArgsConstructor
+public class ScheduleTimeResponse {
 
-    boolean isAvailable();
+    @Schema(type = "String", pattern = "HH:mm")
+    @JsonFormat(pattern = "HH:mm")
+    final LocalTime time;
+    final boolean isAvailable;
 
-     record WithId(
-            @Schema(type = "String", pattern = "HH:mm")
-            @JsonFormat(pattern = "HH:mm")
-            LocalTime time,
-            boolean isAvailable,
-            UUID appointmentId) implements ScheduleTimeResponse {
-        public WithId(ScheduleTimeResponse schedule, UUID appointmentId) {
-            this(schedule.time(), false, appointmentId);
+    public ScheduleTimeResponse(ScheduleTimeResponse availableTime) {
+        this(availableTime.getTime(), availableTime.isAvailable());
+    }
+
+    @Getter
+    public static class WithAppointmentId extends ScheduleTimeResponse {
+        UUID appointmentId;
+
+        public WithAppointmentId(ScheduleTimeResponse schedule, UUID appointmentId) {
+            super(schedule.getTime(), false);
+            this.appointmentId = appointmentId;
         }
     }
 
-    record WithoutId(
-            @Schema(type = "String", pattern = "HH:mm")
-            @JsonFormat(pattern = "HH:mm")
-            LocalTime time,
-            boolean isAvailable) implements ScheduleTimeResponse {
-
-        public WithoutId(ScheduleTimeResponse availableTime) {
-            this(availableTime.time(), availableTime.isAvailable());
-        }
-    }
 }

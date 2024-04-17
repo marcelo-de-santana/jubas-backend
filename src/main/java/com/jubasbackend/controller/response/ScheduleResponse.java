@@ -27,9 +27,9 @@ public class ScheduleResponse {
 
     @Getter
     public static class WithEmployees extends ScheduleResponse {
-        List<EmployeeScheduleResponse> employees;
+        List<EmployeeScheduleTimeResponse> employees;
 
-        public WithEmployees(LocalDate date, List<EmployeeScheduleResponse> employees) {
+        public WithEmployees(LocalDate date, List<EmployeeScheduleTimeResponse> employees) {
             super(date, true);
             this.employees = employees;
         }
