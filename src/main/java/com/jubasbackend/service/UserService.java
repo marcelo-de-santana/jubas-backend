@@ -61,7 +61,7 @@ public class UserService {
         }
 
         if (request.password() != null)
-            userToUpdate.setPassword(request.password());
+            userToUpdate.setPassword(passwordEncoder.encode(request.password()));
 
         if (request.permission() != null)
             userToUpdate.setPermission(request.permission());

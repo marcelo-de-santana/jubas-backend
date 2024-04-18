@@ -41,10 +41,6 @@ public class Employee {
         return getSpecialties().contains(getCompoundEntity(specialtyId));
     }
 
-    public boolean hasId(UUID employeeId) {
-        return employeeId.equals(this.getId());
-    }
-
     public Specialty getSpecialty(UUID specialtyId) {
         var indexOf = getSpecialties().indexOf(getCompoundEntity(specialtyId));
         return getSpecialties().get(indexOf).getSpecialty();

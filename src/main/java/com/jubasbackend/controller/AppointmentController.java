@@ -77,16 +77,4 @@ public class AppointmentController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Cancelar agendamento.", responses = {
-            @ApiResponse(responseCode = "200", description = "Cancelamento realizado com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Agendamento não encontrado."),
-            @ApiResponse(responseCode = "500", description = "Erro ao cancelar agendamento.")
-    })
-    @DeleteMapping("/{appointmentId}")
-    public ResponseEntity<Void> cancelAppointment(@PathVariable UUID appointmentId, JwtAuthenticationToken jwt) {
-        service.cancelAppointment(appointmentId, jwt);
-        return ResponseEntity.noContent().build();
-    }
-
-
 }

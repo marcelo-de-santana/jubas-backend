@@ -1,12 +1,7 @@
 package com.jubasbackend.service.appointment;
 
 import com.jubasbackend.controller.request.AppointmentRequest;
-import com.jubasbackend.domain.entity.Appointment;
-import com.jubasbackend.domain.entity.Employee;
-import com.jubasbackend.domain.entity.EmployeeSpecialty;
-import com.jubasbackend.domain.entity.EmployeeSpecialtyId;
-import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.domain.entity.Specialty;
+import com.jubasbackend.domain.entity.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,7 +41,7 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
     @DisplayName("Deve atualizar o agendamento com sucesso.")
     void shouldUpdateAppointmentWithSuccess() {
         //ARRANGE
-        var input = new AppointmentRequest(employeeId, clientId, specialtyId, dateTimeNow);
+        var input = new AppointmentRequest(employeeId, clientId, specialtyId, dateTimeNow, null);
         currentEmployee.setSpecialties(List.of(compoundEntity));
         Appointment appointmentRegistered = Appointment.builder()
                 .employee(currentEmployee)
@@ -80,12 +75,13 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionWhenEmployeeDoesNotExist() {
             //ARRANGE
             var otherEmployeeId = UUID.randomUUID();
-            var input = new AppointmentRequest(otherEmployeeId, null, null, null);
+            var input = new AppointmentRequest(otherEmployeeId, null, null, null, null);
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
             doReturn(Optional.empty()).when(employeeRepository).findById(uuidCaptor.capture());
 
             //ACT & ASSERT
-            var exception = assertThrows(NoSuchElementException.class, () -> service.updateAppointment(appointmentId, input));
+            var exception = assertThrows(NoSuchElementException.class,
+                    () -> service.updateAppointment(appointmentId, input));
             var capturedId = uuidCaptor.getValue();
 
             assertEquals("Employee doesn't registered.", exception.getMessage());
@@ -106,7 +102,7 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
             var compoundEntity = new EmployeeSpecialty(compoundId, otherEmployee, currentSpecialty);
             otherEmployee.setSpecialties(List.of(compoundEntity));
 
-            var input = new AppointmentRequest(otherEmployeeId, null, null, null);
+            var input = new AppointmentRequest(otherEmployeeId, null, null, null, null);
 
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
             doReturn(Optional.of(otherEmployee)).when(employeeRepository).findById(any());
@@ -131,7 +127,7 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
         void shouldThrowExceptionWhenEmployeeDoesNotExecuteTheSpecialty() {
             //ARRANGE
             currentEmployee.setSpecialties(List.of());
-            var input = new AppointmentRequest(null, null, UUID.randomUUID(), null);
+            var input = new AppointmentRequest(null, null, UUID.randomUUID(), null, null);
 
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
 
@@ -156,7 +152,7 @@ class UpdateAppointmentTest extends AbstractAppointmentServiceTest {
                     .employee(currentEmployee)
                     .date(LocalDateTime.parse("2024-02-12T15:20")).build();
 
-            var input = new AppointmentRequest(null, null, specialtyId, null);
+            var input = new AppointmentRequest(null, null, specialtyId, null, null);
 
             doReturn(Optional.of(appointmentRegistered)).when(appointmentRepository).findById(any());
 

@@ -1,7 +1,6 @@
 package com.jubasbackend.domain.entity;
 
 import com.jubasbackend.controller.request.ProfileRequest;
-import com.jubasbackend.domain.repository.ProfileRepository;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

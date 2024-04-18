@@ -4,7 +4,6 @@ import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import com.jubasbackend.exception.APIException;
 import com.jubasbackend.service.MailService;
-import com.jubasbackend.utils.MailMessageUtils;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -15,7 +14,6 @@ import java.time.LocalTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import static com.jubasbackend.utils.DateTimeUtils.BRAZILIAN_DATETIME;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
 @Getter
@@ -54,19 +52,6 @@ public class Appointment {
     private Instant createdAt;
 
     private Instant updatedAt;
-
-    public static Appointment create(AppointmentRequest request, Employee employee){
-        return Appointment.builder()
-                .employee(employee)
-                .specialty(employee.getSpecialty(request.specialtyId()))
-                .appointmentStatus(AppointmentStatus.MARCADO)
-                .date(request.dateTime())
-                .createdAt(Instant.now())
-                .client(Profile.builder()
-                        .id(request.clientId())
-                        .build())
-                .build();
-    }
 
     public LocalTime startTime() {
         return getDate().toLocalTime();
@@ -118,6 +103,11 @@ public class Appointment {
 
     }
 
+    public void sendAppointmentNotification(MailService mailService) {
+        mailService.sendAppointment(getClientEmail(), getClientName(), getEmployeeEmail(), getEmployeeName(),
+                date.toLocalDate(), date.toLocalTime(), appointmentStatus);
+    }
+
     //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA
     private void validateSameSpecialty(Specialty specialty, Profile client) {
         if (getAppointmentStatus().equals(AppointmentStatus.MARCADO)
@@ -153,49 +143,6 @@ public class Appointment {
         if (startTime.equals(getDate().toLocalTime()) || endTime.equals(endTime()))
             throw new APIException(CONFLICT,
                     "The start or end of the new schedule conflicts with the booked one.");
-    }
-
-    public boolean expiredTime() {
-        return BRAZILIAN_DATETIME.isAfter(getDate());
-    }
-
-    public void sendCancellationNotificationByClientWhenExpiredTime(MailService mailService) {
-        mailService.
-                sendCancellationEmails(
-                        getClientEmail(),
-                        getEmployeeEmail(),
-                        MailMessageUtils.ClientCancellationExpiredTime.messageClient(getClientName(), getEmployeeName(), getDate(), startTime()),
-                        MailMessageUtils.ClientCancellationExpiredTime.messageEmployee(getClientName(), getDate(), startTime()),
-                        MailMessageUtils.ClientCancellationExpiredTime.messageAdmin(getClientName(), getEmployeeName(), getDate(), startTime())
-                );
-    }
-
-    public void sendCancellationNotificationByEmployeeWhenExpiredTime(MailService mailService) {
-        mailService.sendCancellationEmails(
-                getClientEmail(),
-                getEmployeeEmail(),
-                MailMessageUtils.EmployeeCancellationExpiredTime.clientMessage(getClientName(), getEmployeeName(), getDate(), startTime()),
-                MailMessageUtils.EmployeeCancellationExpiredTime.employeeMessage(getClientName(), getDate(), startTime()),
-                MailMessageUtils.EmployeeCancellationExpiredTime.adminMessage(getClientName(), getEmployeeName(), getDate(), startTime()));
-    }
-
-    public void sendCancellationNotificationByClient(MailService mailService) {
-        mailService
-                .sendCancellationEmails(
-                        getClientEmail(),
-                        getEmployeeEmail(),
-                        MailMessageUtils.ClientCancellation.clientMessage(getClientName(), getEmployeeName(), getDate(), startTime()),
-                        MailMessageUtils.ClientCancellation.employeeMessage(getClientName(), getDate(), startTime()),
-                        MailMessageUtils.ClientCancellation.adminMessage(getClientName(), getEmployeeName(), getDate(), startTime()));
-    }
-
-    public void sendCancellationNotificationByEmployee(MailService mailService) {
-        mailService.sendCancellationEmails(
-                getClientEmail(),
-                getEmployeeEmail(),
-                MailMessageUtils.EmployeeCancellation.clientMessage(getClientName(), getEmployeeName(), getDate(), startTime()),
-                MailMessageUtils.EmployeeCancellation.employeeMessage(getClientName(), getDate(), startTime()),
-                MailMessageUtils.EmployeeCancellation.adminMessage(getClientName(), getEmployeeName(), getDate(), startTime()));
     }
 
 }
