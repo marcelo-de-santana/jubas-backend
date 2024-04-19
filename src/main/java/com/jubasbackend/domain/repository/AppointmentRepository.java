@@ -8,9 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.jubasbackend.utils.DateTimeUtils.parseEndOfDay;
-import static com.jubasbackend.utils.DateTimeUtils.parseStatOfDay;
-
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
@@ -20,4 +17,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     List<Appointment> findAllByDateBetweenAndEmployeeId(LocalDateTime startDate, LocalDateTime endDate, UUID employeeId);
 
+    List<Appointment> findAllByClient_UserId(UUID userId);
 }

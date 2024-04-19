@@ -9,10 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -29,8 +27,7 @@ public class AppointmentController {
     private final AppointmentService service;
 
     @Operation(summary = "Buscar agendamentos.",
-            description = "Retorna os agendamentos do dia, os marcados contém os Ids de referência.",
-            responses = {
+            description = "Retorna os agendamentos do dia, os marcados contém os Ids de referência.", responses = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
             @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamentos.", content = @Content)
     })
@@ -51,6 +48,15 @@ public class AppointmentController {
         return ResponseEntity.ok(service.getAppointment(appointmentId));
     }
 
+    @Operation(summary = "Buscar agendamentos pelo id do usuário", responses = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamentos", content = @Content)
+    })
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByUser(@PathVariable UUID userId) {
+        return ResponseEntity.ok(service.getAppointmentsByUser(userId));
+    }
+
     @Operation(summary = "Cadastrar novo agendamento.", responses = {
             @ApiResponse(responseCode = "201", description = "Agendamento realizado com sucesso."),
             @ApiResponse(responseCode = "401", description = "Especialidade já agendada para o cliente."),
@@ -58,9 +64,8 @@ public class AppointmentController {
             @ApiResponse(responseCode = "409", description = "Conflito de horário."),
             @ApiResponse(responseCode = "500", description = "Erro ao cadastrar o agendamento.")
     })
-
     @PostMapping
-    public ResponseEntity<Void> createAppointment(@NonNull @RequestBody AppointmentRequest request, JwtAuthenticationToken jwt) {
+    public ResponseEntity<Void> createAppointment(@RequestBody AppointmentRequest request) {
         var createdAppointment = service.createAppointment(request);
         return ResponseEntity.created(URI.create("/appointments/" + createdAppointment.getId())).build();
     }

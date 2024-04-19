@@ -50,6 +50,12 @@ public class AppointmentService {
         return new AppointmentResponse(findAppointment(appointmentId));
     }
 
+    public List<AppointmentResponse> getAppointmentsByUser(UUID userId) {
+        return appointmentRepository.findAllByClient_UserId(userId).stream()
+                .map(AppointmentResponse::new)
+                .toList();
+    }
+
     public Appointment createAppointment(AppointmentRequest request) {
         var employee = findEmployee(request.employeeId());
 
