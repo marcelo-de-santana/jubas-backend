@@ -2,7 +2,6 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
-import com.jubasbackend.controller.response.EmployeeScheduleTimeResponse;
 import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.Profile;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import static com.jubasbackend.controller.response.EmployeeScheduleTimeResponse.createWithAvailableTimes;
 import static com.jubasbackend.utils.AppointmentsUtils.getDateTimeForAppointment;
 import static com.jubasbackend.utils.AppointmentsUtils.validateAppointmentOverlap;
 import static com.jubasbackend.utils.DateTimeUtils.parseEndOfDay;
@@ -37,12 +35,11 @@ public class AppointmentService {
     private final ProfileRepository profileRepository;
     private final MailService mailService;
 
-    public List<EmployeeScheduleTimeResponse> getAppointments(LocalDate date) {
-        var availableEmployees = employeeRepository.findAllByActiveProfile();
-        var appointmentsOfDay = findAppointmentsOfDay(date);
+    public List<AppointmentResponse> getAppointments(LocalDate date) {
+        var appointmentsOfDay = appointmentRepository.findAllByDateBetween(parseStatOfDay(date), parseEndOfDay(date));
 
-        return availableEmployees.stream()
-                .map(employee -> createWithAvailableTimes(employee, appointmentsOfDay))
+        return appointmentsOfDay.stream()
+                .map(AppointmentResponse::new)
                 .toList();
     }
 
@@ -121,10 +118,6 @@ public class AppointmentService {
 
         updatedAppointment.sendAppointmentNotification(mailService);
 
-    }
-
-    private List<Appointment> findAppointmentsOfDay(LocalDate date) {
-        return appointmentRepository.findAllByDateBetween(parseStatOfDay(date), parseEndOfDay(date));
     }
 
     private List<Appointment> findAppointments(LocalDate requestDate, UUID employeeId, UUID clientId) {

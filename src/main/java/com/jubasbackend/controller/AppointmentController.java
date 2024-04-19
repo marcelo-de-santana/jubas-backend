@@ -3,7 +3,6 @@ package com.jubasbackend.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
-import com.jubasbackend.controller.response.EmployeeScheduleTimeResponse;
 import com.jubasbackend.service.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,16 +25,14 @@ public class AppointmentController {
 
     private final AppointmentService service;
 
-    @Operation(summary = "Buscar agendamentos.",
-            description = "Retorna os agendamentos do dia, os marcados contém os Ids de referência.", responses = {
-            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
-            @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamentos.", content = @Content)
+    @Operation(summary = "Buscar agendamentos.", responses = {
+            @ApiResponse(responseCode = "200", description = "Buscar realizada com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamentos.")
     })
     @GetMapping
-    public ResponseEntity<List<EmployeeScheduleTimeResponse>> getAppointments(
+    public ResponseEntity<List<AppointmentResponse>> getAppointment(
             @RequestParam @JsonFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-
-        return ResponseEntity.ok(service.getAppointments(date));
+            return ResponseEntity.ok(service.getAppointments(date));
     }
 
     @Operation(summary = "Buscar agendamento.", responses = {

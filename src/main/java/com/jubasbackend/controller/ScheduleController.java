@@ -1,6 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.jubasbackend.controller.response.EmployeeScheduleTimeResponse;
 import com.jubasbackend.controller.response.ScheduleResponse;
 import com.jubasbackend.domain.entity.DayAvailability;
 import com.jubasbackend.service.ScheduleService;
@@ -25,13 +26,27 @@ public class ScheduleController {
 
     private final ScheduleService service;
 
-    @Operation(summary = "Buscar agenda.", responses = {
+    @Operation(summary = "Buscar agenda.",
+            description = "Recurso destinado aos clientes, pois retorna apenas os dias e horários disponíveis.",
+            responses = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
             @ApiResponse(responseCode = "500", description = "Erro ao buscar agenda", content = @Content)
     })
     @GetMapping
     public ResponseEntity<List<ScheduleResponse>> getSchedule(@RequestParam(required = false) UUID specialtyId) {
         return ResponseEntity.ok(service.getSchedules(specialtyId));
+    }
+
+    @Operation(summary = "Buscar agenda do dia.",
+            description = "Retorna os agendamentos do dia, os marcados contém os Ids de referência.", responses = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar agendamentos.", content = @Content)
+    })
+    @GetMapping("/by-date")
+    public ResponseEntity<List<EmployeeScheduleTimeResponse>> getSchedule(
+            @RequestParam @JsonFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+
+        return ResponseEntity.ok(service.getSchedule(date));
     }
 
     @Operation(summary = "Buscar dias de atendimento.",
@@ -51,8 +66,10 @@ public class ScheduleController {
                     @ApiResponse(responseCode = "500", description = "Erro ao buscar dias de atendimento.", content = @Content)
             })
     @GetMapping("/days-of-attendance")
-    public ResponseEntity<List<ScheduleResponse>> getDaysOfAttendance(@RequestParam(required = false) LocalDate startDate,
-                                                                      @RequestParam(required = false) LocalDate endDate) {
+    public ResponseEntity<List<ScheduleResponse>> getDaysOfAttendance(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate) {
+
         return ResponseEntity.ok(service.getDaysOfAttendance(startDate, endDate));
     }
 
@@ -75,7 +92,8 @@ public class ScheduleController {
             @ApiResponse(responseCode = "500", description = "Erro ao registrar os dias.")
     })
     @PostMapping("/days-without-attendance")
-    public ResponseEntity<Void> registerDaysWithoutAttendance(@RequestBody @JsonFormat(pattern = "yyyy-MM-dd") List<LocalDate> dates) {
+    public ResponseEntity<Void> registerDaysWithoutAttendance(
+            @RequestBody @JsonFormat(pattern = "yyyy-MM-dd") List<LocalDate> dates) {
         service.registerDaysWithoutAttendance(dates);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

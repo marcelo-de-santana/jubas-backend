@@ -27,7 +27,6 @@ public record EmployeeScheduleTimeResponse(UUID employeeId, String employeeName,
                 employee.getProfile().getName(),
                 filterAvailableTimes(employee.getAvailableTimes(appointmentsOfDay), evaluatedDate, today)
         );
-
     }
 
     public static EmployeeScheduleTimeResponse createWithFilteredPossibleTimesForSpecialty(Employee employee,

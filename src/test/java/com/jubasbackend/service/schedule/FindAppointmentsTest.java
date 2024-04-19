@@ -1,4 +1,4 @@
-package com.jubasbackend.service.appointment;
+package com.jubasbackend.service.schedule;
 
 import com.jubasbackend.controller.response.ScheduleTimeResponse;
 import com.jubasbackend.domain.entity.*;
@@ -18,7 +18,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class FindAppointmentsTest extends AbstractAppointmentServiceTest {
+class FindAppointmentsTest extends AbstractScheduleServiceTest {
     final static UUID CLIENT_PROFILE_ID = UUID.randomUUID();
     final static UUID EMPLOYEE_PROFILE_ID = UUID.randomUUID();
     final static UUID WORKING_HOUR_ID = UUID.randomUUID();
@@ -93,7 +93,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
 
         var exception = assertThrows(
                 NoSuchElementException.class, () ->
-                        service.getAppointments(null));
+                        service.getSchedule(LocalDate.now()));
 
         assertEquals("No employees.", exception.getMessage());
 
@@ -109,7 +109,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
                 .when(appointmentRepository)
                 .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
 
-        service.getAppointments(null);
+        service.getSchedule(LocalDate.now());
         var capturedDatesTimes = dateTimeCaptor.getAllValues();
         var firstDateTime = capturedDatesTimes.get(0);
         var secondDateTime = capturedDatesTimes.get(1);
@@ -129,7 +129,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
                 .when(appointmentRepository)
                 .findAllByDateBetween(dateTimeCaptor.capture(), dateTimeCaptor.capture());
 
-        var response = service.getAppointments(specificDay);
+        var response = service.getSchedule(specificDay);
 
         var capturedDatesTimes = dateTimeCaptor.getAllValues();
         var firstDateTime = capturedDatesTimes.get(0);
@@ -164,7 +164,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
         mockReturnEmployeeRepository_FindAllByActiveProfile();
         mockReturnAppointmentRepository_FindAllDateBetween(List.of(APPOINTMENT));
 
-        var response = service.getAppointments(null);
+        var response = service.getSchedule(LocalDate.now());
 
         var unavailableHours = response.stream()
                 .flatMap(schedule ->
@@ -197,7 +197,7 @@ class FindAppointmentsTest extends AbstractAppointmentServiceTest {
     }
 
     private boolean impossibleSchedules(ScheduleTimeResponse workingHours) {
-        var endOfAttendance = workingHours.time()
+        var endOfAttendance = workingHours.getTime()
                 .plusMinutes(SPECIALTY
                         .getTimeDuration()
                         .getMinute());

@@ -1,5 +1,6 @@
 package com.jubasbackend.service;
 
+import com.jubasbackend.controller.response.EmployeeScheduleTimeResponse;
 import com.jubasbackend.controller.response.ScheduleResponse;
 import com.jubasbackend.domain.entity.DayAvailability;
 import com.jubasbackend.domain.entity.NonServiceDay;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.jubasbackend.controller.response.EmployeeScheduleTimeResponse.createWithAvailableTimes;
 import static com.jubasbackend.utils.AppointmentsUtils.getAvailableEmployeesFilteredByTimes;
 import static com.jubasbackend.utils.AppointmentsUtils.getEmployeesWithPossibleTimesForSpecialty;
 import static com.jubasbackend.utils.DateTimeUtils.*;
@@ -68,6 +70,15 @@ public class ScheduleService {
                     new ScheduleResponse.WithEmployees(evaluatedDate, employeeSchedules));
         }
         return schedule;
+    }
+
+    public List<EmployeeScheduleTimeResponse> getSchedule(LocalDate date) {
+        var appointmentsOfDay = appointmentRepository.findAllByDateBetween(parseStatOfDay(date), parseEndOfDay(date));
+        var availableEmployees = employeeRepository.findAllByActiveProfile();
+
+        return availableEmployees.stream()
+                .map(employee -> createWithAvailableTimes(employee, appointmentsOfDay))
+                .toList();
     }
 
     public List<ScheduleResponse> getDaysOfAttendance(LocalDate startDate, LocalDate endDate) {
