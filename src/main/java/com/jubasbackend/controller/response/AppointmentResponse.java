@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.domain.entity.Appointment;
 import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.domain.entity.Specialty;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -46,21 +45,16 @@ public record AppointmentResponse(
             this(entity.getId(), entity.getName());
         }
 
-        GenericDTO(Specialty specialty) {
-            this(specialty.getId(), specialty.getName());
-        }
-
     }
 
     record Scheduling(
-            @Schema(type = "string", pattern = "yyyy-MM-dd")
-            @JsonFormat(pattern = "yyyy-MM-dd")
+            @Schema(type = "string", pattern = "yyyy-MM-dd") @JsonFormat(pattern = "yyyy-MM-dd")
             LocalDate date,
-            @Schema(type = "string", pattern = "HH:mm")
-            @JsonFormat(pattern = "HH:mm")
+
+            @Schema(type = "string", pattern = "HH:mm") @JsonFormat(pattern = "HH:mm")
             LocalTime startTime,
-            @Schema(type = "string", pattern = "HH:mm")
-            @JsonFormat(pattern = "HH:mm")
+
+            @Schema(type = "string", pattern = "HH:mm") @JsonFormat(pattern = "HH:mm")
             LocalTime endTime
     ) {
 
@@ -68,4 +62,5 @@ public record AppointmentResponse(
             this(entity.getDate().toLocalDate(), entity.startTime(), entity.endTime());
         }
     }
+
 }

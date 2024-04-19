@@ -41,7 +41,11 @@ classDiagram
     
     Specialty "1" -- "1" Appointment : contains
     
-    Appointment "1" -- "1"  AppointmentStatus: associated
+    Appointment "n" -- "1"  AppointmentStatus: associated
+
+    Appointment "1" -- "1"  Feedback: associated
+
+    Feedback "n" -- "1"  Rating: has
 
     Appointment "n" -- "1"  Payment: associated
 
@@ -130,6 +134,23 @@ classDiagram
         String type
         BigDecimal value
     }
+
+    class Feedback {
+        Appointment appointment
+        Text comment
+        Rating rating
+        Instant createdAt
+    }
+
+    class Rating {
+        <<Enumeration>>
+        MUITO_RUIM
+        RUIM
+        REGULAR
+        BOM
+        EXCELENTE
+    }
+
 ```
 
 ## :wrench: Tecnologias utilizadas
@@ -147,6 +168,7 @@ classDiagram
 * Agendamento de atendimento
 * Gerenciamento de negócios
 * Notificação de usuários
+* Avaliação do atendimento
 * Sistema de pagamentos
 
 Desenvolvido por Marcelo Santana

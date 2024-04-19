@@ -2,6 +2,7 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.controller.request.MailRequest;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
+import com.jubasbackend.domain.entity.enums.Rating;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
@@ -72,6 +73,24 @@ public class MailService {
         sendEmailToAdmin(SUBJECT, ADMIN_MESSAGE);
     }
 
+    public void sendFeedback(String employeeEmail, String employeeName, String clientName, Rating rating) {
+
+        final var SUBJECT = "Avaliação do atendimento";
+        final var capitalizedRating = capitalizeFirstLetter(rating.toString().toLowerCase());
+
+        final var employeeMessage = String.format("""
+                %s avaliou o atendimento como %s.
+                """, clientName, capitalizedRating
+        );
+
+        var adminMessage = String.format("""
+                %s avaliou o atendimento de %s como %s.
+                """, clientName, employeeName, capitalizedRating
+        );
+
+        sendEmail(new MailRequest(employeeEmail, SUBJECT, employeeMessage));
+        sendEmailToAdmin(SUBJECT, adminMessage);
+    }
 
     private String capitalizeFirstLetter(String text) {
         if (text == null || text.isEmpty()) {

@@ -1,6 +1,5 @@
 package com.jubasbackend.domain.entity;
 
-import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import com.jubasbackend.exception.APIException;
 import com.jubasbackend.service.MailService;
