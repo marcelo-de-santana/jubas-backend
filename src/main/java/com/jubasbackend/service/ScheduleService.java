@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -43,7 +44,7 @@ public class ScheduleService {
         var schedule = new ArrayList<ScheduleResponse>();
 
         // ITERANDO SOBRE CADA DIA DISPONÍVEL PARA AGENDAMENTO
-        for (int i = 0; i < daysAvailableQuantity; i++) {
+        for (int i = 0; i <= daysAvailableQuantity; i++) {
 
             // CALCULANDO A DATA A SER AVALIADA
             var evaluatedDate = today.plusDays(i).toLocalDate();
@@ -59,7 +60,7 @@ public class ScheduleService {
                             appointment.getDate().toLocalDate().equals(evaluatedDate))
                     .toList();
 
-            // SE A ESPECIALIDADE FOR NULA BUSCA OS HORÁRIOS POSSÍVEIS, SE NÃO BUSCA OS POSSÍVEIS PARA ATENDER A ESPECIALIDADE
+            // SE A ESPECIALIDADE FOR FORNECIDA REALIZA A BUSCA DE HORÁRIOS POSSÍVEIS PARA ATENDE-LA
             var employeeSchedules = specialtyId != null ?
                     getEmployeesWithPossibleTimesForSpecialty(availableEmployees, specialtyId, appointmentsOfDay, evaluatedDate, today) :
                     getAvailableEmployeesFilteredByTimes(availableEmployees, appointmentsOfDay, evaluatedDate, today);
@@ -105,6 +106,14 @@ public class ScheduleService {
 
     public DayAvailability getRangeOfAttendanceDays() {
         return dayAvailabilityRepository.findSingleEntity();
+    }
+
+    public List<String> getDaysWithoutAttendance() {
+        var yesterday = LocalDate.now().minusDays(1);
+
+        return nonServiceDayRepository.findAllByDateAfter(yesterday).stream()
+                .map(nonServiceDay -> nonServiceDay.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .toList();
     }
 
     public void registerDaysWithoutAttendance(List<LocalDate> dates) {

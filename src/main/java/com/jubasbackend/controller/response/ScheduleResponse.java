@@ -15,7 +15,7 @@ public class ScheduleResponse {
     @Schema(type = "date")
     @JsonFormat(pattern = "yyyy-MM-dd")
     final LocalDate date;
-    final boolean isAvailable;
+    final boolean available;
 
     public static ScheduleResponse available(LocalDate date) {
         return new ScheduleResponse(date, true);

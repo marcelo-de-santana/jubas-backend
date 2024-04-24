@@ -103,8 +103,8 @@ public class Appointment {
     }
 
     public void sendAppointmentNotification(MailService mailService) {
-        mailService.sendAppointment(getClientEmail(), getClientName(), getEmployeeEmail(), getEmployeeName(),
-                date.toLocalDate(), date.toLocalTime(), appointmentStatus);
+        mailService.sendAppointment(
+                getClientEmail(), getEmployeeName(), date.toLocalDate(), date.toLocalTime(), appointmentStatus);
     }
 
     //VERIFICA SE O CLIENTE AGENDOU O MESMO SERVIÇO NO DIA

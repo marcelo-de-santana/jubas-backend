@@ -69,7 +69,8 @@ public class AppointmentService {
 
         newAppointment.validateIfEmployeeMakesSpecialty();
 
-        var registeredAppointments = findAppointments(request.date(), request.employeeId(), request.clientId());
+        var registeredAppointments = findAppointments(
+                request.date(), request.employeeId(), request.clientId());
 
         validateAppointmentOverlap(registeredAppointments, newAppointment);
 

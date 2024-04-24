@@ -25,9 +25,10 @@ public class AppointmentsUtils {
     public static void validateAppointmentOverlap(List<Appointment> registeredAppointments,
                                                   Appointment requestAppointment) {
         registeredAppointments.stream()
-                .filter(extistingAppointment ->
-                        !(extistingAppointment.getAppointmentStatus().equals(AppointmentStatus.CANCELADO) ||
-                                extistingAppointment.getAppointmentStatus().equals(AppointmentStatus.FINALIZADO)))
+                .filter(extistingAppointment -> (
+                        extistingAppointment.getAppointmentStatus().equals(AppointmentStatus.MARCADO) ||
+                                extistingAppointment.getAppointmentStatus().equals(AppointmentStatus.EM_ATENDIMENTO)
+                ))
                 .forEach(existingAppointment -> existingAppointment
                 .validate(requestAppointment));
     }
@@ -56,6 +57,7 @@ public class AppointmentsUtils {
                 .map(filteredEmployees ->
                         createWithFilteredPossibleTimesForSpecialty(filteredEmployees, appointmentsOfDay, specialtyId, evaluatedDate, today)
                 )
+                .filter(employee -> !employee.workingHours().isEmpty())
                 .toList();
     }
 

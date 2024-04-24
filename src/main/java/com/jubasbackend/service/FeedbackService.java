@@ -3,6 +3,7 @@ package com.jubasbackend.service;
 import com.jubasbackend.controller.request.FeedbackRequest;
 import com.jubasbackend.controller.response.FeedbackResponse;
 import com.jubasbackend.domain.entity.Feedback;
+import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import com.jubasbackend.domain.repository.AppointmentRepository;
 import com.jubasbackend.domain.repository.FeedbackRepository;
 import com.jubasbackend.exception.APIException;
@@ -39,6 +40,10 @@ public class FeedbackService {
         var appointment = appointmentRepository.findById(request.appointmentId())
                 .orElseThrow(() -> new APIException(HttpStatus.NOT_FOUND, "Appointment not found."));
 
+        appointment.setAppointmentStatus(AppointmentStatus.AVALIADO);
+        appointment.setUpdatedAt(Instant.now());
+        appointmentRepository.save(appointment);
+
         var newFeedback = Feedback.builder()
                 .id(appointment.getId())
                 .appointment(appointment)
@@ -51,7 +56,6 @@ public class FeedbackService {
 
         mailService.sendFeedback(
                 savedFeedback.getAppointment().getEmployeeEmail(),
-                savedFeedback.getAppointment().getEmployeeName(),
                 savedFeedback.getAppointment().getClientName(),
                 savedFeedback.getRating()
         );

@@ -50,7 +50,7 @@ public class FeedbackController {
     @PutMapping
     public ResponseEntity<Void> createFeedback(@RequestBody FeedbackRequest request) {
         var newFeedback = service.createFeedback(request);
-        return ResponseEntity.created(URI.create("/feedbacks" + newFeedback.appointmentId())).build();
+        return ResponseEntity.created(URI.create("/feedbacks" + newFeedback.getId())).build();
     }
 
 }

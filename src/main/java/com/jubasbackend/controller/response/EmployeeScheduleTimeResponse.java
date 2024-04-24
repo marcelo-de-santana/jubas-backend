@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record EmployeeScheduleTimeResponse(UUID employeeId, String employeeName, List<ScheduleTimeResponse> workingHours) {
+public record EmployeeScheduleTimeResponse(UUID id, String name, List<ScheduleTimeResponse> workingHours) {
 
     public static EmployeeScheduleTimeResponse createWithAvailableTimes(Employee employee,
                                                                         List<Appointment> appointmentsOfDay) {

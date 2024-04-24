@@ -80,11 +80,21 @@ public class ScheduleController {
                     - Um: A agenda está disponível em dois dias dois dias (Hoje e amanhã).
                     - E assim sucessivamente.""",
             responses = {
+                    @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
                     @ApiResponse(responseCode = "500", description = "Erro ao buscar a disponibilidade da agenda.")
             })
     @GetMapping("/range-of-attendance-days")
     public ResponseEntity<DayAvailability> getRangeOfAttendanceDays() {
         return ResponseEntity.ok(service.getRangeOfAttendanceDays());
+    }
+
+    @Operation(summary = "Busca os dias sem atendimento", responses = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso."),
+            @ApiResponse(responseCode = "500", description = "Erro ao buscar dias sem atendimento.")
+    })
+    @GetMapping("/days-without-attendance")
+    public ResponseEntity<List<String>> getDaysWithoutAttendance() {
+        return ResponseEntity.ok(service.getDaysWithoutAttendance());
     }
 
     @Operation(summary = "Bloquear dias para da agenda.", responses = {

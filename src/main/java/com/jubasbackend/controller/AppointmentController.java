@@ -3,6 +3,7 @@ package com.jubasbackend.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
+import com.jubasbackend.controller.response.FeedbackResponse;
 import com.jubasbackend.service.AppointmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

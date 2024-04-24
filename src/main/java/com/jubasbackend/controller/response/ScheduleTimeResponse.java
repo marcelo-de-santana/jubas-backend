@@ -15,7 +15,7 @@ public class ScheduleTimeResponse {
     @Schema(type = "String", pattern = "HH:mm")
     @JsonFormat(pattern = "HH:mm")
     final LocalTime time;
-    final boolean isAvailable;
+    final boolean available;
 
     public ScheduleTimeResponse(ScheduleTimeResponse availableTime) {
         this(availableTime.getTime(), availableTime.isAvailable());

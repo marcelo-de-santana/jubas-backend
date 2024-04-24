@@ -16,4 +16,7 @@ public interface NonServiceDayRepository extends JpaRepository<NonServiceDay, Lo
     }
 
     List<NonServiceDay> findAllByDateBetween(LocalDate from, LocalDate to);
+
+
+    List<NonServiceDay> findAllByDateAfter(LocalDate from);
 }

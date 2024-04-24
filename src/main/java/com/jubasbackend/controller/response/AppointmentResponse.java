@@ -6,22 +6,26 @@ import com.jubasbackend.domain.entity.Employee;
 import com.jubasbackend.domain.entity.Profile;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 
-public record AppointmentResponse(
-        UUID id,
-        GenericDTO employee,
-        GenericDTO client,
-        SpecialtyResponse specialty,
-        AppointmentStatus status,
-        Scheduling scheduling,
-        Instant createdAt,
-        Instant updatedAt
-) {
+@Getter
+@AllArgsConstructor
+public class AppointmentResponse {
+
+    final UUID id;
+    final GenericDTO employee;
+    final GenericDTO client;
+    final SpecialtyResponse specialty;
+    final AppointmentStatus status;
+    final Scheduling scheduling;
+    final Instant createdAt;
+    final Instant updatedAt;
 
     public AppointmentResponse(Appointment entity) {
         this(

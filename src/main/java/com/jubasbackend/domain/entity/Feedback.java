@@ -21,7 +21,7 @@ public class Feedback {
     private UUID id;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
