@@ -2,6 +2,7 @@ package com.jubasbackend.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
+import com.jubasbackend.domain.entity.enums.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
@@ -19,8 +20,9 @@ public record AppointmentRequest(
         @Schema(type = "string", pattern = "yyyy-MM-dd HH:mm") @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
         LocalDateTime dateTime,
 
-        AppointmentStatus appointmentStatus
-) {
+        AppointmentStatus appointmentStatus,
+
+        PaymentMethod paymentMethod) {
 
         public LocalTime time() {
                 return dateTime.toLocalTime();

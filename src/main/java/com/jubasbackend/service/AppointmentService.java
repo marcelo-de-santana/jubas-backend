@@ -2,13 +2,12 @@ package com.jubasbackend.service;
 
 import com.jubasbackend.controller.request.AppointmentRequest;
 import com.jubasbackend.controller.response.AppointmentResponse;
-import com.jubasbackend.domain.entity.Appointment;
-import com.jubasbackend.domain.entity.Employee;
-import com.jubasbackend.domain.entity.Profile;
-import com.jubasbackend.domain.entity.Specialty;
+import com.jubasbackend.domain.entity.*;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
+import com.jubasbackend.domain.entity.enums.PaymentMethod;
 import com.jubasbackend.domain.repository.AppointmentRepository;
 import com.jubasbackend.domain.repository.EmployeeRepository;
+import com.jubasbackend.domain.repository.PaymentRepository;
 import com.jubasbackend.domain.repository.ProfileRepository;
 import com.jubasbackend.exception.APIException;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +32,7 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final EmployeeRepository employeeRepository;
     private final ProfileRepository profileRepository;
+    private final PaymentRepository paymentRepository;
     private final MailService mailService;
 
     public List<AppointmentResponse> getAppointments(LocalDate date) {
@@ -44,7 +44,7 @@ public class AppointmentService {
     }
 
     public AppointmentResponse getAppointment(UUID appointmentId) {
-        return new AppointmentResponse(findAppointment(appointmentId));
+        return new AppointmentResponse(appointmentRepository.findAppointment(appointmentId));
     }
 
     public List<AppointmentResponse> getAppointmentsByUser(UUID userId) {
@@ -82,7 +82,7 @@ public class AppointmentService {
     }
 
     public void updateAppointment(UUID appointmentId, AppointmentRequest request) {
-        var appointment = findAppointment(appointmentId);
+        var appointment = appointmentRepository.findAppointment(appointmentId);
 
         //VERIFICA SE É OUTRO FUNCIONÁRIO
         if (request.employeeId() != null)
@@ -110,12 +110,17 @@ public class AppointmentService {
             validateAppointmentOverlap(registeredAppointments, appointment);
         }
 
-        if (request.appointmentStatus() != null)
+        if (request.appointmentStatus() != null) {
             appointment.setAppointmentStatus(request.appointmentStatus());
+        }
 
         appointment.setUpdatedAt(Instant.now());
 
         var updatedAppointment = appointmentRepository.save(appointment);
+
+        if (updatedAppointment.getAppointmentStatus().equals(AppointmentStatus.PAGO)) {
+            registerPayment(appointment);
+        }
 
         updatedAppointment.sendAppointmentNotification(mailService);
 
@@ -136,11 +141,6 @@ public class AppointmentService {
                 () -> new APIException(HttpStatus.NOT_FOUND, "Client doesn't' registered."));
     }
 
-    private Appointment findAppointment(UUID appointmentId) {
-        return appointmentRepository.findById(appointmentId).orElseThrow(
-                () -> new NoSuchElementException("Appointment not found."));
-    }
-
     private boolean appointmentHasBeenChanged(AppointmentRequest request) {
         return (request.employeeId() != null ||
                 request.specialtyId() != null ||
@@ -148,4 +148,14 @@ public class AppointmentService {
                 request.clientId() != null);
     }
 
+    private void registerPayment(Appointment appointment) {
+
+        var payment = Payment.builder()
+                .id(appointment.getId())
+                .appointment(appointment)
+                .method(PaymentMethod.DINHEIRO)
+                .build();
+
+        paymentRepository.save(payment);
+    }
 }

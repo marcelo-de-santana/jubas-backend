@@ -16,10 +16,6 @@ spring:
           starttls:
             enabled: true
             required: true
-#server:
-#  error:
-#    include-stacktrace: never
-#    include-message: never
 
 springdoc:
   api-docs:
@@ -30,4 +26,3 @@ springdoc:
     operations-sorter: method
   cache:
     disabled: true
-

@@ -57,7 +57,8 @@ public class FeedbackService {
         mailService.sendFeedback(
                 savedFeedback.getAppointment().getEmployeeEmail(),
                 savedFeedback.getAppointment().getClientName(),
-                savedFeedback.getRating()
+                savedFeedback.getRating(),
+                savedFeedback.getComment()
         );
 
         return new FeedbackResponse(savedFeedback);

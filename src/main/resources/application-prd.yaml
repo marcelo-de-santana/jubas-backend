@@ -5,5 +5,15 @@ spring:
     password: ${DB_PASSWORD}
   jpa:
     hibernate.ddl-auto: none
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  security.user:
+    name: ${PRD_SECURITY_USERNAME}
+    password: ${PRD_SECURITY_PASSWORD}
+
+jwt:
+  issuer: JubasBackend
+  duration: ${PRD_JWT_DURATION}
+  keys:
+    public: ${PRD_JWT_PUBLIC_KEY}
+    private: ${PRD_JWT_PRIVATE_KEY}
+
+mercado-pago.key: ${PRD_MERCADO_PAGO_KEY}

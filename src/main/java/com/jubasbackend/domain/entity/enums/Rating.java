@@ -4,11 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum Rating {
-    MUITO_RUIM((short) 0),
-    RUIM((short) 1),
-    REGULAR((short) 2),
-    BOM((short) 3),
-    EXCELENTE((short) 4);
+    INSATISFEITO((short) 0),
+    SATISFEITO((short) 1),
+    MUITO_SATISFEITO((short) 2);
 
     private final Short id;
 

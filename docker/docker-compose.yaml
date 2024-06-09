@@ -21,6 +21,8 @@ services:
     volumes:
       - ../:/home/jubas-backend
       - /home/jubas-backend/docker
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - DB_HOST=db
