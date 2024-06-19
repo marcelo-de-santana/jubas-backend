@@ -10,8 +10,6 @@ INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_inter
 INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_interval) VALUES (2, '08:00:00', '19:00:00', '13:00:00', '14:00:00');
 INSERT INTO tb_working_hour (id, start_time, end_time, start_interval, end_interval) VALUES (3, '10:00:00', '20:00:00', '13:00:00', '14:00:00');
 
--- CLIENTES
-
 -- BARBEIROS
 INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (UNHEX('e2fd01f0e75f11eabbc8628eb8d80c33'), 'Gabriel Navalha', null, true, UNHEX('550e8400e29b41d4a716446655440002'));
 INSERT INTO tb_profile (id, name, cpf, status_profile, user_id) VALUES (UNHEX('e2fd0294e75f11eabbc8628eb8d80c33'), 'Gerson de Castro', null, false, UNHEX('550e8400e29b41d4a716446655440003'));

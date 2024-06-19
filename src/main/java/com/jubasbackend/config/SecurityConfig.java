@@ -1,5 +1,6 @@
 package com.jubasbackend.config;
 
+import com.jubasbackend.domain.entity.enums.PermissionType;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -27,6 +28,9 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @EnableWebSecurity
@@ -88,25 +92,25 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/api-docs/**", "/swagger-ui/**")
-//                        .permitAll()
-//
-//                        .requestMatchers(GET,
-//                                "/appointments",
-//                                "/appointments/days-of-attendance",
-//                                "/categories")
-//                        .permitAll()
-//
-//                        .requestMatchers(POST,
-//                                "/auth",
-//                                "/users")
-//                        .permitAll()
-//
-//                        .requestMatchers(GET, "/users")
-//                        .hasRole(PermissionType.ADMIN.toString())
-
-                                .anyRequest()
+                        .requestMatchers("/api-docs/**", "/swagger-ui/**")
                         .permitAll()
+
+                        .requestMatchers(GET,
+                                "/appointments",
+                                "/appointments/days-of-attendance",
+                                "/categories")
+                        .permitAll()
+
+                        .requestMatchers(POST,
+                                "/auth",
+                                "/users")
+                        .permitAll()
+
+                        .requestMatchers(GET, "/users")
+                        .hasRole(PermissionType.ADMIN.toString())
+
+                        .anyRequest()
+                        .authenticated()
                 ).build();
     }
 }

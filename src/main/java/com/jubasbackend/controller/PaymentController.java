@@ -1,6 +1,7 @@
 package com.jubasbackend.controller;
 
 import com.jubasbackend.controller.request.PaymentRequest;
+import com.jubasbackend.controller.response.MercadoPagoTokenResponse;
 import com.jubasbackend.controller.response.PaymentResponse;
 import com.jubasbackend.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +25,11 @@ public class PaymentController {
     @GetMapping
     public ResponseEntity<List<PaymentResponse>> getPayments() {
         return ResponseEntity.ok(paymentService.getPayments());
+    }
+
+    @GetMapping("/token")
+    public ResponseEntity<MercadoPagoTokenResponse> getAccessToken() {
+        return ResponseEntity.ok(paymentService.getAccessToken());
     }
 
     @PostMapping

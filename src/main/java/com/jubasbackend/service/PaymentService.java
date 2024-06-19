@@ -1,6 +1,7 @@
 package com.jubasbackend.service;
 
 import com.jubasbackend.controller.request.PaymentRequest;
+import com.jubasbackend.controller.response.MercadoPagoTokenResponse;
 import com.jubasbackend.controller.response.PaymentResponse;
 import com.jubasbackend.domain.entity.Payment;
 import com.jubasbackend.domain.entity.enums.AppointmentStatus;
@@ -31,8 +32,8 @@ import java.util.UUID;
 @Service
 public class PaymentService {
 
-    @Value("${mercado-pago.key}")
-    private String apiKey;
+    @Value("${mercado-pago.access_token}")
+    private String accessToken;
 
     @Autowired
     private AppointmentRepository appointmentRepository;
@@ -70,7 +71,7 @@ public class PaymentService {
                 .customHeaders(customHeaders)
                 .build();
 
-        MercadoPagoConfig.setAccessToken(apiKey);
+        MercadoPagoConfig.setAccessToken(accessToken);
 
         PaymentClient client = new PaymentClient();
 
@@ -155,5 +156,9 @@ public class PaymentService {
 
     public List<PaymentResponse> getPayments() {
         return paymentRepository.findAll().stream().map(PaymentResponse::new).toList();
+    }
+
+    public MercadoPagoTokenResponse getAccessToken() {
+        return new MercadoPagoTokenResponse(accessToken);
     }
 }
